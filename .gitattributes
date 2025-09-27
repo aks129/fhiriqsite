@@ -1,2 +1,118 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Set default behavior to automatically normalize line endings
+* text=auto eol=lf
+
+# Force LF line endings for specific file types
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.xml text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.sass text eol=lf
+*.less text eol=lf
+*.svg text eol=lf
+*.txt text eol=lf
+*.sh text eol=lf
+*.env text eol=lf
+*.env.* text eol=lf
+*.gitignore text eol=lf
+*.gitattributes text eol=lf
+*.editorconfig text eol=lf
+*.prettierrc text eol=lf
+*.eslintrc text eol=lf
+*.eslintrc.* text eol=lf
+Dockerfile text eol=lf
+Makefile text eol=lf
+README text eol=lf
+LICENSE text eol=lf
+CHANGELOG text eol=lf
+
+# Force CRLF line endings for Windows-specific files
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files (no conversion)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+*.pdf binary
+*.zip binary
+*.tar.gz binary
+*.tgz binary
+*.7z binary
+*.rar binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+
+# Wix-specific files
+*.wix text eol=lf
+*.wix.js text eol=lf
+*.wix.jsx text eol=lf
+
+# Template files
+*.template text eol=lf
+
+# Configuration files
+package.json text eol=lf
+package-lock.json text eol=lf
+yarn.lock text eol=lf
+tsconfig.json text eol=lf
+jsconfig.json text eol=lf
+.nvmrc text eol=lf
+
+# Docker files
+Dockerfile text eol=lf
+docker-compose.yml text eol=lf
+docker-compose.yaml text eol=lf
+.dockerignore text eol=lf
+
+# CI/CD files
+.github/workflows/*.yml text eol=lf
+.github/workflows/*.yaml text eol=lf
+.gitlab-ci.yml text eol=lf
+.travis.yml text eol=lf
+appveyor.yml text eol=lf
+
+# Linguist vendored paths (exclude from language statistics)
+vendor/** linguist-vendored
+node_modules/** linguist-vendored
+public/build/** linguist-vendored
+dist/** linguist-vendored
+build/** linguist-vendored
+coverage/** linguist-vendored
+test-results/** linguist-vendored
+.wix/** linguist-vendored
+
+# Linguist language detection
+*.jsx linguist-language=JavaScript
+*.tsx linguist-language=TypeScript
+*.wix linguist-language=JavaScript
+*.template linguist-language=Text
+
+# Export-ignore (files to exclude from git archive)
+.gitattributes export-ignore
+.gitignore export-ignore
+.github/ export-ignore
+.vscode/ export-ignore
+.idea/ export-ignore
+*.log export-ignore
+coverage/ export-ignore
+test-results/ export-ignore
+.env.local export-ignore
+.env.*.local export-ignore

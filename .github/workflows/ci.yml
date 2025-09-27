@@ -1,0 +1,493 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '18'
+  CACHE_KEY_PREFIX: v1
+
+jobs:
+  # Job 1: Lint and Format Check
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            builder-service/package-lock.json
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            builder-service/node_modules
+          key: ${{ env.CACHE_KEY_PREFIX }}-node-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ env.CACHE_KEY_PREFIX }}-node-${{ runner.os }}-
+
+      - name: Install root dependencies
+        run: npm ci --prefer-offline --no-audit
+        if: hashFiles('package.json') != ''
+
+      - name: Install builder-service dependencies
+        run: |
+          cd builder-service
+          npm ci --prefer-offline --no-audit
+        if: hashFiles('builder-service/package.json') != ''
+
+      - name: Run ESLint
+        run: |
+          # Check if ESLint config exists and run linting
+          if [ -f ".eslintrc.js" ] || [ -f ".eslintrc.json" ] || [ -f "eslint.config.js" ]; then
+            echo "Running ESLint on root project..."
+            npx eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0 --format stylish
+          fi
+
+          # Check builder-service
+          if [ -f "builder-service/.eslintrc.js" ] || [ -f "builder-service/package.json" ]; then
+            echo "Running ESLint on builder-service..."
+            cd builder-service
+            if command -v npx eslint &> /dev/null; then
+              npx eslint src/ --ext .js,.jsx,.ts,.tsx --max-warnings 0 --format stylish
+            else
+              echo "ESLint not available in builder-service, skipping..."
+            fi
+            cd ..
+          fi
+
+      - name: Check Prettier formatting
+        run: |
+          # Check if Prettier config exists
+          if [ -f ".prettierrc" ] || [ -f ".prettierrc.json" ] || [ -f "prettier.config.js" ]; then
+            echo "Checking Prettier formatting..."
+            npx prettier --check "**/*.{js,jsx,ts,tsx,json,md,yml,yaml}" --ignore-path .gitignore
+          fi
+
+      - name: Check EditorConfig compliance
+        run: |
+          if [ -f ".editorconfig" ]; then
+            echo "Checking EditorConfig compliance..."
+            npm install -g editorconfig-checker
+            editorconfig-checker
+          fi
+
+  # Job 2: TypeScript Type Checking
+  typecheck:
+    name: TypeScript Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            builder-service/package-lock.json
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            builder-service/node_modules
+          key: ${{ env.CACHE_KEY_PREFIX }}-node-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ env.CACHE_KEY_PREFIX }}-node-${{ runner.os }}-
+
+      - name: Install root dependencies
+        run: npm ci --prefer-offline --no-audit
+        if: hashFiles('package.json') != ''
+
+      - name: Install builder-service dependencies
+        run: |
+          cd builder-service
+          npm ci --prefer-offline --no-audit
+        if: hashFiles('builder-service/package.json') != ''
+
+      - name: Run TypeScript type checking
+        run: |
+          # Check root project
+          if [ -f "tsconfig.json" ]; then
+            echo "Running TypeScript check on root project..."
+            npx tsc --noEmit
+          fi
+
+          # Check builder-service
+          if [ -f "builder-service/tsconfig.json" ]; then
+            echo "Running TypeScript check on builder-service..."
+            cd builder-service
+            npx tsc --noEmit
+            cd ..
+          fi
+
+  # Job 3: Unit Tests
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            builder-service/package-lock.json
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            builder-service/node_modules
+          key: ${{ env.CACHE_KEY_PREFIX }}-node-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ env.CACHE_KEY_PREFIX }}-node-${{ runner.os }}-
+
+      - name: Install root dependencies
+        run: npm ci --prefer-offline --no-audit
+        if: hashFiles('package.json') != ''
+
+      - name: Install builder-service dependencies
+        run: |
+          cd builder-service
+          npm ci --prefer-offline --no-audit
+        if: hashFiles('builder-service/package.json') != ''
+
+      - name: Run unit tests
+        run: |
+          # Check root project for tests
+          if [ -f "package.json" ] && grep -q '"test"' package.json; then
+            echo "Running tests on root project..."
+            npm test
+          else
+            echo "No test script found in root package.json"
+          fi
+
+          # Check builder-service for tests
+          if [ -f "builder-service/package.json" ] && grep -q '"test"' builder-service/package.json; then
+            echo "Running tests on builder-service..."
+            cd builder-service
+            npm test
+            cd ..
+          else
+            echo "No test script found in builder-service package.json"
+          fi
+
+      - name: Upload test coverage
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: coverage-reports
+          path: |
+            coverage/
+            builder-service/coverage/
+          retention-days: 30
+
+  # Job 4: Documentation Link Check
+  link-check:
+    name: Documentation Link Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install markdown-link-check
+        run: npm install -g markdown-link-check
+
+      - name: Check links in documentation
+        run: |
+          echo "Checking links in Markdown files..."
+
+          # Create config file for markdown-link-check
+          cat > .markdown-link-check.json << 'EOF'
+          {
+            "ignorePatterns": [
+              {
+                "pattern": "^http://localhost"
+              },
+              {
+                "pattern": "^https://localhost"
+              },
+              {
+                "pattern": "^http://127.0.0.1"
+              },
+              {
+                "pattern": "^https://127.0.0.1"
+              },
+              {
+                "pattern": "file://"
+              }
+            ],
+            "httpHeaders": [
+              {
+                "urls": ["https://github.com", "https://api.github.com"],
+                "headers": {
+                  "User-Agent": "Mozilla/5.0 (compatible; LinkChecker)"
+                }
+              }
+            ],
+            "timeout": "10s",
+            "retryOn429": true,
+            "retryCount": 3,
+            "fallbackHTTPStatus": [400, 401, 403, 404, 429, 500, 502, 503, 504]
+          }
+          EOF
+
+          # Find and check all markdown files
+          find . -name "*.md" -not -path "./node_modules/*" -not -path "./.git/*" -not -path "./dist/*" -not -path "./build/*" | while read file; do
+            echo "Checking links in: $file"
+            markdown-link-check "$file" --config .markdown-link-check.json --quiet || echo "Link check failed for $file"
+          done
+
+      - name: Check for broken internal links
+        run: |
+          echo "Checking for broken internal file references..."
+
+          # Check for references to files that don't exist
+          find . -name "*.md" -not -path "./node_modules/*" -not -path "./.git/*" | xargs grep -l "\./" | while read file; do
+            echo "Checking internal links in: $file"
+            grep -o '\[.*\](\.\/[^)]*\|[^)]*\.md\|[^)]*\.json\|[^)]*\.js\|[^)]*\.ts)' "$file" | while read link; do
+              path=$(echo "$link" | sed 's/.*](\([^)]*\)).*/\1/')
+              if [[ "$path" =~ ^\./ ]] && [[ ! -e "$path" ]]; then
+                echo "Broken internal link in $file: $path"
+              fi
+            done
+          done
+
+  # Job 5: Security Audit
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Run npm audit (root)
+        run: |
+          if [ -f "package.json" ]; then
+            echo "Running npm audit on root project..."
+            npm audit --audit-level=moderate
+          fi
+        continue-on-error: true
+
+      - name: Run npm audit (builder-service)
+        run: |
+          if [ -f "builder-service/package.json" ]; then
+            echo "Running npm audit on builder-service..."
+            cd builder-service
+            npm audit --audit-level=moderate
+            cd ..
+          fi
+        continue-on-error: true
+
+      - name: Check for hardcoded secrets
+        run: |
+          echo "Checking for potential hardcoded secrets..."
+
+          # Simple regex patterns to detect potential secrets
+          echo "Scanning for API keys and tokens..."
+          if grep -r -E "(api[_-]?key|secret[_-]?key|access[_-]?token|auth[_-]?token)" --include="*.js" --include="*.ts" --include="*.jsx" --include="*.tsx" --exclude-dir=node_modules --exclude-dir=.git .; then
+            echo "⚠️ Potential hardcoded secrets found. Please review."
+          else
+            echo "✅ No obvious hardcoded secrets detected."
+          fi
+
+          echo "Checking for environment variable leaks..."
+          if grep -r -E "process\.env\.[A-Z_]+" --include="*.js" --include="*.ts" --include="*.jsx" --include="*.tsx" --exclude-dir=node_modules --exclude-dir=.git . | grep -v "NODE_ENV\|PORT\|PUBLIC_"; then
+            echo "ℹ️ Environment variables found. Ensure they don't contain secrets in production."
+          fi
+
+  # Job 6: Build Check
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint, typecheck]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            builder-service/package-lock.json
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            builder-service/node_modules
+          key: ${{ env.CACHE_KEY_PREFIX }}-node-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ env.CACHE_KEY_PREFIX }}-node-${{ runner.os }}-
+
+      - name: Install root dependencies
+        run: npm ci --prefer-offline --no-audit
+        if: hashFiles('package.json') != ''
+
+      - name: Install builder-service dependencies
+        run: |
+          cd builder-service
+          npm ci --prefer-offline --no-audit
+        if: hashFiles('builder-service/package.json') != ''
+
+      - name: Build projects
+        run: |
+          # Build root project if build script exists
+          if [ -f "package.json" ] && grep -q '"build"' package.json; then
+            echo "Building root project..."
+            npm run build
+          fi
+
+          # Build builder-service if build script exists
+          if [ -f "builder-service/package.json" ] && grep -q '"build"' builder-service/package.json; then
+            echo "Building builder-service..."
+            cd builder-service
+            npm run build
+            cd ..
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: build-artifacts
+          path: |
+            dist/
+            build/
+            builder-service/dist/
+          retention-days: 7
+
+  # Summary job that depends on all others
+  ci-success:
+    name: CI Success
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, test, link-check, security, build]
+    if: always()
+
+    steps:
+      - name: Check job results
+        run: |
+          if [[ "${{ needs.lint.result }}" != "success" ]]; then
+            echo "❌ Lint job failed"
+            exit 1
+          fi
+
+          if [[ "${{ needs.typecheck.result }}" != "success" ]]; then
+            echo "❌ TypeScript check failed"
+            exit 1
+          fi
+
+          if [[ "${{ needs.test.result }}" != "success" && "${{ needs.test.result }}" != "skipped" ]]; then
+            echo "❌ Test job failed"
+            exit 1
+          fi
+
+          if [[ "${{ needs.link-check.result }}" != "success" ]]; then
+            echo "❌ Link check failed"
+            exit 1
+          fi
+
+          if [[ "${{ needs.security.result }}" != "success" ]]; then
+            echo "⚠️ Security audit had issues"
+            # Don't fail the build for security issues, but warn
+          fi
+
+          if [[ "${{ needs.build.result }}" != "success" && "${{ needs.build.result }}" != "skipped" ]]; then
+            echo "❌ Build job failed"
+            exit 1
+          fi
+
+          echo "✅ All CI checks passed!"
+
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const jobResults = {
+              lint: '${{ needs.lint.result }}',
+              typecheck: '${{ needs.typecheck.result }}',
+              test: '${{ needs.test.result }}',
+              'link-check': '${{ needs.link-check.result }}',
+              security: '${{ needs.security.result }}',
+              build: '${{ needs.build.result }}'
+            };
+
+            const successEmoji = '✅';
+            const failureEmoji = '❌';
+            const skippedEmoji = '⏭️';
+
+            let comment = '## CI Results\n\n';
+            for (const [job, result] of Object.entries(jobResults)) {
+              const emoji = result === 'success' ? successEmoji :
+                           result === 'skipped' ? skippedEmoji : failureEmoji;
+              comment += `${emoji} **${job}**: ${result}\n`;
+            }
+
+            comment += '\n---\n*Automated CI check results*';
+
+            github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: number,
+              body: comment
+            });
