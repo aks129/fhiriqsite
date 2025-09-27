@@ -1,0 +1,182 @@
+{
+  "collection": {
+    "name": "Licenses",
+    "displayName": "Product Licenses",
+    "description": "Digital product licenses and access keys for FHIR IQ products",
+    "permissions": {
+      "read": "admin",
+      "write": "admin",
+      "create": "admin",
+      "delete": "admin"
+    },
+    "fields": {
+      "licenseKey": {
+        "displayName": "License Key",
+        "type": "text",
+        "required": true,
+        "unique": true,
+        "maxLength": 100,
+        "description": "Unique license key for product access"
+      },
+      "orderId": {
+        "displayName": "Order ID",
+        "type": "text",
+        "required": true,
+        "maxLength": 50,
+        "description": "Associated Wix Stores order ID"
+      },
+      "customerId": {
+        "displayName": "Customer ID",
+        "type": "text",
+        "required": false,
+        "maxLength": 50,
+        "description": "Wix customer ID"
+      },
+      "customerEmail": {
+        "displayName": "Customer Email",
+        "type": "text",
+        "required": true,
+        "maxLength": 255,
+        "description": "Customer email address"
+      },
+      "productSku": {
+        "displayName": "Product SKU",
+        "type": "text",
+        "required": true,
+        "maxLength": 50,
+        "description": "Product SKU identifier"
+      },
+      "productName": {
+        "displayName": "Product Name",
+        "type": "text",
+        "required": true,
+        "maxLength": 255,
+        "description": "Full product name"
+      },
+      "productCategory": {
+        "displayName": "Product Category",
+        "type": "text",
+        "required": true,
+        "maxLength": 50,
+        "description": "Product category (license, training, consulting, bundle, addon)"
+      },
+      "edition": {
+        "displayName": "Edition",
+        "type": "text",
+        "required": true,
+        "maxLength": 50,
+        "description": "Product edition (basic, professional, enterprise, etc.)"
+      },
+      "term": {
+        "displayName": "Term",
+        "type": "text",
+        "required": true,
+        "maxLength": 50,
+        "description": "License term (annual, monthly, single_seat, etc.)"
+      },
+      "status": {
+        "displayName": "Status",
+        "type": "text",
+        "required": true,
+        "maxLength": 20,
+        "description": "License status (active, suspended, expired, revoked)"
+      },
+      "activatedAt": {
+        "displayName": "Activated At",
+        "type": "date",
+        "required": false,
+        "description": "Date when license was first activated"
+      },
+      "expiresAt": {
+        "displayName": "Expires At",
+        "type": "date",
+        "required": true,
+        "description": "License expiration date"
+      },
+      "maxUsers": {
+        "displayName": "Maximum Users",
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "description": "Maximum number of concurrent users (-1 for unlimited)"
+      },
+      "currentUsers": {
+        "displayName": "Current Users",
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "description": "Current number of active users"
+      },
+      "features": {
+        "displayName": "Included Features",
+        "type": "tags",
+        "required": false,
+        "description": "List of features included with this license"
+      },
+      "deliverables": {
+        "displayName": "Deliverables",
+        "type": "richText",
+        "required": false,
+        "description": "JSON object containing product deliverables and configuration"
+      },
+      "metadata": {
+        "displayName": "Metadata",
+        "type": "richText",
+        "required": false,
+        "description": "Additional metadata as JSON object"
+      },
+      "lastAccessedAt": {
+        "displayName": "Last Accessed",
+        "type": "date",
+        "required": false,
+        "description": "Date when license was last accessed"
+      },
+      "accessCount": {
+        "displayName": "Access Count",
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "description": "Number of times license has been accessed"
+      },
+      "ipAddresses": {
+        "displayName": "IP Addresses",
+        "type": "tags",
+        "required": false,
+        "description": "IP addresses that have accessed this license"
+      },
+      "userAgents": {
+        "displayName": "User Agents",
+        "type": "tags",
+        "required": false,
+        "description": "User agents that have accessed this license"
+      }
+    },
+    "indexes": [
+      {
+        "name": "licenseKey",
+        "fields": ["licenseKey"],
+        "unique": true
+      },
+      {
+        "name": "customerEmail",
+        "fields": ["customerEmail"]
+      },
+      {
+        "name": "orderId",
+        "fields": ["orderId"]
+      },
+      {
+        "name": "status",
+        "fields": ["status"]
+      },
+      {
+        "name": "productCategory",
+        "fields": ["productCategory"]
+      },
+      {
+        "name": "expiresAt",
+        "fields": ["expiresAt"]
+      }
+    ]
+  }
+}

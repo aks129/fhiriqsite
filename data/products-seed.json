@@ -1,0 +1,342 @@
+{
+  "products": [
+    {
+      "sku": "FHIR-DEV-BASIC-1Y",
+      "name": "FHIR Developer License - Basic",
+      "category": "license",
+      "edition": "basic",
+      "term": "annual",
+      "price": 299.00,
+      "originalPrice": 399.00,
+      "currency": "USD",
+      "description": "Essential FHIR development tools and resources for individual developers",
+      "features": [
+        "FHIR R4 validation tools",
+        "Basic code generators",
+        "Community support",
+        "Documentation access",
+        "1 concurrent user"
+      ],
+      "deliverables": {
+        "type": "license_key",
+        "accessLevel": "basic",
+        "maxUsers": 1,
+        "includes": ["fhir-validator", "basic-codegen", "docs-access"]
+      },
+      "popular": false,
+      "available": true,
+      "digital": true
+    },
+    {
+      "sku": "FHIR-DEV-PRO-1Y",
+      "name": "FHIR Developer License - Professional",
+      "category": "license",
+      "edition": "professional",
+      "term": "annual",
+      "price": 799.00,
+      "originalPrice": 999.00,
+      "currency": "USD",
+      "description": "Advanced FHIR development platform for professional developers and small teams",
+      "features": [
+        "Advanced FHIR validation",
+        "Premium code generators",
+        "Custom profiles & extensions",
+        "Priority support",
+        "API testing tools",
+        "Up to 5 concurrent users"
+      ],
+      "deliverables": {
+        "type": "license_key",
+        "accessLevel": "professional",
+        "maxUsers": 5,
+        "includes": ["fhir-validator", "premium-codegen", "profile-builder", "api-tester", "priority-support"]
+      },
+      "popular": true,
+      "available": true,
+      "digital": true
+    },
+    {
+      "sku": "FHIR-DEV-ENT-1Y",
+      "name": "FHIR Developer License - Enterprise",
+      "category": "license",
+      "edition": "enterprise",
+      "term": "annual",
+      "price": 2499.00,
+      "originalPrice": 2999.00,
+      "currency": "USD",
+      "description": "Complete FHIR development suite for large organizations and healthcare systems",
+      "features": [
+        "Enterprise FHIR validation",
+        "Advanced code generation",
+        "Custom implementation guides",
+        "Dedicated support manager",
+        "On-premise deployment options",
+        "Unlimited users",
+        "Advanced analytics",
+        "SSO integration"
+      ],
+      "deliverables": {
+        "type": "license_key",
+        "accessLevel": "enterprise",
+        "maxUsers": -1,
+        "includes": ["fhir-validator", "enterprise-codegen", "ig-builder", "analytics", "sso", "dedicated-support"]
+      },
+      "popular": false,
+      "available": true,
+      "digital": true
+    },
+    {
+      "sku": "FHIR-TRAIN-FUND-1SEAT",
+      "name": "FHIR Fundamentals Training",
+      "category": "training",
+      "edition": "fundamentals",
+      "term": "single_seat",
+      "price": 495.00,
+      "currency": "USD",
+      "description": "Comprehensive FHIR fundamentals course for healthcare IT professionals",
+      "features": [
+        "8-hour live virtual training",
+        "FHIR R4 deep dive",
+        "Hands-on exercises",
+        "Certification exam",
+        "Course materials included",
+        "90 days access to recordings"
+      ],
+      "deliverables": {
+        "type": "training_access",
+        "courseId": "fhir-fundamentals",
+        "duration": "90_days",
+        "includes": ["live-session", "recordings", "materials", "certification"]
+      },
+      "popular": true,
+      "available": true,
+      "digital": true
+    },
+    {
+      "sku": "FHIR-TRAIN-ADV-1SEAT",
+      "name": "Advanced FHIR Implementation",
+      "category": "training",
+      "edition": "advanced",
+      "term": "single_seat",
+      "price": 895.00,
+      "currency": "USD",
+      "description": "Advanced FHIR implementation strategies for experienced developers",
+      "features": [
+        "12-hour advanced workshop",
+        "Implementation patterns",
+        "Performance optimization",
+        "Security best practices",
+        "Real-world case studies",
+        "6 months access to content"
+      ],
+      "deliverables": {
+        "type": "training_access",
+        "courseId": "fhir-advanced",
+        "duration": "180_days",
+        "includes": ["workshop", "recordings", "case-studies", "advanced-certification"]
+      },
+      "popular": false,
+      "available": true,
+      "digital": true
+    },
+    {
+      "sku": "FHIR-TRAIN-TEAM-5SEAT",
+      "name": "Team Training Package (5 seats)",
+      "category": "training",
+      "edition": "team",
+      "term": "team_package",
+      "price": 3995.00,
+      "originalPrice": 4975.00,
+      "currency": "USD",
+      "description": "Comprehensive FHIR training package for development teams",
+      "features": [
+        "Fundamentals + Advanced courses",
+        "5 training seats included",
+        "Team dashboard access",
+        "Custom training schedule",
+        "Dedicated training coordinator",
+        "1 year access to all materials"
+      ],
+      "deliverables": {
+        "type": "training_access",
+        "courseId": "fhir-team-package",
+        "duration": "365_days",
+        "teamSize": 5,
+        "includes": ["fundamentals", "advanced", "team-dashboard", "coordinator"]
+      },
+      "popular": true,
+      "available": true,
+      "digital": true
+    },
+    {
+      "sku": "FHIR-CONSULT-STARTER-20H",
+      "name": "FHIR Consulting - Starter Block",
+      "category": "consulting",
+      "edition": "starter",
+      "term": "hours_block",
+      "price": 3500.00,
+      "currency": "USD",
+      "description": "20 hours of expert FHIR consulting for quick implementation guidance",
+      "features": [
+        "20 hours of consulting time",
+        "FHIR implementation planning",
+        "Architecture review",
+        "Best practices guidance",
+        "Email and video support",
+        "Valid for 6 months"
+      ],
+      "deliverables": {
+        "type": "consulting_hours",
+        "hours": 20,
+        "consultantLevel": "senior",
+        "validityPeriod": "6_months",
+        "includes": ["planning", "architecture-review", "guidance"]
+      },
+      "popular": false,
+      "available": true,
+      "digital": true
+    },
+    {
+      "sku": "FHIR-CONSULT-PRO-50H",
+      "name": "FHIR Consulting - Professional Block",
+      "category": "consulting",
+      "edition": "professional",
+      "term": "hours_block",
+      "price": 8500.00,
+      "originalPrice": 9000.00,
+      "currency": "USD",
+      "description": "50 hours of expert FHIR consulting for comprehensive implementation projects",
+      "features": [
+        "50 hours of consulting time",
+        "Custom implementation strategy",
+        "Code review and optimization",
+        "Integration architecture",
+        "Dedicated project manager",
+        "Valid for 12 months"
+      ],
+      "deliverables": {
+        "type": "consulting_hours",
+        "hours": 50,
+        "consultantLevel": "principal",
+        "validityPeriod": "12_months",
+        "includes": ["strategy", "code-review", "integration", "project-manager"]
+      },
+      "popular": true,
+      "available": true,
+      "digital": true
+    },
+    {
+      "sku": "FHIR-CONSULT-ENT-100H",
+      "name": "FHIR Consulting - Enterprise Block",
+      "category": "consulting",
+      "edition": "enterprise",
+      "term": "hours_block",
+      "price": 16500.00,
+      "originalPrice": 18000.00,
+      "currency": "USD",
+      "description": "100 hours of expert FHIR consulting for large-scale enterprise implementations",
+      "features": [
+        "100 hours of consulting time",
+        "Enterprise architecture design",
+        "Multi-system integration",
+        "Performance and scalability",
+        "Dedicated team assignment",
+        "24/7 support included",
+        "Valid for 18 months"
+      ],
+      "deliverables": {
+        "type": "consulting_hours",
+        "hours": 100,
+        "consultantLevel": "principal",
+        "validityPeriod": "18_months",
+        "includes": ["enterprise-architecture", "integration", "performance", "dedicated-team", "24x7-support"]
+      },
+      "popular": false,
+      "available": true,
+      "digital": true
+    },
+    {
+      "sku": "FHIR-BUNDLE-STARTUP",
+      "name": "FHIR Startup Bundle",
+      "category": "bundle",
+      "edition": "startup",
+      "term": "annual",
+      "price": 1299.00,
+      "originalPrice": 1594.00,
+      "currency": "USD",
+      "description": "Complete FHIR package for healthcare startups and small organizations",
+      "features": [
+        "Professional Developer License",
+        "Fundamentals Training (2 seats)",
+        "Starter Consulting Block (20h)",
+        "Priority email support",
+        "Startup resource kit"
+      ],
+      "deliverables": {
+        "type": "bundle",
+        "components": [
+          {"sku": "FHIR-DEV-PRO-1Y", "quantity": 1},
+          {"sku": "FHIR-TRAIN-FUND-1SEAT", "quantity": 2},
+          {"sku": "FHIR-CONSULT-STARTER-20H", "quantity": 1}
+        ],
+        "includes": ["pro-license", "training-seats", "consulting-hours", "startup-kit"]
+      },
+      "popular": true,
+      "available": true,
+      "digital": true
+    },
+    {
+      "sku": "FHIR-ADDON-SUPPORT-1Y",
+      "name": "Premium Support Add-on",
+      "category": "addon",
+      "edition": "premium",
+      "term": "annual",
+      "price": 499.00,
+      "currency": "USD",
+      "description": "Premium technical support for FHIR development projects",
+      "features": [
+        "Priority ticket response",
+        "Direct access to FHIR experts",
+        "Phone and video support",
+        "Architecture guidance",
+        "Implementation reviews"
+      ],
+      "deliverables": {
+        "type": "support_addon",
+        "supportLevel": "premium",
+        "responseTime": "4_hours",
+        "includes": ["priority-tickets", "expert-access", "phone-support", "reviews"]
+      },
+      "popular": false,
+      "available": true,
+      "digital": true
+    },
+    {
+      "sku": "FHIR-ADDON-ONSITE-1D",
+      "name": "On-site Implementation Day",
+      "category": "addon",
+      "edition": "onsite",
+      "term": "single_day",
+      "price": 2500.00,
+      "currency": "USD",
+      "description": "Full day on-site FHIR implementation assistance with expert consultant",
+      "features": [
+        "8-hour on-site consultation",
+        "Hands-on implementation",
+        "Team training session",
+        "Architecture workshop",
+        "Travel expenses included (US only)"
+      ],
+      "deliverables": {
+        "type": "onsite_service",
+        "duration": "8_hours",
+        "consultantLevel": "principal",
+        "location": "customer_site",
+        "includes": ["consultation", "implementation", "training", "workshop", "travel"]
+      },
+      "popular": false,
+      "available": true,
+      "digital": false
+    }
+  ]
+}
