@@ -1,0 +1,50 @@
+# FHIR IQ Site - Global Objectives and Configuration
+# This file defines the overall project objectives, KPIs, and stakeholder information
+
+project:
+  name: "FHIR IQ Site Redesign"
+  version: "1.0.0"
+  platform: "Wix Studio + Velo"
+  domain: "fhiriq.com"
+
+objectives:
+  primary:
+    - "Establish trust parity with leading FHIR vendors (Firely, Smile, Vermonster)"
+    - "Showcase AI-driven 'Build on FHIR' capabilities"
+    - "Convert visitors to consultations, tool subscriptions, and training enrollments"
+    - "Demonstrate thought leadership in FHIR + AI space"
+
+  secondary:
+    - "Migrate existing content from Substack and scattered platforms"
+    - "Create cohesive brand experience across all touchpoints"
+    - "Implement scalable content management system"
+    - "Optimize for search engine visibility and conversion"
+
+stakeholders:
+  product_owner: "Eugene Vestel"
+  development_team: "Claude Code + Eugene"
+  target_audience:
+    - "FHIR developers and architects"
+    - "Healthcare IT professionals"
+    - "Startup founders in health tech"
+    - "Enterprise healthcare organizations"
+
+kpis:
+  technical:
+    core_web_vitals: ">90"
+    page_load_time: "<3 seconds"
+    uptime: "99.9%"
+    security_score: "A+ rating"
+
+  business:
+    consultation_booking_rate: ">2%"
+    newsletter_signup_rate: ">5%"
+    tool_trial_conversion: ">15%"
+    time_on_site: ">3 minutes"
+    monthly_visitors: ">10,000"
+
+constraints:
+  budget: "Bootstrap-friendly approach"
+  timeline: "Q4 2024 launch target"
+  technology: "Wix Studio platform with custom Velo development"
+  compliance: "HIPAA awareness for healthcare content"

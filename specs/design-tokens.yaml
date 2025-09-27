@@ -1,0 +1,131 @@
+# FHIR IQ Design Tokens
+# Core design system tokens for colors, typography, spacing, and components
+
+colors:
+  primary:
+    blue_50: "#E6F3FF"
+    blue_100: "#CCE7FF"
+    blue_200: "#99CFFF"
+    blue_300: "#66B7FF"
+    blue_400: "#339FFF"
+    blue_500: "#0087FF"  # Primary brand blue
+    blue_600: "#006ACC"
+    blue_700: "#004D99"
+    blue_800: "#003366"
+    blue_900: "#001A33"
+
+  secondary:
+    teal_50: "#E6FFFA"
+    teal_100: "#B3F5E8"
+    teal_200: "#80EBD6"
+    teal_300: "#4DE1C4"
+    teal_400: "#1AD7B2"
+    teal_500: "#00CDA0"  # Secondary teal
+    teal_600: "#00A480"
+    teal_700: "#007B60"
+    teal_800: "#005240"
+    teal_900: "#002920"
+
+  neutral:
+    white: "#FFFFFF"
+    gray_50: "#F9FAFB"
+    gray_100: "#F3F4F6"
+    gray_200: "#E5E7EB"
+    gray_300: "#D1D5DB"
+    gray_400: "#9CA3AF"
+    gray_500: "#6B7280"
+    gray_600: "#4B5563"
+    gray_700: "#374151"
+    gray_800: "#1F2937"
+    gray_900: "#111827"
+    black: "#000000"
+
+  semantic:
+    success: "#10B981"
+    warning: "#F59E0B"
+    error: "#EF4444"
+    info: "#3B82F6"
+
+typography:
+  font_families:
+    primary: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    heading: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    mono: "'JetBrains Mono', 'Fira Code', Consolas, monospace"
+
+  font_sizes:
+    xs: "12px"
+    sm: "14px"
+    base: "16px"
+    lg: "18px"
+    xl: "20px"
+    "2xl": "24px"
+    "3xl": "30px"
+    "4xl": "36px"
+    "5xl": "48px"
+    "6xl": "60px"
+
+  font_weights:
+    light: 300
+    normal: 400
+    medium: 500
+    semibold: 600
+    bold: 700
+    extrabold: 800
+
+  line_heights:
+    tight: 1.25
+    snug: 1.375
+    normal: 1.5
+    relaxed: 1.625
+    loose: 2
+
+spacing:
+  scale:
+    "0": "0px"
+    "1": "4px"
+    "2": "8px"
+    "3": "12px"
+    "4": "16px"
+    "5": "20px"
+    "6": "24px"
+    "8": "32px"
+    "10": "40px"
+    "12": "48px"
+    "16": "64px"
+    "20": "80px"
+    "24": "96px"
+    "32": "128px"
+    "40": "160px"
+    "48": "192px"
+    "56": "224px"
+    "64": "256px"
+
+breakpoints:
+  mobile: "320px"
+  tablet: "768px"
+  desktop: "1024px"
+  wide: "1440px"
+
+shadows:
+  sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
+  base: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+  md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+  lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+  xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+
+border_radius:
+  none: "0px"
+  sm: "2px"
+  base: "4px"
+  md: "6px"
+  lg: "8px"
+  xl: "12px"
+  "2xl": "16px"
+  full: "9999px"
+
+transitions:
+  duration:
+    fast: "150ms"
+    normal: "250ms"
+    slow: "350ms"
+  timing: "cubic-bezier(0.4, 0, 0.2, 1)"

@@ -1,0 +1,127 @@
+# FHIR IQ Site - Information Architecture
+# Defines sitemap, navigation structure, and routing
+
+sitemap:
+  home:
+    path: "/"
+    title: "FHIR IQ - Build on FHIR with AI"
+    description: "Expert FHIR consulting, AI-powered tools, and comprehensive training"
+
+  main_sections:
+    services:
+      path: "/services"
+      title: "Services"
+      children:
+        consulting:
+          path: "/services/consulting"
+          title: "FHIR Consulting"
+        implementation:
+          path: "/services/implementation"
+          title: "Implementation Services"
+        training:
+          path: "/services/training"
+          title: "Training & Certification"
+
+    tools:
+      path: "/tools"
+      title: "Tools"
+      children:
+        ai_builder:
+          path: "/tools/ai-builder"
+          title: "AI FHIR App Builder"
+        copilot:
+          path: "/tools/copilot"
+          title: "FHIR IQ Copilot"
+        catalog:
+          path: "/tools/catalog"
+          title: "Tools Catalog"
+
+    resources:
+      path: "/resources"
+      title: "Resources"
+      children:
+        blog:
+          path: "/blog"
+          title: "Blog"
+        podcast:
+          path: "/podcast"
+          title: "Podcast"
+        case_studies:
+          path: "/case-studies"
+          title: "Case Studies"
+        guides:
+          path: "/guides"
+          title: "Implementation Guides"
+
+    about:
+      path: "/about"
+      title: "About"
+      children:
+        team:
+          path: "/about/team"
+          title: "Team"
+        partners:
+          path: "/about/partners"
+          title: "Partners"
+        testimonials:
+          path: "/about/testimonials"
+          title: "Testimonials"
+
+  utility_pages:
+    contact:
+      path: "/contact"
+      title: "Contact"
+    pricing:
+      path: "/pricing"
+      title: "Pricing"
+    book_consultation:
+      path: "/book"
+      title: "Book Consultation"
+
+navigation:
+  primary:
+    - "Services"
+    - "Tools"
+    - "Resources"
+    - "About"
+    - "Contact"
+
+  secondary:
+    - "Blog"
+    - "Podcast"
+    - "Book Consultation"
+
+  footer:
+    company:
+      - "About"
+      - "Team"
+      - "Partners"
+      - "Contact"
+    resources:
+      - "Blog"
+      - "Podcast"
+      - "Case Studies"
+      - "Guides"
+    tools:
+      - "AI Builder"
+      - "Copilot"
+      - "Tools Catalog"
+    legal:
+      - "Privacy Policy"
+      - "Terms of Service"
+      - "Cookie Policy"
+
+routing:
+  dynamic_routes:
+    blog_posts: "/blog/[slug]"
+    podcast_episodes: "/podcast/[slug]"
+    case_studies: "/case-studies/[slug]"
+    tools: "/tools/[slug]"
+
+  redirects:
+    - from: "/old-blog"
+      to: "/blog"
+      type: "301"
+    - from: "/services/development"
+      to: "/services/implementation"
+      type: "301"

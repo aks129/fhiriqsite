@@ -1,0 +1,403 @@
+# FHIR IQ Wix CMS Collections Schema
+# Defines the data models for Wix CMS collections
+
+collections:
+  blog_posts:
+    display_name: "Blog Posts"
+    fields:
+      title:
+        type: "text"
+        required: true
+        max_length: 120
+        description: "SEO-optimized blog post title"
+
+      slug:
+        type: "text"
+        required: true
+        unique: true
+        description: "URL slug for the post"
+
+      excerpt:
+        type: "text"
+        max_length: 160
+        description: "Meta description and excerpt"
+
+      content:
+        type: "rich_text"
+        required: true
+        description: "Main blog post content"
+
+      author:
+        type: "text"
+        required: true
+        default: "Eugene Vestel"
+
+      published_date:
+        type: "date"
+        required: true
+
+      featured_image:
+        type: "image"
+        description: "Hero image for the post"
+
+      categories:
+        type: "multi_reference"
+        reference_collection: "blog_categories"
+
+      tags:
+        type: "tags"
+        description: "Content tags for filtering"
+
+      seo_title:
+        type: "text"
+        max_length: 60
+        description: "Custom SEO title if different from title"
+
+      featured:
+        type: "boolean"
+        default: false
+        description: "Feature on homepage"
+
+      reading_time:
+        type: "number"
+        description: "Estimated reading time in minutes"
+
+  blog_categories:
+    display_name: "Blog Categories"
+    fields:
+      name:
+        type: "text"
+        required: true
+        unique: true
+
+      slug:
+        type: "text"
+        required: true
+        unique: true
+
+      description:
+        type: "text"
+        max_length: 160
+
+      color:
+        type: "text"
+        description: "Hex color for category badge"
+
+  podcast_episodes:
+    display_name: "Podcast Episodes"
+    fields:
+      title:
+        type: "text"
+        required: true
+        max_length: 120
+
+      slug:
+        type: "text"
+        required: true
+        unique: true
+
+      episode_number:
+        type: "number"
+        required: true
+
+      description:
+        type: "text"
+        max_length: 500
+        description: "Episode description"
+
+      show_notes:
+        type: "rich_text"
+        description: "Detailed show notes"
+
+      audio_file:
+        type: "media"
+        required: true
+        description: "Audio file for the episode"
+
+      duration:
+        type: "text"
+        description: "Episode duration (e.g., '45:30')"
+
+      published_date:
+        type: "date"
+        required: true
+
+      guests:
+        type: "multi_reference"
+        reference_collection: "podcast_guests"
+
+      transcript:
+        type: "rich_text"
+        description: "Episode transcript"
+
+      featured_image:
+        type: "image"
+        description: "Episode artwork"
+
+      tags:
+        type: "tags"
+
+  podcast_guests:
+    display_name: "Podcast Guests"
+    fields:
+      name:
+        type: "text"
+        required: true
+
+      title:
+        type: "text"
+        description: "Professional title"
+
+      company:
+        type: "text"
+        description: "Company/organization"
+
+      bio:
+        type: "rich_text"
+        description: "Guest biography"
+
+      photo:
+        type: "image"
+        description: "Guest headshot"
+
+      linkedin:
+        type: "url"
+
+      twitter:
+        type: "url"
+
+      website:
+        type: "url"
+
+  case_studies:
+    display_name: "Case Studies"
+    fields:
+      title:
+        type: "text"
+        required: true
+        max_length: 120
+
+      slug:
+        type: "text"
+        required: true
+        unique: true
+
+      client_name:
+        type: "text"
+        required: true
+        description: "Client or project name"
+
+      industry:
+        type: "text"
+        description: "Healthcare sector/industry"
+
+      challenge:
+        type: "rich_text"
+        required: true
+        description: "Problem statement and challenges"
+
+      solution:
+        type: "rich_text"
+        required: true
+        description: "Our approach and solution"
+
+      results:
+        type: "rich_text"
+        required: true
+        description: "Outcomes and metrics"
+
+      technologies:
+        type: "tags"
+        description: "FHIR resources, standards, tools used"
+
+      featured_image:
+        type: "image"
+        description: "Case study hero image"
+
+      client_logo:
+        type: "image"
+        description: "Client company logo"
+
+      testimonial:
+        type: "rich_text"
+        description: "Client testimonial quote"
+
+      project_duration:
+        type: "text"
+        description: "Timeline (e.g., '3 months')"
+
+      team_size:
+        type: "text"
+        description: "Project team size"
+
+      published_date:
+        type: "date"
+        required: true
+
+      featured:
+        type: "boolean"
+        default: false
+
+  tools:
+    display_name: "Tools Catalog"
+    fields:
+      name:
+        type: "text"
+        required: true
+        max_length: 80
+
+      slug:
+        type: "text"
+        required: true
+        unique: true
+
+      tagline:
+        type: "text"
+        max_length: 120
+        description: "Short description for listings"
+
+      description:
+        type: "rich_text"
+        required: true
+        description: "Detailed tool description"
+
+      category:
+        type: "reference"
+        reference_collection: "tool_categories"
+        required: true
+
+      features:
+        type: "rich_text"
+        description: "Key features and capabilities"
+
+      pricing_model:
+        type: "text"
+        options: ["Free", "Freemium", "Subscription", "One-time", "Enterprise"]
+        required: true
+
+      starting_price:
+        type: "text"
+        description: "Starting price (e.g., '$29/month')"
+
+      demo_url:
+        type: "url"
+        description: "Link to live demo"
+
+      documentation_url:
+        type: "url"
+        description: "Link to documentation"
+
+      github_url:
+        type: "url"
+        description: "GitHub repository if open source"
+
+      screenshot:
+        type: "image"
+        description: "Tool screenshot or interface"
+
+      logo:
+        type: "image"
+        description: "Tool logo"
+
+      tags:
+        type: "tags"
+        description: "Technology tags (FHIR R4, HL7, etc.)"
+
+      status:
+        type: "text"
+        options: ["Active", "Beta", "Coming Soon", "Deprecated"]
+        default: "Active"
+
+      featured:
+        type: "boolean"
+        default: false
+
+  tool_categories:
+    display_name: "Tool Categories"
+    fields:
+      name:
+        type: "text"
+        required: true
+        unique: true
+
+      slug:
+        type: "text"
+        required: true
+        unique: true
+
+      description:
+        type: "text"
+        max_length: 200
+
+      icon:
+        type: "text"
+        description: "Icon class or name"
+
+      sort_order:
+        type: "number"
+        description: "Display order"
+
+  testimonials:
+    display_name: "Testimonials"
+    fields:
+      client_name:
+        type: "text"
+        required: true
+
+      client_title:
+        type: "text"
+        description: "Job title"
+
+      company:
+        type: "text"
+        required: true
+
+      quote:
+        type: "rich_text"
+        required: true
+        description: "Testimonial content"
+
+      photo:
+        type: "image"
+        description: "Client headshot"
+
+      company_logo:
+        type: "image"
+        description: "Company logo"
+
+      rating:
+        type: "number"
+        min: 1
+        max: 5
+        description: "Star rating"
+
+      project_type:
+        type: "text"
+        description: "Type of work (Consulting, Implementation, etc.)"
+
+      featured:
+        type: "boolean"
+        default: false
+
+      date_added:
+        type: "date"
+        required: true
+
+permissions:
+  blog_posts:
+    create: ["admin", "editor"]
+    read: ["anyone"]
+    update: ["admin", "editor"]
+    delete: ["admin"]
+
+  case_studies:
+    create: ["admin"]
+    read: ["anyone"]
+    update: ["admin"]
+    delete: ["admin"]
+
+  tools:
+    create: ["admin"]
+    read: ["anyone"]
+    update: ["admin"]
+    delete: ["admin"]
