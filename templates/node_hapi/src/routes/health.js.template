@@ -1,0 +1,202 @@
+import { fhirClient } from '../services/fhirClient.js';
+import { logger } from '../utils/logger.js';
+
+export const createHealthRoutes = async (server) => {
+  // Basic health check
+  server.route({
+    method: 'GET',
+    path: '/health',
+    options: {
+      description: 'Health check endpoint',
+      tags: ['health']
+    },
+    handler: async (request, h) => {
+      const timestamp = new Date().toISOString();
+
+      try {
+        // Test FHIR server connectivity
+        const capabilities = await fhirClient.capabilities();
+
+        return {
+          status: 'healthy',
+          timestamp,
+          version: '1.0.0',
+          application: '{{APP_NAME}}',
+          fhir: {
+            status: 'connected',
+            server: capabilities.implementation?.description || 'FHIR Server',
+            version: capabilities.fhirVersion,
+            url: process.env.FHIR_SERVER_URL || '{{FHIR_SERVER_URL}}'
+          },
+          uptime: process.uptime(),
+          memory: process.memoryUsage(),
+          environment: process.env.NODE_ENV || 'development'
+        };
+      } catch (error) {
+        logger.error('Health check failed - FHIR server unavailable', { error: error.message });
+
+        return h.response({
+          status: 'degraded',
+          timestamp,
+          version: '1.0.0',
+          application: '{{APP_NAME}}',
+          fhir: {
+            status: 'disconnected',
+            error: error.message,
+            url: process.env.FHIR_SERVER_URL || '{{FHIR_SERVER_URL}}'
+          },
+          uptime: process.uptime(),
+          memory: process.memoryUsage(),
+          environment: process.env.NODE_ENV || 'development'
+        }).code(503);
+      }
+    }
+  });
+
+  // Detailed readiness check
+  server.route({
+    method: 'GET',
+    path: '/ready',
+    options: {
+      description: 'Readiness check for load balancers',
+      tags: ['health']
+    },
+    handler: async (request, h) => {
+      try {
+        // Perform comprehensive checks
+        const checks = await Promise.allSettled([
+          checkFHIRServer(),
+          checkMemory(),
+          checkDiskSpace()
+        ]);
+
+        const results = {
+          timestamp: new Date().toISOString(),
+          ready: true,
+          checks: {
+            fhir: checks[0].status === 'fulfilled' ? checks[0].value : { status: 'failed', error: checks[0].reason.message },
+            memory: checks[1].status === 'fulfilled' ? checks[1].value : { status: 'failed', error: checks[1].reason.message },
+            disk: checks[2].status === 'fulfilled' ? checks[2].value : { status: 'failed', error: checks[2].reason.message }
+          }
+        };
+
+        // Determine overall readiness
+        const failedChecks = Object.values(results.checks).filter(check => check.status === 'failed');
+
+        if (failedChecks.length > 0) {
+          results.ready = false;
+          return h.response(results).code(503);
+        }
+
+        return results;
+      } catch (error) {
+        logger.error('Readiness check failed', { error: error.message });
+        return h.response({
+          timestamp: new Date().toISOString(),
+          ready: false,
+          error: error.message
+        }).code(503);
+      }
+    }
+  });
+
+  // Liveness check (minimal check for container orchestration)
+  server.route({
+    method: 'GET',
+    path: '/live',
+    options: {
+      description: 'Liveness check for container orchestration',
+      tags: ['health']
+    },
+    handler: async (request, h) => {
+      return {
+        status: 'alive',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+      };
+    }
+  });
+
+  // Metrics endpoint (basic application metrics)
+  server.route({
+    method: 'GET',
+    path: '/metrics',
+    options: {
+      description: 'Application metrics',
+      tags: ['monitoring']
+    },
+    handler: async (request, h) => {
+      const memory = process.memoryUsage();
+      const cpuUsage = process.cpuUsage();
+
+      return {
+        timestamp: new Date().toISOString(),
+        application: '{{APP_NAME}}',
+        process: {
+          pid: process.pid,
+          uptime: process.uptime(),
+          version: process.version,
+          platform: process.platform,
+          arch: process.arch
+        },
+        memory: {
+          rss: Math.round(memory.rss / 1024 / 1024), // MB
+          heapTotal: Math.round(memory.heapTotal / 1024 / 1024), // MB
+          heapUsed: Math.round(memory.heapUsed / 1024 / 1024), // MB
+          external: Math.round(memory.external / 1024 / 1024), // MB
+          arrayBuffers: Math.round(memory.arrayBuffers / 1024 / 1024) // MB
+        },
+        cpu: {
+          user: cpuUsage.user,
+          system: cpuUsage.system
+        }
+      };
+    }
+  });
+};
+
+// Helper functions for health checks
+async function checkFHIRServer() {
+  try {
+    const capabilities = await fhirClient.capabilities();
+    return {
+      status: 'healthy',
+      server: capabilities.implementation?.description || 'FHIR Server',
+      version: capabilities.fhirVersion,
+      responseTime: Date.now() // You might want to measure actual response time
+    };
+  } catch (error) {
+    throw new Error(`FHIR server check failed: ${error.message}`);
+  }
+}
+
+async function checkMemory() {
+  const memory = process.memoryUsage();
+  const heapUsedPercent = (memory.heapUsed / memory.heapTotal) * 100;
+
+  if (heapUsedPercent > 90) {
+    throw new Error(`High memory usage: ${heapUsedPercent.toFixed(2)}%`);
+  }
+
+  return {
+    status: 'healthy',
+    heapUsedPercent: Math.round(heapUsedPercent),
+    heapUsedMB: Math.round(memory.heapUsed / 1024 / 1024),
+    heapTotalMB: Math.round(memory.heapTotal / 1024 / 1024)
+  };
+}
+
+async function checkDiskSpace() {
+  // This is a simplified check - in production you might want to check actual disk space
+  try {
+    const fs = await import('fs/promises');
+    await fs.access('./');
+
+    return {
+      status: 'healthy',
+      available: true
+    };
+  } catch (error) {
+    throw new Error(`Disk space check failed: ${error.message}`);
+  }
+}

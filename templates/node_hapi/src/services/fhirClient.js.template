@@ -1,0 +1,349 @@
+import Client from 'fhir-kit-client';
+import { logger } from '../utils/logger.js';
+
+// FHIR Client Configuration
+const fhirServerUrl = process.env.FHIR_SERVER_URL || '{{FHIR_SERVER_URL}}';
+const authType = process.env.FHIR_SERVER_AUTH_TYPE || 'none';
+
+// Initialize FHIR Client
+const clientConfig = {
+  baseUrl: fhirServerUrl,
+  customHeaders: {
+    'User-Agent': '{{APP_NAME}}/1.0.0 (FHIR IQ Builder)',
+    'Accept': 'application/fhir+json',
+    'Content-Type': 'application/fhir+json'
+  }
+};
+
+// Add authentication if configured
+switch (authType) {
+  case 'bearer':
+    if (process.env.FHIR_SERVER_TOKEN) {
+      clientConfig.customHeaders['Authorization'] = `Bearer ${process.env.FHIR_SERVER_TOKEN}`;
+    }
+    break;
+
+  case 'basic':
+    if (process.env.FHIR_SERVER_USERNAME && process.env.FHIR_SERVER_PASSWORD) {
+      const credentials = Buffer.from(
+        `${process.env.FHIR_SERVER_USERNAME}:${process.env.FHIR_SERVER_PASSWORD}`
+      ).toString('base64');
+      clientConfig.customHeaders['Authorization'] = `Basic ${credentials}`;
+    }
+    break;
+
+  case 'oauth':
+    // OAuth configuration would be more complex and require token management
+    logger.warn('OAuth authentication configured but not implemented in this template');
+    break;
+
+  case 'none':
+  default:
+    // No authentication
+    break;
+}
+
+export const fhirClient = new Client(clientConfig);
+
+// Add request/response logging
+const originalRequest = fhirClient.request;
+fhirClient.request = async function(options) {
+  const startTime = Date.now();
+
+  logger.debug('FHIR request started', {
+    method: options.method || 'GET',
+    url: options.url || options.uri,
+    resourceType: options.resourceType
+  });
+
+  try {
+    const response = await originalRequest.call(this, options);
+    const responseTime = Date.now() - startTime;
+
+    logger.debug('FHIR request completed', {
+      method: options.method || 'GET',
+      url: options.url || options.uri,
+      statusCode: response.status || 200,
+      responseTime
+    });
+
+    return response;
+  } catch (error) {
+    const responseTime = Date.now() - startTime;
+
+    logger.error('FHIR request failed', {
+      method: options.method || 'GET',
+      url: options.url || options.uri,
+      error: error.message,
+      statusCode: error.response?.status,
+      responseTime
+    });
+
+    throw error;
+  }
+};
+
+// Enhanced FHIR client with additional utilities
+export class FHIRService {
+  constructor() {
+    this.client = fhirClient;
+  }
+
+  /**
+   * Get server capabilities
+   */
+  async getCapabilities() {
+    try {
+      return await this.client.capabilities();
+    } catch (error) {
+      logger.error('Failed to fetch server capabilities', { error: error.message });
+      throw new Error(`Unable to connect to FHIR server: ${error.message}`);
+    }
+  }
+
+  /**
+   * Search for resources with enhanced error handling and logging
+   */
+  async searchResources(resourceType, searchParams = {}) {
+    try {
+      logger.info('Searching FHIR resources', { resourceType, searchParams });
+
+      const response = await this.client.search({
+        resourceType,
+        searchParams: {
+          _count: 50, // Default page size
+          ...searchParams
+        }
+      });
+
+      const entryCount = response.entry ? response.entry.length : 0;
+      logger.info('FHIR search completed', {
+        resourceType,
+        total: response.total || 0,
+        returned: entryCount
+      });
+
+      return response;
+    } catch (error) {
+      logger.error('FHIR search failed', {
+        resourceType,
+        searchParams,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Read a specific resource by ID
+   */
+  async readResource(resourceType, id) {
+    try {
+      logger.info('Reading FHIR resource', { resourceType, id });
+
+      const resource = await this.client.read({
+        resourceType,
+        id
+      });
+
+      return resource;
+    } catch (error) {
+      logger.error('FHIR read failed', {
+        resourceType,
+        id,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new resource
+   */
+  async createResource(resource) {
+    try {
+      const resourceType = resource.resourceType;
+      logger.info('Creating FHIR resource', { resourceType, id: resource.id });
+
+      const response = await this.client.create({
+        resourceType,
+        body: resource
+      });
+
+      logger.info('FHIR resource created', {
+        resourceType,
+        id: response.id,
+        versionId: response.meta?.versionId
+      });
+
+      return response;
+    } catch (error) {
+      logger.error('FHIR create failed', {
+        resourceType: resource.resourceType,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Update an existing resource
+   */
+  async updateResource(resourceType, id, resource) {
+    try {
+      logger.info('Updating FHIR resource', { resourceType, id });
+
+      const response = await this.client.update({
+        resourceType,
+        id,
+        body: { ...resource, id }
+      });
+
+      logger.info('FHIR resource updated', {
+        resourceType,
+        id: response.id,
+        versionId: response.meta?.versionId
+      });
+
+      return response;
+    } catch (error) {
+      logger.error('FHIR update failed', {
+        resourceType,
+        id,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a resource
+   */
+  async deleteResource(resourceType, id) {
+    try {
+      logger.info('Deleting FHIR resource', { resourceType, id });
+
+      await this.client.delete({
+        resourceType,
+        id
+      });
+
+      logger.info('FHIR resource deleted', { resourceType, id });
+    } catch (error) {
+      logger.error('FHIR delete failed', {
+        resourceType,
+        id,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Validate a resource against the server
+   */
+  async validateResource(resource) {
+    try {
+      const resourceType = resource.resourceType;
+      logger.info('Validating FHIR resource', { resourceType });
+
+      const response = await this.client.operation({
+        name: 'validate',
+        resourceType,
+        input: resource
+      });
+
+      return response;
+    } catch (error) {
+      logger.error('FHIR validation failed', {
+        resourceType: resource.resourceType,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Execute a FHIR operation
+   */
+  async executeOperation(operationName, resourceType, id = null, parameters = {}) {
+    try {
+      logger.info('Executing FHIR operation', {
+        operation: operationName,
+        resourceType,
+        id
+      });
+
+      const response = await this.client.operation({
+        name: operationName,
+        resourceType,
+        id,
+        input: parameters
+      });
+
+      return response;
+    } catch (error) {
+      logger.error('FHIR operation failed', {
+        operation: operationName,
+        resourceType,
+        id,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get resource history
+   */
+  async getResourceHistory(resourceType, id) {
+    try {
+      logger.info('Fetching FHIR resource history', { resourceType, id });
+
+      const response = await this.client.history({
+        resourceType,
+        id
+      });
+
+      return response;
+    } catch (error) {
+      logger.error('FHIR history failed', {
+        resourceType,
+        id,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Test server connectivity
+   */
+  async testConnection() {
+    try {
+      const capabilities = await this.getCapabilities();
+      return {
+        connected: true,
+        server: capabilities.implementation?.description || 'FHIR Server',
+        version: capabilities.fhirVersion,
+        url: fhirServerUrl
+      };
+    } catch (error) {
+      return {
+        connected: false,
+        error: error.message,
+        url: fhirServerUrl
+      };
+    }
+  }
+}
+
+// Export singleton instance
+export const fhirService = new FHIRService();
+
+// Export configuration for debugging
+export const fhirConfig = {
+  serverUrl: fhirServerUrl,
+  authType,
+  headers: clientConfig.customHeaders
+};

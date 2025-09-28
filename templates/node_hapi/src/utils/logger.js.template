@@ -1,0 +1,102 @@
+const LOG_LEVELS = {
+  DEBUG: 0,
+  INFO: 1,
+  WARN: 2,
+  ERROR: 3
+};
+
+class Logger {
+  constructor() {
+    this.level = LOG_LEVELS[process.env.LOG_LEVEL?.toUpperCase()] || LOG_LEVELS.INFO;
+    this.enableColors = process.env.NODE_ENV !== 'production';
+  }
+
+  formatMessage(level, message, meta = {}) {
+    const timestamp = new Date().toISOString();
+    const metaStr = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : '';
+
+    if (this.enableColors) {
+      const colors = {
+        DEBUG: '\x1b[36m', // Cyan
+        INFO: '\x1b[32m',  // Green
+        WARN: '\x1b[33m',  // Yellow
+        ERROR: '\x1b[31m'  // Red
+      };
+      const reset = '\x1b[0m';
+      return `${colors[level]}[${timestamp}] ${level}: ${message}${reset}${metaStr}`;
+    }
+
+    return `[${timestamp}] ${level}: ${message}${metaStr}`;
+  }
+
+  shouldLog(level) {
+    return LOG_LEVELS[level] >= this.level;
+  }
+
+  debug(message, meta) {
+    if (this.shouldLog('DEBUG')) {
+      console.debug(this.formatMessage('DEBUG', message, meta));
+    }
+  }
+
+  info(message, meta) {
+    if (this.shouldLog('INFO')) {
+      console.info(this.formatMessage('INFO', message, meta));
+    }
+  }
+
+  warn(message, meta) {
+    if (this.shouldLog('WARN')) {
+      console.warn(this.formatMessage('WARN', message, meta));
+    }
+  }
+
+  error(message, meta) {
+    if (this.shouldLog('ERROR')) {
+      console.error(this.formatMessage('ERROR', message, meta));
+    }
+  }
+
+  // Convenience method for HTTP request logging
+  logRequest(req, res, responseTime) {
+    const meta = {
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      responseTime: `${responseTime}ms`,
+      ip: req.info?.remoteAddress || 'unknown',
+      userAgent: req.headers['user-agent']
+    };
+
+    if (res.statusCode >= 400) {
+      this.error('Request failed', meta);
+    } else {
+      this.info('Request completed', meta);
+    }
+  }
+
+  // Convenience method for FHIR operation logging
+  logFHIROperation(operation, resourceType, result, duration) {
+    const meta = {
+      operation,
+      resourceType,
+      duration: `${duration}ms`,
+      success: !result.error
+    };
+
+    if (result.error) {
+      meta.error = result.error;
+      this.error('FHIR operation failed', meta);
+    } else {
+      if (result.total !== undefined) {
+        meta.total = result.total;
+      }
+      if (result.id) {
+        meta.resourceId = result.id;
+      }
+      this.info('FHIR operation completed', meta);
+    }
+  }
+}
+
+export const logger = new Logger();

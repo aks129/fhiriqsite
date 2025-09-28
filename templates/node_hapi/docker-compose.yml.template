@@ -1,0 +1,134 @@
+version: '3.8'
+
+services:
+  # Main FHIR Application
+  fhir-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+      - FHIR_SERVER_URL=http://hapi-fhir:8080/fhir
+      - LOG_LEVEL=INFO
+      - CORS_ORIGIN=http://localhost:3000
+    depends_on:
+      - hapi-fhir
+      - postgres
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - fhir-network
+
+  # React Frontend (if built separately)
+  fhir-frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080/api
+      - REACT_APP_FHIR_SERVER_URL={{FHIR_SERVER_URL}}
+    depends_on:
+      - fhir-app
+    restart: unless-stopped
+    networks:
+      - fhir-network
+
+  # HAPI FHIR Server
+  hapi-fhir:
+    image: hapiproject/hapi:latest
+    ports:
+      - "8081:8080"
+    environment:
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/hapi
+      - spring.datasource.username=admin
+      - spring.datasource.password=admin
+      - spring.datasource.driverClassName=org.postgresql.Driver
+      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQL10Dialect
+      - hapi.fhir.server_address=http://localhost:8081/fhir
+      - hapi.fhir.subscription.resthook_enabled=true
+      - hapi.fhir.subscription.websocket_enabled=false
+      - hapi.fhir.subscription.email_enabled=false
+      - hapi.fhir.cors.enabled=true
+      - hapi.fhir.cors.allowedOrigin=*
+      - hapi.fhir.allow_external_references=true
+      - hapi.fhir.allow_multiple_delete=true
+      - hapi.fhir.allow_placeholder_references=true
+      - hapi.fhir.auto_create_placeholder_reference_targets=true
+      - hapi.fhir.enable_index_missing_fields=true
+      - hapi.fhir.auto_create_placeholder_reference_targets=true
+      - hapi.fhir.enforce_referential_integrity_on_write=false
+      - hapi.fhir.enforce_referential_integrity_on_delete=false
+      - hapi.fhir.narrative_enabled=true
+      - hapi.fhir.mdm_enabled=false
+      - hapi.fhir.delete_expunge_enabled=true
+      - hapi.fhir.bulk_export_enabled=true
+      - hapi.fhir.bulk_import_enabled=true
+    depends_on:
+      - postgres
+    volumes:
+      - hapi-data:/data/hapi
+    restart: unless-stopped
+    networks:
+      - fhir-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=hapi
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+    networks:
+      - fhir-network
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - fhir-network
+
+  # Nginx Reverse Proxy (optional)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - fhir-app
+      - fhir-frontend
+    restart: unless-stopped
+    networks:
+      - fhir-network
+
+volumes:
+  postgres-data:
+    driver: local
+  hapi-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  fhir-network:
+    driver: bridge
