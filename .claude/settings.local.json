@@ -22,7 +22,10 @@
       "Bash(node:*)",
       "Bash(npx create-next-app:*)",
       "Bash(npm run dev:*)",
-      "Bash(npx vercel:*)"
+      "Bash(npx vercel:*)",
+      "Bash(vercel:*)",
+      "Bash(npm run build:*)",
+      "WebFetch(domain:fhiriq-nextjs-5wxu8xhlg-aks129s-projects.vercel.app)"
     ],
     "deny": [],
     "ask": []
