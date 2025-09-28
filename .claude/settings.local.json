@@ -1,7 +1,28 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(tree:*)",
+      "Bash(git checkout:*)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh auth:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git remote add:*)",
+      "Bash(npm install:*)",
+      "Bash(wix:*)",
+      "Bash(git clone:*)",
+      "Bash(npm cache clean:*)",
+      "Bash(cat:*)",
+      "Read(//c/Users/default.LAPTOP-BOBEDDVK/OneDrive/Documents/GitHub/**)",
+      "Bash(export:*)",
+      "Bash(node:*)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx vercel:*)"
     ],
     "deny": [],
     "ask": []
