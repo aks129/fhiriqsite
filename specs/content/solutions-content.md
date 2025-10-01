@@ -334,8 +334,10 @@ Our SMART on FHIR accelerator eliminates months of authentication development:
 ### Industry Recognition
 - HL7 FHIR Connectathon participation
 - HIMSS Interoperability Showcase presenter
-- Epic App Orchard preferred partner
-- AWS Healthcare Competency member
+- Active in FHIR community standards development
+- Experience with major EHR and cloud platforms
+
+**Note**: Only claim specific vendor certifications or partner status if formally verified and documented
 
 ### Technical Credentials
 - 500+ successful FHIR implementations

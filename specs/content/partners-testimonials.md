@@ -1,85 +1,88 @@
-# Partners & Testimonials Content Framework
+# Collaborators, Guests & Testimonials Content Framework
 
 ## Social Proof Strategy
 
 ### Objective
-Build trust and credibility through verified client success stories, quantified outcomes, and recognizable partner relationships that demonstrate FHIR IQ's proven track record in healthcare interoperability.
+Build trust and credibility through verified client success stories, quantified outcomes, and affiliations with recognized organizations that demonstrate FHIR IQ's proven track record in healthcare interoperability.
 
 ---
 
-## Partner Showcase Framework
+## Organizations & Affiliations Showcase
 
-### Partner Categories & Criteria
+### Affiliation Categories
 
-#### Tier 1: Strategic Technology Partners
-**Selection Criteria**:
-- Fortune 500 healthcare/technology companies
-- Formal partnership agreements
-- Co-marketing opportunities
-- Joint solution development
+#### Category 1: Podcast Guests & Collaborators
+**Display Criteria**:
+- Organizations whose representatives appeared on the FHIR IQ Podcast
+- Collaborators on projects, research, or content
+- Community partners in the FHIR ecosystem
+- No formal partnership required
 
-**Examples**:
-- **Microsoft Healthcare** - Azure FHIR Service integration
-- **Epic** - App Orchard preferred partner status
-- **AWS** - Healthcare Competency member
-- **Google Cloud** - Healthcare API partnership
-
-#### Tier 2: Implementation Partners
-**Selection Criteria**:
-- Health systems with 100,000+ patients
-- Successful FHIR implementations
-- Measurable outcomes achieved
-- Reference permissions granted
+**Display Language**: "Featured on the FHIR IQ Podcast" or "Podcast Guests & Collaborators"
 
 **Examples**:
-- **Mayo Clinic** - Enterprise FHIR platform modernization
-- **Kaiser Permanente** - Multi-region interoperability
-- **Johns Hopkins** - Research data sharing initiative
-- **Cleveland Clinic** - Innovation partnership
+- **NCQA** - Podcast guest discussing quality measurement
+- **HL7** - Standards community involvement
+- **HTD Health** - Podcast collaboration
+- **Flexpa** - Podcast guest on patient access
+- **Fasten Health** - Podcast guest on personal health records
 
-#### Tier 3: Startup & Growth Partners
-**Selection Criteria**:
-- Fast-growing health tech companies
-- FHIR-first architecture approach
-- Successful funding rounds
-- Impressive growth metrics
+#### Category 2: Standards & Community Involvement
+**Display Criteria**:
+- Active participation in standards organizations
+- Community contributions and involvement
+- Conference presentations and speaking engagements
+
+**Display Language**: "Community Involvement" or "Standards Participation"
 
 **Examples**:
-- **Teladoc Health** - Telehealth FHIR integration
-- **Veracyte** - Genomics data interoperability
-- **1upHealth** - Consumer health data platform
-- **Redox** - Healthcare API integration
+- **HL7 FHIR** - Active community participant
+- **FHIR Connectathons** - Regular participation
 
-### Partner Content Structure
+#### Category 3: Past Professional Experience
+**Display Criteria**:
+- Organizations where Eugene Vestel has worked
+- Professional background and experience
+- Based on LinkedIn profile verification
 
-#### Partner Spotlight Template
+**Display Language**: "Professional Experience" or "Career Background"
+
+**Note**: See LinkedIn profile (linkedin.com/in/evestel) for verified work history
+
+### Organization Affiliation Display Template
+
+#### Guest/Collaborator Spotlight Template
 ```markdown
-**Partner**: [Company Name]
+**Organization**: [Company Name]
 **Industry**: [Healthcare Sector]
-**Partnership Type**: [Strategic/Implementation/Growth]
-**Relationship Since**: [Year]
+**Affiliation Type**: [Podcast Guest/Collaborator/Community Partner]
+**Featured**: [Episode Number or Project Name]
 
-**Partnership Overview**:
-[2-3 sentences describing the nature of the partnership and mutual value]
+**Context**:
+[2-3 sentences describing the podcast appearance, collaboration, or affiliation]
 
-**Joint Achievements**:
-• [Specific outcome 1 with metrics]
-• [Specific outcome 2 with metrics]
-• [Specific outcome 3 with metrics]
+**Topics Discussed** (for podcast guests):
+• [Topic 1]
+• [Topic 2]
+• [Topic 3]
 
-**Quote**: "[Partnership testimonial from executive]"
+**Quote** (if available): "[Guest quote from episode or collaboration]"
 — [Name, Title], [Company]
 
-**Logo Usage**: ✅ Approved for website and marketing materials
-**Case Study Available**: [Yes/No - link if available]
-**Joint Marketing**: [Active/Planned/None]
+**Logo Display**: [Approved/Not Approved for website display]
+**Episode Link**: [Link to podcast episode if applicable]
+**Relationship**: Podcast Guest / Collaborator / Community Partner (NOT "Partner")
 ```
 
-#### Partnership Success Metrics
-- **Technical Integration**: API calls, data volume, performance metrics
-- **Business Impact**: Revenue growth, market expansion, customer acquisition
-- **Innovation Outcomes**: New features, patents, industry recognition
-- **Market Reach**: Geographic expansion, industry penetration
+#### Display Guidelines for Website
+- **Always use accurate language**: "Podcast Guests", "Collaborators", "Community Partners"
+- **NEVER use**: "Partners", "Official Partners", "Strategic Partners"
+- **Acceptable phrases**:
+  - "Featured on the FHIR IQ Podcast"
+  - "Organizations we've collaborated with"
+  - "Community involvement"
+  - "Guest organizations"
+- **Logo usage**: Only display logos with explicit permission
 
 ---
 

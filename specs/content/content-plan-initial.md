@@ -29,7 +29,7 @@ Hero Section
 └── Secondary CTA (Book Call)
 
 Social Proof Strip
-├── Partner Logos
+├── Podcast Guest & Collaborator Logos
 └── Quick Stats
 
 Key Tools Preview
@@ -278,15 +278,16 @@ Training Overview
 
 ---
 
-### 6. Partners/Testimonials Framework
+### 6. Collaborators/Testimonials Framework
 **Objective**: Build trust through verified social proof
 
-#### Partner Showcase Strategy
+#### Organization Showcase Strategy
 **Criteria for Inclusion**:
-- Recognizable healthcare/tech brands
-- Quantifiable project outcomes
+- Organizations featured on podcast or collaborated with
+- Quantifiable project outcomes (for client testimonials)
 - Permission for logo usage
 - Quotable testimonials
+- **Note**: Only use "partner" language if formal partnership agreements exist
 
 #### Testimonial Structure Template
 ```markdown
@@ -314,17 +315,23 @@ Training Overview
    - **Results**: "Achieved FDA approval on first submission"
    - **Impact**: "Accelerated time-to-market by 4 months"
 
-#### Partner Logo Strip
+#### Organization Logo Display
 **Selection Criteria**:
-- Fortune 500 healthcare companies
-- Leading EHR vendors
-- Major health systems
-- Recognized healthcare startups
+- Organizations featured on the FHIR IQ Podcast
+- Collaborators and community partners
+- Permission granted for logo display
+- **NOT claiming formal partnerships**
 
 **Display Strategy**:
-- Rotating carousel on homepage
-- Static grid on about/partners page
-- Category-specific logos on solution pages
+- Rotating carousel on homepage with caption "Podcast Guests & Collaborators"
+- Static grid on about page with accurate labeling
+- Category-specific logos only where relevant and accurate
+
+**Display Language to Use**:
+- "Featured on the FHIR IQ Podcast"
+- "Podcast Guests & Collaborators"
+- "Community Involvement"
+- **AVOID**: "Partners", "Official Partners", "Strategic Partners"
 
 ---
 
@@ -349,7 +356,7 @@ Training Overview
 - [ ] RSS sync automation
 
 ### Phase 4: Social Proof (Weeks 7-8)
-- [ ] Partner logo acquisition and optimization
+- [ ] Podcast guest & collaborator logo acquisition and optimization (with permission)
 - [ ] Testimonial collection and formatting
 - [ ] Case study verification and approval
 - [ ] Trust badge and certification display

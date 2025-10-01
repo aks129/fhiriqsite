@@ -37,19 +37,24 @@
 
 ---
 
-## Partner Logos Strip
+## Podcast Guests & Collaborators Strip
 
-### Partner Categories
-- **EHR Vendors**: Epic, Cerner, Allscripts logos
-- **Health Systems**: Mayo Clinic, Kaiser Permanente, Johns Hopkins
-- **Tech Partners**: Microsoft, AWS, Google Cloud
-- **Standards Bodies**: HL7, HIMSS, CHIME
+### Section Title
+**"Featured on the FHIR IQ Podcast"** or **"Podcast Guests & Collaborators"**
+
+### Organization Categories (NOT Partners)
+- **Podcast Guests**: NCQA, HTD Health, Flexpa, Fasten Health
+- **Standards Bodies**: HL7, FHIR (community involvement)
+- **Other Collaborators**: [Only include with explicit permission]
+
+**IMPORTANT**: Do NOT claim partnerships with organizations unless formal partnership agreements exist.
 
 ### Display Format
 - Grayscale logos on light background
 - Rotating carousel on mobile
 - Static grid on desktop
-- Maximum 8 logos visible at once
+- Maximum 6-8 logos visible at once
+- Caption: "Organizations featured on our podcast and community collaborations"
 
 ---
 
