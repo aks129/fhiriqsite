@@ -8472,6 +8472,7 @@ function initializeNavigation() {
 
 // Load page content
 function loadPage(pageId) {
+    window.location.hash = pageId;
     const contentArea = document.getElementById('content');
 
     if (content[pageId]) {
@@ -8554,19 +8555,3 @@ window.addEventListener('popstate', function(e) {
     }
 });
 
-// Update URL hash when loading pages
-function loadPage(pageId) {
-    window.location.hash = pageId;
-    const contentArea = document.getElementById('content');
-
-    if (content[pageId]) {
-        contentArea.innerHTML = content[pageId].content;
-        currentPage = pageId;
-        updateActiveNavLink(pageId);
-        window.scrollTo(0, 0);
-
-        if (typeof Prism !== 'undefined') {
-            Prism.highlightAll();
-        }
-    }
-}
