@@ -7023,10 +7023,10 @@ jobs:
 
             const comment = \`## FHIR Data Quality Report
 
-            **Source Data Validation**: ${metricsData.source_valid ? '✅ Passed' : '❌ Failed'}
-            **FHIR Validation**: ${metricsData.fhir_valid ? '✅ Passed' : '❌ Failed'}
-            **Completeness**: ${metricsData.completeness}%
-            **Accuracy**: ${metricsData.accuracy}%
+            **Source Data Validation**: \${metricsData.source_valid ? '✅ Passed' : '❌ Failed'}
+            **FHIR Validation**: \${metricsData.fhir_valid ? '✅ Passed' : '❌ Failed'}
+            **Completeness**: \${metricsData.completeness}%
+            **Accuracy**: \${metricsData.accuracy}%
 
             See artifacts for detailed reports.
             \`;
@@ -7702,8 +7702,8 @@ audit.log_transformation("epic_123", "fhir_patient_123", "v2.1.0")
       "command": "python",
       "args": ["-m", "mcp_server.fhir_mapping"],
       "env": {
-        "FHIR_SERVER_URL": "${FHIR_SERVER_URL}",
-        "API_KEY": "${API_KEY}",
+        "FHIR_SERVER_URL": "\${FHIR_SERVER_URL}",
+        "API_KEY": "\${API_KEY}",
         "DATA_CLASSIFICATION": "internal",
         "PHI_ALLOWED": "false"
       },
