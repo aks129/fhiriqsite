@@ -8217,8 +8217,7 @@ Respond with JSON only, no explanation."""
         response = self.llm.generate(
             prompt,
             max_tokens=2000,
-            temperature=0.1,  # Low temperature for consistency
-            stop=["```"]
+            temperature=0.1  # Low temperature for consistency
         )
 
         try:
