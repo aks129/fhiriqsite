@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "mappingguide/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/mappingguide",
+      "dest": "/mappingguide/index.html"
+    },
+    {
+      "src": "/mappingguide/(.*)",
+      "dest": "/mappingguide/$1"
+    }
+  ]
+}
