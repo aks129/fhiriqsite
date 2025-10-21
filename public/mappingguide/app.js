@@ -3817,184 +3817,175 @@ For additional questions or technical support, please refer to the <a href="http
     'fhir-tools': {
         title: 'FHIR Tools Overview',
         content: `
-# FHIR Tools Overview
+<h1>FHIR Tools Overview</h1>
 
-A comprehensive guide to tools and libraries for working with FHIR data.
+<p>A comprehensive guide to tools and libraries for working with FHIR data.</p>
 
-## Validation Tools
+<h2>Validation Tools</h2>
 
-### FHIR Validator (Official)
-The official HL7 FHIR validator supports all FHIR versions and profiles.
+<h3>FHIR Validator (Official)</h3>
+<p>The official HL7 FHIR validator supports all FHIR versions and profiles.</p>
 
-\`\`\`bash
-# Download the validator
+<pre><code class="language-bash"># Download the validator
 wget https://github.com/hapifhir/org.hl7.fhir.core/releases/latest/download/validator_cli.jar
 
 # Validate a resource
-java -jar validator_cli.jar mypatient.json -version 4.0
-\`\`\`
+java -jar validator_cli.jar mypatient.json -version 4.0</code></pre>
 
-**Features:**
-- Validates against base FHIR and custom profiles
-- Checks terminology bindings
-- Generates detailed error reports
+<p><strong>Features:</strong></p>
+<ul>
+<li>Validates against base FHIR and custom profiles</li>
+<li>Checks terminology bindings</li>
+<li>Generates detailed error reports</li>
+</ul>
 
-### HAPI FHIR Validator
-Java-based validation integrated with HAPI FHIR server.
+<h3>HAPI FHIR Validator</h3>
+<p>Java-based validation integrated with HAPI FHIR server.</p>
 
-\`\`\`java
-FhirContext ctx = FhirContext.forR4();
+<pre><code class="language-java">FhirContext ctx = FhirContext.forR4();
 FhirValidator validator = ctx.newValidator();
-ValidationResult result = validator.validateWithResult(patient);
-\`\`\`
+ValidationResult result = validator.validateWithResult(patient);</code></pre>
 
-## Development Libraries
+<h2>Development Libraries</h2>
 
-### Python
+<h3>Python</h3>
 
-**fhir.resources**
-\`\`\`bash
-pip install fhir.resources
-\`\`\`
+<p><strong>fhir.resources</strong></p>
+<pre><code class="language-bash">pip install fhir.resources</code></pre>
 
-\`\`\`python
-from fhir.resources.patient import Patient
+<pre><code class="language-python">from fhir.resources.patient import Patient
 
 patient = Patient(
     id="123",
     name=[{"family": "Smith", "given": ["John"]}]
-)
-\`\`\`
+)</code></pre>
 
-**FHIR-Parser**
-Generates Python classes from FHIR StructureDefinitions.
+<p><strong>FHIR-Parser</strong></p>
+<p>Generates Python classes from FHIR StructureDefinitions.</p>
 
-### JavaScript/TypeScript
+<h3>JavaScript/TypeScript</h3>
 
-**FHIR.js**
-\`\`\`bash
-npm install fhir.js
-\`\`\`
+<p><strong>FHIR.js</strong></p>
+<pre><code class="language-bash">npm install fhir.js</code></pre>
 
-\`\`\`javascript
-const FHIR = require('fhir.js');
-const client = FHIR.client('https://hapi.fhir.org/baseR4');
-\`\`\`
+<pre><code class="language-javascript">const FHIR = require('fhir.js');
+const client = FHIR.client('https://hapi.fhir.org/baseR4');</code></pre>
 
-### Java
+<h3>Java</h3>
 
-**HAPI FHIR**
-The most comprehensive Java FHIR library.
+<p><strong>HAPI FHIR</strong></p>
+<p>The most comprehensive Java FHIR library.</p>
 
-\`\`\`xml
-<dependency>
-  <groupId>ca.uhn.hapi.fhir</groupId>
-  <artifactId>hapi-fhir-structures-r4</artifactId>
-  <version>6.4.0</version>
-</dependency>
-\`\`\`
+<pre><code class="language-xml">&lt;dependency&gt;
+  &lt;groupId&gt;ca.uhn.hapi.fhir&lt;/groupId&gt;
+  &lt;artifactId&gt;hapi-fhir-structures-r4&lt;/artifactId&gt;
+  &lt;version&gt;6.4.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
 
-## Mapping Tools
+<h2>Mapping Tools</h2>
 
-### Microsoft FHIR Converter
-Converts HL7 v2, C-CDA, and JSON to FHIR using Liquid templates.
+<h3>Microsoft FHIR Converter</h3>
+<p>Converts HL7 v2, C-CDA, and JSON to FHIR using Liquid templates.</p>
 
-\`\`\`bash
-docker pull mcr.microsoft.com/healthcareapis/fhir-converter:latest
-\`\`\`
+<pre><code class="language-bash">docker pull mcr.microsoft.com/healthcareapis/fhir-converter:latest</code></pre>
 
-### Bulk Data Tools
+<h3>Bulk Data Tools</h3>
 
-**Synthea**
-Generates synthetic patient data in FHIR format.
+<p><strong>Synthea</strong></p>
+<p>Generates synthetic patient data in FHIR format.</p>
 
-\`\`\`bash
-java -jar synthea.jar -p 100
-\`\`\`
+<pre><code class="language-bash">java -jar synthea.jar -p 100</code></pre>
 
-**Bulk Data Export Tools**
-- SMART Bulk Data IG implementation
-- Async export for large datasets
+<p><strong>Bulk Data Export Tools</strong></p>
+<ul>
+<li>SMART Bulk Data IG implementation</li>
+<li>Async export for large datasets</li>
+</ul>
 
-## Testing Tools
+<h2>Testing Tools</h2>
 
-### Touchstone
-Official FHIR testing platform for conformance testing.
+<h3>Touchstone</h3>
+<p>Official FHIR testing platform for conformance testing.</p>
 
-### Inferno
-Open-source testing tool for FHIR APIs and US Core compliance.
+<h3>Inferno</h3>
+<p>Open-source testing tool for FHIR APIs and US Core compliance.</p>
 
-\`\`\`bash
-git clone https://github.com/onc-healthit/inferno
-docker-compose up
-\`\`\`
+<pre><code class="language-bash">git clone https://github.com/onc-healthit/inferno
+docker-compose up</code></pre>
 
-## Online Tools
+<h2>Online Tools</h2>
 
-- **FHIR Validator**: https://validator.fhir.org
-- **FHIR Path Tester**: https://hl7.org/fhirpath.js/
-- **SIMPLIFIER**: Profile registry and validation
+<ul>
+<li><strong>FHIR Validator</strong>: <a href="https://validator.fhir.org" target="_blank">https://validator.fhir.org</a></li>
+<li><strong>FHIR Path Tester</strong>: <a href="https://hl7.org/fhirpath.js/" target="_blank">https://hl7.org/fhirpath.js/</a></li>
+<li><strong>SIMPLIFIER</strong>: Profile registry and validation</li>
+</ul>
 
-## IDE Extensions
+<h2>IDE Extensions</h2>
 
-### VS Code Extensions
-- **FHIR Tools**: Syntax highlighting and validation
-- **REST Client**: Test FHIR API endpoints
+<h3>VS Code Extensions</h3>
+<ul>
+<li><strong>FHIR Tools</strong>: Syntax highlighting and validation</li>
+<li><strong>REST Client</strong>: Test FHIR API endpoints</li>
+</ul>
 
-## Resources
+<h2>Resources</h2>
 
-- [FHIR Registry](https://registry.fhir.org/) - Official tool registry
-- [FHIR GitHub](https://github.com/HL7/fhir) - Source code and issues
+<ul>
+<li><a href="https://registry.fhir.org/" target="_blank">FHIR Registry</a> - Official tool registry</li>
+<li><a href="https://github.com/HL7/fhir" target="_blank">FHIR GitHub</a> - Source code and issues</li>
+</ul>
         `
     },
 
     'validation': {
         title: 'Validation & Testing',
         content: `
-# Validation & Testing
+<h1>Validation & Testing</h1>
 
-Comprehensive guide to validating FHIR resources and testing your mappings.
+<p>Comprehensive guide to validating FHIR resources and testing your mappings.</p>
 
-## Why Validate?
+<h2>Why Validate?</h2>
 
-Validation ensures:
-- **Compliance**: Resources meet FHIR specifications
-- **Interoperability**: Data works across different systems
-- **Data Quality**: Correct data types and required fields
-- **Profile Conformance**: Adherence to US Core or custom profiles
+<p>Validation ensures:</p>
+<ul>
+<li><strong>Compliance</strong>: Resources meet FHIR specifications</li>
+<li><strong>Interoperability</strong>: Data works across different systems</li>
+<li><strong>Data Quality</strong>: Correct data types and required fields</li>
+<li><strong>Profile Conformance</strong>: Adherence to US Core or custom profiles</li>
+</ul>
 
-## Validation Levels
+<h2>Validation Levels</h2>
 
-### 1. Structure Validation
+<h3>1. Structure Validation</h3>
 
-Ensures resources have correct JSON/XML structure and required elements.
+<p>Ensures resources have correct JSON/XML structure and required elements.</p>
 
-\`\`\`python
-from fhir.resources.patient import Patient
+<pre><code class="language-python">from fhir.resources.patient import Patient
 from pydantic import ValidationError
 
 try:
     patient = Patient(**data)
     print("Valid structure!")
 except ValidationError as e:
-    print(f"Validation errors: {e}")
-\`\`\`
+    print(f"Validation errors: {e}")</code></pre>
 
-### 2. Cardinality Validation
+<h3>2. Cardinality Validation</h3>
 
-Checks minimum and maximum occurrences of elements.
+<p>Checks minimum and maximum occurrences of elements.</p>
 
-- **0..1**: Optional, maximum one
-- **1..1**: Required, exactly one
-- **0..***: Optional, any number
-- **1..***: Required, at least one
+<ul>
+<li><strong>0..1</strong>: Optional, maximum one</li>
+<li><strong>1..1</strong>: Required, exactly one</li>
+<li><strong>0..*</strong>: Optional, any number</li>
+<li><strong>1..*</strong>: Required, at least one</li>
+</ul>
 
-### 3. Data Type Validation
+<h3>3. Data Type Validation</h3>
 
-Verifies correct data types for each element.
+<p>Verifies correct data types for each element.</p>
 
-\`\`\`python
-# Incorrect - will fail validation
+<pre><code class="language-python"># Incorrect - will fail validation
 patient = Patient(
     birthDate="not-a-date"  # Should be YYYY-MM-DD
 )
@@ -4002,56 +3993,48 @@ patient = Patient(
 # Correct
 patient = Patient(
     birthDate="1990-01-15"
-)
-\`\`\`
+)</code></pre>
 
-### 4. Terminology Validation
+<h3>4. Terminology Validation</h3>
 
-Checks codes against required value sets.
+<p>Checks codes against required value sets.</p>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "code": {
     "coding": [{
       "system": "http://loinc.org",
       "code": "718-7"  // Must be valid LOINC code
     }]
   }
-}
-\`\`\`
+}</code></pre>
 
-### 5. Profile Validation
+<h3>5. Profile Validation</h3>
 
-Validates against specific profiles like US Core.
+<p>Validates against specific profiles like US Core.</p>
 
-\`\`\`bash
-java -jar validator_cli.jar patient.json \\
-  -version 4.0 \\
-  -ig hl7.fhir.us.core#4.0.0
-\`\`\`
+<pre><code class="language-bash">java -jar validator_cli.jar patient.json \
+  -version 4.0 \
+  -ig hl7.fhir.us.core#4.0.0</code></pre>
 
-## Validation Tools
+<h2>Validation Tools</h2>
 
-### Command Line
+<h3>Command Line</h3>
 
-**FHIR Validator**
-\`\`\`bash
-# Basic validation
+<p><strong>FHIR Validator</strong></p>
+<pre><code class="language-bash"># Basic validation
 java -jar validator_cli.jar resource.json
 
 # With specific profile
-java -jar validator_cli.jar resource.json \\
+java -jar validator_cli.jar resource.json \
   -profile http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
 
 # Generate HTML output
-java -jar validator_cli.jar resource.json -output validation-report.html
-\`\`\`
+java -jar validator_cli.jar resource.json -output validation-report.html</code></pre>
 
-### Python
+<h3>Python</h3>
 
-**fhir.resources with Pydantic**
-\`\`\`python
-from fhir.resources.observation import Observation
+<p><strong>fhir.resources with Pydantic</strong></p>
+<pre><code class="language-python">from fhir.resources.observation import Observation
 from pydantic import ValidationError
 
 def validate_observation(data):
@@ -4069,29 +4052,25 @@ valid, result = validate_observation(observation_data)
 if valid:
     print("✓ Valid observation")
 else:
-    print(f"✗ Validation failed: {result}")
-\`\`\`
+    print(f"✗ Validation failed: {result}")</code></pre>
 
-### JavaScript
+<h3>JavaScript</h3>
 
-**FHIR Validator.js**
-\`\`\`javascript
-const { Validator } = require('@asymmetrik/fhir-validator');
+<p><strong>FHIR Validator.js</strong></p>
+<pre><code class="language-javascript">const { Validator } = require('@asymmetrik/fhir-validator');
 const validator = new Validator();
 
 const isValid = validator.validate(resource, {
   version: '4.0.1'
-});
-\`\`\`
+});</code></pre>
 
-## Testing Strategies
+<h2>Testing Strategies</h2>
 
-### Unit Testing
+<h3>Unit Testing</h3>
 
-Test individual resource creation and validation.
+<p>Test individual resource creation and validation.</p>
 
-\`\`\`python
-import pytest
+<pre><code class="language-python">import pytest
 from fhir.resources.patient import Patient
 
 def test_create_patient():
@@ -4104,15 +4083,13 @@ def test_create_patient():
 
 def test_invalid_patient():
     with pytest.raises(ValidationError):
-        Patient(birthDate="invalid-date")
-\`\`\`
+        Patient(birthDate="invalid-date")</code></pre>
 
-### Integration Testing
+<h3>Integration Testing</h3>
 
-Test complete mapping pipelines.
+<p>Test complete mapping pipelines.</p>
 
-\`\`\`python
-def test_csv_to_fhir_pipeline():
+<pre><code class="language-python">def test_csv_to_fhir_pipeline():
     # Load test CSV
     csv_data = load_test_csv("test-data.csv")
 
@@ -4124,25 +4101,21 @@ def test_csv_to_fhir_pipeline():
         assert validate_fhir_resource(resource)
 
     # Check expected count
-    assert len(fhir_resources) == expected_count
-\`\`\`
+    assert len(fhir_resources) == expected_count</code></pre>
 
-### Conformance Testing
+<h3>Conformance Testing</h3>
 
-Use Inferno or Touchstone for full conformance testing.
+<p>Use Inferno or Touchstone for full conformance testing.</p>
 
-\`\`\`bash
-# Run Inferno tests
+<pre><code class="language-bash"># Run Inferno tests
 docker run -p 4567:4567 infernocommunity/inferno:latest
 
-# Access at http://localhost:4567
-\`\`\`
+# Access at http://localhost:4567</code></pre>
 
-## Best Practices
+<h2>Best Practices</h2>
 
-### 1. Validate Early and Often
-\`\`\`python
-def process_data(source_data):
+<h3>1. Validate Early and Often</h3>
+<pre><code class="language-python">def process_data(source_data):
     # Validate source data first
     validate_source(source_data)
 
@@ -4152,91 +4125,81 @@ def process_data(source_data):
     # Validate FHIR resource
     validate_fhir(fhir_resource)
 
-    return fhir_resource
-\`\`\`
+    return fhir_resource</code></pre>
 
-### 2. Use Profile-Specific Validation
+<h3>2. Use Profile-Specific Validation</h3>
 
-Always validate against the specific profiles you're implementing.
+<p>Always validate against the specific profiles you're implementing.</p>
 
-### 3. Automated Validation in CI/CD
+<h3>3. Automated Validation in CI/CD</h3>
 
-\`\`\`yaml
-# GitHub Actions example
+<pre><code class="language-yaml"># GitHub Actions example
 - name: Validate FHIR Resources
   run: |
-    java -jar validator_cli.jar output/*.json
-\`\`\`
+    java -jar validator_cli.jar output/*.json</code></pre>
 
-### 4. Maintain Test Data Sets
+<h3>4. Maintain Test Data Sets</h3>
 
-Keep sample valid and invalid resources for testing.
+<p>Keep sample valid and invalid resources for testing.</p>
 
-\`\`\`
-tests/
+<pre><code>tests/
   fixtures/
     valid/
       patient-example.json
       observation-example.json
     invalid/
       patient-missing-required.json
-      observation-bad-code.json
-\`\`\`
+      observation-bad-code.json</code></pre>
 
-## Common Validation Errors
+<h2>Common Validation Errors</h2>
 
-### Missing Required Fields
-\`\`\`
-ERROR: Patient.name: minimum required = 1, but only found 0
-\`\`\`
+<h3>Missing Required Fields</h3>
+<pre><code>ERROR: Patient.name: minimum required = 1, but only found 0</code></pre>
 
-### Invalid Code System
-\`\`\`
-ERROR: Observation.code: Unknown code system http://example.com/codes
-\`\`\`
+<h3>Invalid Code System</h3>
+<pre><code>ERROR: Observation.code: Unknown code system http://example.com/codes</code></pre>
 
-### Cardinality Violation
-\`\`\`
-ERROR: Patient.identifier: maximum allowed = 1, but found 2
-\`\`\`
+<h3>Cardinality Violation</h3>
+<pre><code>ERROR: Patient.identifier: maximum allowed = 1, but found 2</code></pre>
 
-### Invalid Reference
-\`\`\`
-ERROR: Observation.subject: Reference must be to Patient, found Practitioner
-\`\`\`
+<h3>Invalid Reference</h3>
+<pre><code>ERROR: Observation.subject: Reference must be to Patient, found Practitioner</code></pre>
 
-## Validation Checklist
+<h2>Validation Checklist</h2>
 
-- [ ] Structure validation (JSON/XML syntax)
-- [ ] Required fields present
-- [ ] Correct data types
-- [ ] Valid codes from required value sets
-- [ ] Cardinality constraints met
-- [ ] Profile-specific requirements
-- [ ] Business rule validation
-- [ ] Reference integrity
+<ul>
+<li>Structure validation (JSON/XML syntax)</li>
+<li>Required fields present</li>
+<li>Correct data types</li>
+<li>Valid codes from required value sets</li>
+<li>Cardinality constraints met</li>
+<li>Profile-specific requirements</li>
+<li>Business rule validation</li>
+<li>Reference integrity</li>
+</ul>
         `
     },
 
     'extensions': {
         title: 'FHIR Extensions',
         content: `
-# FHIR Extensions
+<h1>FHIR Extensions</h1>
 
-Learn how to use and create FHIR extensions for data not covered by base resources.
+<p>Learn how to use and create FHIR extensions for data not covered by base resources.</p>
 
-## What are Extensions?
+<h2>What are Extensions?</h2>
 
-Extensions allow you to add data elements not defined in the base FHIR specification. They enable:
+<p>Extensions allow you to add data elements not defined in the base FHIR specification. They enable:</p>
 
-- **Flexibility**: Capture data specific to your use case
-- **Interoperability**: Share custom data in a standardized way
-- **Evolution**: Add new concepts before they're standardized
+<ul>
+<li><strong>Flexibility</strong>: Capture data specific to your use case</li>
+<li><strong>Interoperability</strong>: Share custom data in a standardized way</li>
+<li><strong>Evolution</strong>: Add new concepts before they're standardized</li>
+</ul>
 
-## Extension Structure
+<h2>Extension Structure</h2>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "extension": [{
     "url": "http://example.org/fhir/StructureDefinition/patient-religion",
     "valueCodeableConcept": {
@@ -4247,15 +4210,13 @@ Extensions allow you to add data elements not defined in the base FHIR specifica
       }]
     }
   }]
-}
-\`\`\`
+}</code></pre>
 
-## Common US Core Extensions
+<h2>Common US Core Extensions</h2>
 
-### Race Extension
+<h3>Race Extension</h3>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "extension": [{
     "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
     "extension": [{
@@ -4270,13 +4231,11 @@ Extensions allow you to add data elements not defined in the base FHIR specifica
       "valueString": "White"
     }]
   }]
-}
-\`\`\`
+}</code></pre>
 
-### Ethnicity Extension
+<h3>Ethnicity Extension</h3>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "extension": [{
     "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
     "extension": [{
@@ -4291,28 +4250,24 @@ Extensions allow you to add data elements not defined in the base FHIR specifica
       "valueString": "Not Hispanic or Latino"
     }]
   }]
-}
-\`\`\`
+}</code></pre>
 
-### Birth Sex Extension
+<h3>Birth Sex Extension</h3>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "extension": [{
     "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
     "valueCode": "M"
   }]
-}
-\`\`\`
+}</code></pre>
 
-## Creating Custom Extensions
+<h2>Creating Custom Extensions</h2>
 
-### 1. Define the Extension
+<h3>1. Define the Extension</h3>
 
-Create a StructureDefinition for your extension.
+<p>Create a StructureDefinition for your extension.</p>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "resourceType": "StructureDefinition",
   "url": "http://example.org/fhir/StructureDefinition/patient-preferred-language",
   "name": "PatientPreferredLanguage",
@@ -4346,13 +4301,11 @@ Create a StructureDefinition for your extension.
       }]
     }]
   }
-}
-\`\`\`
+}</code></pre>
 
-### 2. Use the Extension
+<h3>2. Use the Extension</h3>
 
-\`\`\`python
-from fhir.resources.patient import Patient
+<pre><code class="language-python">from fhir.resources.patient import Patient
 
 patient = Patient(
     id="example",
@@ -4366,15 +4319,13 @@ patient = Patient(
             }]
         }
     }]
-)
-\`\`\`
+)</code></pre>
 
-## Nested Extensions
+<h2>Nested Extensions</h2>
 
-Extensions can contain other extensions for complex data.
+<p>Extensions can contain other extensions for complex data.</p>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "extension": [{
     "url": "http://example.org/fhir/StructureDefinition/contact-details",
     "extension": [{
@@ -4388,82 +4339,78 @@ Extensions can contain other extensions for complex data.
       "valueString": "email"
     }]
   }]
-}
-\`\`\`
+}</code></pre>
 
-## Modifier Extensions
+<h2>Modifier Extensions</h2>
 
-Modifier extensions change the meaning of the resource and must be understood by all processors.
+<p>Modifier extensions change the meaning of the resource and must be understood by all processors.</p>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "modifierExtension": [{
     "url": "http://example.org/fhir/StructureDefinition/data-absent-reason",
     "valueCode": "unknown"
   }]
-}
-\`\`\`
+}</code></pre>
 
-## Extension Data Types
+<h2>Extension Data Types</h2>
 
-Extensions can use any FHIR data type:
+<p>Extensions can use any FHIR data type:</p>
 
-- **valueString**: Simple text
-- **valueInteger**: Whole numbers
-- **valueDecimal**: Decimal numbers
-- **valueBoolean**: true/false
-- **valueDate**: Dates
-- **valueDateTime**: Date and time
-- **valueCode**: Coded value
-- **valueCodeableConcept**: Coded concept with system
-- **valueReference**: Reference to another resource
+<ul>
+<li><strong>valueString</strong>: Simple text</li>
+<li><strong>valueInteger</strong>: Whole numbers</li>
+<li><strong>valueDecimal</strong>: Decimal numbers</li>
+<li><strong>valueBoolean</strong>: true/false</li>
+<li><strong>valueDate</strong>: Dates</li>
+<li><strong>valueDateTime</strong>: Date and time</li>
+<li><strong>valueCode</strong>: Coded value</li>
+<li><strong>valueCodeableConcept</strong>: Coded concept with system</li>
+<li><strong>valueReference</strong>: Reference to another resource</li>
+</ul>
 
-## Best Practices
+<h2>Best Practices</h2>
 
-### 1. Use Standard Extensions First
+<h3>1. Use Standard Extensions First</h3>
 
-Check if a standard extension exists before creating a custom one:
-- US Core extensions
-- FHIR core extensions
-- IGs from other jurisdictions
+<p>Check if a standard extension exists before creating a custom one:</p>
+<ul>
+<li>US Core extensions</li>
+<li>FHIR core extensions</li>
+<li>IGs from other jurisdictions</li>
+</ul>
 
-### 2. Define Clear URLs
+<h3>2. Define Clear URLs</h3>
 
-Use a namespace you control for extension URLs.
+<p>Use a namespace you control for extension URLs.</p>
 
-\`\`\`
-http://[your-domain]/fhir/StructureDefinition/[extension-name]
-\`\`\`
+<pre><code>http://[your-domain]/fhir/StructureDefinition/[extension-name]</code></pre>
 
-### 3. Document Extensions
+<h3>3. Document Extensions</h3>
 
-Provide clear documentation:
-- Purpose and use case
-- Data type and constraints
-- Examples
+<p>Provide clear documentation:</p>
+<ul>
+<li>Purpose and use case</li>
+<li>Data type and constraints</li>
+<li>Examples</li>
+</ul>
 
-### 4. Version Extensions
+<h3>4. Version Extensions</h3>
 
-Include version in URL for breaking changes.
+<p>Include version in URL for breaking changes.</p>
 
-\`\`\`
-http://example.org/fhir/StructureDefinition/patient-score/v2
-\`\`\`
+<pre><code>http://example.org/fhir/StructureDefinition/patient-score/v2</code></pre>
 
-### 5. Validate Extension Usage
+<h3>5. Validate Extension Usage</h3>
 
-\`\`\`python
-def validate_extension(resource, extension_url):
+<pre><code class="language-python">def validate_extension(resource, extension_url):
     extensions = resource.extension or []
     matching = [e for e in extensions if e.url == extension_url]
-    return len(matching) > 0
-\`\`\`
+    return len(matching) > 0</code></pre>
 
-## Mapping Extensions
+<h2>Mapping Extensions</h2>
 
-### From CSV
-\`\`\`python
-def add_race_extension(patient, race_code):
+<h3>From CSV</h3>
+<pre><code class="language-python">def add_race_extension(patient, race_code):
     if not patient.extension:
         patient.extension = []
 
@@ -4480,47 +4427,51 @@ def add_race_extension(patient, race_code):
             "url": "text",
             "valueString": get_race_display(race_code)
         }]
-    })
-\`\`\`
+    })</code></pre>
 
-## Extension Registry
+<h2>Extension Registry</h2>
 
-- **US Core**: http://hl7.org/fhir/us/core/
-- **FHIR Core Extensions**: http://hl7.org/fhir/extensions/
-- **Simplifier**: https://simplifier.net/ (search for extensions)
+<ul>
+<li><strong>US Core</strong>: <a href="http://hl7.org/fhir/us/core/" target="_blank">http://hl7.org/fhir/us/core/</a></li>
+<li><strong>FHIR Core Extensions</strong>: <a href="http://hl7.org/fhir/extensions/" target="_blank">http://hl7.org/fhir/extensions/</a></li>
+<li><strong>Simplifier</strong>: <a href="https://simplifier.net/" target="_blank">https://simplifier.net/</a> (search for extensions)</li>
+</ul>
 
-## Resources
+<h2>Resources</h2>
 
-- [FHIR Extensions Documentation](http://hl7.org/fhir/extensibility.html)
-- [US Core Extensions](http://hl7.org/fhir/us/core/profiles-and-extensions.html)
+<ul>
+<li><a href="http://hl7.org/fhir/extensibility.html" target="_blank">FHIR Extensions Documentation</a></li>
+<li><a href="http://hl7.org/fhir/us/core/profiles-and-extensions.html" target="_blank">US Core Extensions</a></li>
+</ul>
         `
     },
 
     'performance': {
         title: 'Performance Optimization',
         content: `
-# Performance Optimization
+<h1>Performance Optimization</h1>
 
-Strategies for optimizing FHIR data mapping and processing pipelines.
+<p>Strategies for optimizing FHIR data mapping and processing pipelines.</p>
 
-## Performance Challenges
+<h2>Performance Challenges</h2>
 
-Common bottlenecks in FHIR mapping:
+<p>Common bottlenecks in FHIR mapping:</p>
 
-- **Large Dataset Processing**: Processing millions of records
-- **Complex Transformations**: Multi-step mapping logic
-- **Validation Overhead**: Validating every resource
-- **Network Latency**: API calls to FHIR servers
-- **Memory Constraints**: Large resources and bundles
+<ul>
+<li><strong>Large Dataset Processing</strong>: Processing millions of records</li>
+<li><strong>Complex Transformations</strong>: Multi-step mapping logic</li>
+<li><strong>Validation Overhead</strong>: Validating every resource</li>
+<li><strong>Network Latency</strong>: API calls to FHIR servers</li>
+<li><strong>Memory Constraints</strong>: Large resources and bundles</li>
+</ul>
 
-## Optimization Strategies
+<h2>Optimization Strategies</h2>
 
-### 1. Batch Processing
+<h3>1. Batch Processing</h3>
 
-Process records in batches instead of one-by-one.
+<p>Process records in batches instead of one-by-one.</p>
 
-\`\`\`python
-import polars as pl
+<pre><code class="language-python">import polars as pl
 
 def batch_process_observations(csv_path, batch_size=1000):
     """Process CSV in batches for better memory efficiency"""
@@ -4538,15 +4489,13 @@ def batch_process_observations(csv_path, batch_size=1000):
         # Send batch to FHIR server
         upload_batch(observations)
 
-        print(f"Processed {min(i+batch_size, total_rows)}/{total_rows}")
-\`\`\`
+        print(f"Processed {min(i+batch_size, total_rows)}/{total_rows}")</code></pre>
 
-### 2. Parallel Processing
+<h3>2. Parallel Processing</h3>
 
-Use multiprocessing for CPU-intensive tasks.
+<p>Use multiprocessing for CPU-intensive tasks.</p>
 
-\`\`\`python
-from multiprocessing import Pool
+<pre><code class="language-python">from multiprocessing import Pool
 import os
 
 def process_chunk(chunk_data):
@@ -4570,15 +4519,13 @@ def parallel_process(data, num_workers=None):
     return [item for sublist in results for item in sublist]
 
 # Usage
-resources = parallel_process(input_data, num_workers=4)
-\`\`\`
+resources = parallel_process(input_data, num_workers=4)</code></pre>
 
-### 3. Use Polars Instead of Pandas
+<h3>3. Use Polars Instead of Pandas</h3>
 
-Polars is significantly faster for large datasets.
+<p>Polars is significantly faster for large datasets.</p>
 
-\`\`\`python
-import polars as pl
+<pre><code class="language-python">import polars as pl
 
 # Polars is 10-30x faster than pandas
 df = pl.read_csv("large_file.csv")
@@ -4588,22 +4535,45 @@ lazy_df = pl.scan_csv("large_file.csv")
 result = (lazy_df
     .filter(pl.col("status") == "final")
     .select(["patient_id", "value", "date"])
-    .collect())
-\`\`\`
+    .collect())</code></pre>
 
-**Performance Comparison:**
-| Operation | Pandas | Polars | Speedup |
-|-----------|--------|--------|---------|
-| Read 1M rows | 2.5s | 0.3s | 8.3x |
-| Filter | 0.8s | 0.1s | 8x |
-| Group by | 1.2s | 0.15s | 8x |
+<p><strong>Performance Comparison:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Pandas</th>
+<th>Polars</th>
+<th>Speedup</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Read 1M rows</td>
+<td>2.5s</td>
+<td>0.3s</td>
+<td>8.3x</td>
+</tr>
+<tr>
+<td>Filter</td>
+<td>0.8s</td>
+<td>0.1s</td>
+<td>8x</td>
+</tr>
+<tr>
+<td>Group by</td>
+<td>1.2s</td>
+<td>0.15s</td>
+<td>8x</td>
+</tr>
+</tbody>
+</table>
 
-### 4. Optimize Validation
+<h3>4. Optimize Validation</h3>
 
-Don't validate every resource if unnecessary.
+<p>Don't validate every resource if unnecessary.</p>
 
-\`\`\`python
-def smart_validation(resources, sample_rate=0.1):
+<pre><code class="language-python">def smart_validation(resources, sample_rate=0.1):
     """Validate a sample instead of all resources"""
     import random
 
@@ -4617,15 +4587,13 @@ def smart_validation(resources, sample_rate=0.1):
     for resource in sample:
         validate_fhir(resource)
 
-    return resources
-\`\`\`
+    return resources</code></pre>
 
-### 5. Caching
+<h3>5. Caching</h3>
 
-Cache expensive lookups and transformations.
+<p>Cache expensive lookups and transformations.</p>
 
-\`\`\`python
-from functools import lru_cache
+<pre><code class="language-python">from functools import lru_cache
 
 @lru_cache(maxsize=1000)
 def get_loinc_display(code):
@@ -4636,15 +4604,13 @@ def get_loinc_display(code):
 def load_mapping_config(config_path):
     """Cache mapping configuration"""
     with open(config_path) as f:
-        return yaml.safe_load(f)
-\`\`\`
+        return yaml.safe_load(f)</code></pre>
 
-### 6. Lazy Loading
+<h3>6. Lazy Loading</h3>
 
-Load data only when needed.
+<p>Load data only when needed.</p>
 
-\`\`\`python
-class LazyFHIRResource:
+<pre><code class="language-python">class LazyFHIRResource:
     def __init__(self, data):
         self._data = data
         self._resource = None
@@ -4653,15 +4619,13 @@ class LazyFHIRResource:
     def resource(self):
         if self._resource is None:
             self._resource = create_fhir_resource(self._data)
-        return self._resource
-\`\`\`
+        return self._resource</code></pre>
 
-### 7. Optimize Bundle Creation
+<h3>7. Optimize Bundle Creation</h3>
 
-Use transaction bundles for bulk uploads.
+<p>Use transaction bundles for bulk uploads.</p>
 
-\`\`\`python
-def create_transaction_bundle(resources, batch_size=100):
+<pre><code class="language-python">def create_transaction_bundle(resources, batch_size=100):
     """Create optimized transaction bundles"""
     from fhir.resources.bundle import Bundle, BundleEntry
 
@@ -4682,15 +4646,13 @@ def create_transaction_bundle(resources, batch_size=100):
         bundle = Bundle(type="transaction", entry=entries)
         bundles.append(bundle)
 
-    return bundles
-\`\`\`
+    return bundles</code></pre>
 
-### 8. Database Optimization
+<h3>8. Database Optimization</h3>
 
-Use efficient queries when working with databases.
+<p>Use efficient queries when working with databases.</p>
 
-\`\`\`python
-# Bad - N+1 query problem
+<pre><code class="language-python"># Bad - N+1 query problem
 for patient_id in patient_ids:
     observations = db.query(Observation).filter_by(patient_id=patient_id).all()
     process(observations)
@@ -4699,15 +4661,13 @@ for patient_id in patient_ids:
 observations = db.query(Observation).filter(
     Observation.patient_id.in_(patient_ids)
 ).all()
-observations_by_patient = group_by_patient(observations)
-\`\`\`
+observations_by_patient = group_by_patient(observations)</code></pre>
 
-### 9. Streaming for Large Files
+<h3>9. Streaming for Large Files</h3>
 
-Process large files without loading entirely into memory.
+<p>Process large files without loading entirely into memory.</p>
 
-\`\`\`python
-def stream_process_ndjson(file_path):
+<pre><code class="language-python">def stream_process_ndjson(file_path):
     """Stream process NDJSON file"""
     with open(file_path, 'r') as f:
         for line in f:
@@ -4716,15 +4676,13 @@ def stream_process_ndjson(file_path):
 
 # Usage
 for processed in stream_process_ndjson("large_file.ndjson"):
-    upload_to_server(processed)
-\`\`\`
+    upload_to_server(processed)</code></pre>
 
-### 10. Async Operations
+<h3>10. Async Operations</h3>
 
-Use async/await for I/O-bound operations.
+<p>Use async/await for I/O-bound operations.</p>
 
-\`\`\`python
-import asyncio
+<pre><code class="language-python">import asyncio
 import aiohttp
 
 async def upload_resource(session, resource):
@@ -4743,15 +4701,13 @@ async def bulk_upload(resources):
         return results
 
 # Usage
-results = asyncio.run(bulk_upload(observations))
-\`\`\`
+results = asyncio.run(bulk_upload(observations))</code></pre>
 
-## Monitoring Performance
+<h2>Monitoring Performance</h2>
 
-### Timing Operations
+<h3>Timing Operations</h3>
 
-\`\`\`python
-import time
+<pre><code class="language-python">import time
 from contextlib import contextmanager
 
 @contextmanager
@@ -4769,25 +4725,21 @@ with timer("FHIR Mapping"):
     resources = map_to_fhir(df)
 
 with timer("Validation"):
-    validate_all(resources)
-\`\`\`
+    validate_all(resources)</code></pre>
 
-### Memory Profiling
+<h3>Memory Profiling</h3>
 
-\`\`\`python
-from memory_profiler import profile
+<pre><code class="language-python">from memory_profiler import profile
 
 @profile
 def process_large_dataset():
     df = pl.read_csv("large_file.csv")
     resources = map_to_fhir(df)
-    return resources
-\`\`\`
+    return resources</code></pre>
 
-## Benchmarking
+<h2>Benchmarking</h2>
 
-\`\`\`python
-import timeit
+<pre><code class="language-python">import timeit
 
 # Compare different approaches
 pandas_time = timeit.timeit(
@@ -4804,85 +4756,105 @@ polars_time = timeit.timeit(
 
 print(f"Pandas: {pandas_time:.2f}s")
 print(f"Polars: {polars_time:.2f}s")
-print(f"Speedup: {pandas_time/polars_time:.1f}x")
-\`\`\`
+print(f"Speedup: {pandas_time/polars_time:.1f}x")</code></pre>
 
-## Best Practices
+<h2>Best Practices</h2>
 
-1. **Profile First**: Measure before optimizing
-2. **Optimize Bottlenecks**: Focus on the slowest parts
-3. **Batch Operations**: Process in chunks
-4. **Use Efficient Libraries**: Polars > Pandas for large data
-5. **Cache Lookups**: Avoid repeated expensive operations
-6. **Parallel Processing**: Utilize multiple cores
-7. **Streaming**: Don't load entire files into memory
-8. **Async I/O**: Concurrent network operations
-9. **Monitor Memory**: Watch for memory leaks
-10. **Benchmark Regularly**: Track performance over time
+<ol>
+<li><strong>Profile First</strong>: Measure before optimizing</li>
+<li><strong>Optimize Bottlenecks</strong>: Focus on the slowest parts</li>
+<li><strong>Batch Operations</strong>: Process in chunks</li>
+<li><strong>Use Efficient Libraries</strong>: Polars &gt; Pandas for large data</li>
+<li><strong>Cache Lookups</strong>: Avoid repeated expensive operations</li>
+<li><strong>Parallel Processing</strong>: Utilize multiple cores</li>
+<li><strong>Streaming</strong>: Don't load entire files into memory</li>
+<li><strong>Async I/O</strong>: Concurrent network operations</li>
+<li><strong>Monitor Memory</strong>: Watch for memory leaks</li>
+<li><strong>Benchmark Regularly</strong>: Track performance over time</li>
+</ol>
 
-## Performance Targets
+<h2>Performance Targets</h2>
 
-| Operation | Target | Good | Excellent |
-|-----------|--------|------|-----------|
-| Process 1K rows | < 10s | < 5s | < 1s |
-| Process 100K rows | < 5min | < 2min | < 30s |
-| Validate resource | < 100ms | < 50ms | < 10ms |
-| API request | < 1s | < 500ms | < 200ms |
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Target</th>
+<th>Good</th>
+<th>Excellent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Process 1K rows</td>
+<td>&lt; 10s</td>
+<td>&lt; 5s</td>
+<td>&lt; 1s</td>
+</tr>
+<tr>
+<td>Process 100K rows</td>
+<td>&lt; 5min</td>
+<td>&lt; 2min</td>
+<td>&lt; 30s</td>
+</tr>
+<tr>
+<td>Validate resource</td>
+<td>&lt; 100ms</td>
+<td>&lt; 50ms</td>
+<td>&lt; 10ms</td>
+</tr>
+<tr>
+<td>API request</td>
+<td>&lt; 1s</td>
+<td>&lt; 500ms</td>
+<td>&lt; 200ms</td>
+</tr>
+</tbody>
+</table>
         `
     },
 
     'api-reference': {
         title: 'API Reference',
         content: `
-# API Reference
+<h1>API Reference</h1>
 
-Quick reference for FHIR REST API operations and common patterns.
+<p>Quick reference for FHIR REST API operations and common patterns.</p>
 
-## Base URL Structure
+<h2>Base URL Structure</h2>
 
-\`\`\`
-[base]/[type]/[id] {?_format=[mime-type]}
-\`\`\`
+<pre><code>[base]/[type]/[id] {?_format=[mime-type]}</code></pre>
 
-Example:
-\`\`\`
-https://hapi.fhir.org/baseR4/Patient/123
-\`\`\`
+<p>Example:</p>
+<pre><code>https://hapi.fhir.org/baseR4/Patient/123</code></pre>
 
-## HTTP Operations
+<h2>HTTP Operations</h2>
 
-### Create (POST)
+<h3>Create (POST)</h3>
 
-Create a new resource.
+<p>Create a new resource.</p>
 
-\`\`\`http
-POST [base]/Patient
+<pre><code class="language-http">POST [base]/Patient
 Content-Type: application/fhir+json
 
 {
   "resourceType": "Patient",
   "name": [{"family": "Smith", "given": ["John"]}]
-}
-\`\`\`
+}</code></pre>
 
-**Response:**
-\`\`\`http
-HTTP/1.1 201 Created
-Location: http://example.org/fhir/Patient/123/_history/1
-\`\`\`
+<p><strong>Response:</strong></p>
+<pre><code class="language-http">HTTP/1.1 201 Created
+Location: http://example.org/fhir/Patient/123/_history/1</code></pre>
 
-### Read (GET)
+<h3>Read (GET)</h3>
 
-Retrieve a specific resource.
+<p>Retrieve a specific resource.</p>
 
-\`\`\`http
-GET [base]/Patient/123
-Accept: application/fhir+json
-\`\`\`
+<pre><code class="language-http">GET [base]/Patient/123
+Accept: application/fhir+json</code></pre>
 
-**Response:**
-\`\`\`json
-{
+<p><strong>Response:</strong></p>
+<pre><code class="language-json">{
   "resourceType": "Patient",
   "id": "123",
   "meta": {
@@ -4890,30 +4862,26 @@ Accept: application/fhir+json
     "lastUpdated": "2024-01-15T10:00:00Z"
   },
   "name": [{"family": "Smith", "given": ["John"]}]
-}
-\`\`\`
+}</code></pre>
 
-### Update (PUT)
+<h3>Update (PUT)</h3>
 
-Update an existing resource.
+<p>Update an existing resource.</p>
 
-\`\`\`http
-PUT [base]/Patient/123
+<pre><code class="language-http">PUT [base]/Patient/123
 Content-Type: application/fhir+json
 
 {
   "resourceType": "Patient",
   "id": "123",
   "name": [{"family": "Smith", "given": ["John", "David"]}]
-}
-\`\`\`
+}</code></pre>
 
-### Patch (PATCH)
+<h3>Patch (PATCH)</h3>
 
-Partially update a resource.
+<p>Partially update a resource.</p>
 
-\`\`\`http
-PATCH [base]/Patient/123
+<pre><code class="language-http">PATCH [base]/Patient/123
 Content-Type: application/json-patch+json
 
 [
@@ -4922,42 +4890,73 @@ Content-Type: application/json-patch+json
     "path": "/name/0/given/0",
     "value": "Jonathan"
   }
-]
-\`\`\`
+]</code></pre>
 
-### Delete (DELETE)
+<h3>Delete (DELETE)</h3>
 
-Delete a resource.
+<p>Delete a resource.</p>
 
-\`\`\`http
-DELETE [base]/Patient/123
-\`\`\`
+<pre><code class="language-http">DELETE [base]/Patient/123</code></pre>
 
-## Search
+<h2>Search</h2>
 
-### Basic Search
+<h3>Basic Search</h3>
 
-\`\`\`http
-GET [base]/Patient?family=Smith
-\`\`\`
+<pre><code class="language-http">GET [base]/Patient?family=Smith</code></pre>
 
-### Common Search Parameters
+<h3>Common Search Parameters</h3>
 
-| Parameter | Example | Description |
-|-----------|---------|-------------|
-| _id | ?_id=123 | Search by ID |
-| _lastUpdated | ?_lastUpdated=gt2024-01-01 | Modified after date |
-| _tag | ?_tag=http://example.org\|test | Search by tag |
-| _profile | ?_profile=http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient | Search by profile |
-| _sort | ?_sort=-date | Sort results |
-| _count | ?_count=50 | Page size |
-| _include | ?_include=Patient:organization | Include related resources |
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_id</td>
+<td>?_id=123</td>
+<td>Search by ID</td>
+</tr>
+<tr>
+<td>_lastUpdated</td>
+<td>?_lastUpdated=gt2024-01-01</td>
+<td>Modified after date</td>
+</tr>
+<tr>
+<td>_tag</td>
+<td>?_tag=http://example.org|test</td>
+<td>Search by tag</td>
+</tr>
+<tr>
+<td>_profile</td>
+<td>?_profile=http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient</td>
+<td>Search by profile</td>
+</tr>
+<tr>
+<td>_sort</td>
+<td>?_sort=-date</td>
+<td>Sort results</td>
+</tr>
+<tr>
+<td>_count</td>
+<td>?_count=50</td>
+<td>Page size</td>
+</tr>
+<tr>
+<td>_include</td>
+<td>?_include=Patient:organization</td>
+<td>Include related resources</td>
+</tr>
+</tbody>
+</table>
 
-### Patient Search Parameters
+<h3>Patient Search Parameters</h3>
 
-\`\`\`http
-# By name
-GET [base]/Patient?family=Smith&given=John
+<pre><code class="language-http"># By name
+GET [base]/Patient?family=Smith&amp;given=John
 
 # By identifier
 GET [base]/Patient?identifier=http://hospital.org/mrn|12345
@@ -4969,32 +4968,28 @@ GET [base]/Patient?birthdate=1990-01-15
 GET [base]/Patient?gender=male
 
 # Combined
-GET [base]/Patient?family=Smith&birthdate=ge1990-01-01&_sort=family
-\`\`\`
+GET [base]/Patient?family=Smith&amp;birthdate=ge1990-01-01&amp;_sort=family</code></pre>
 
-### Observation Search
+<h3>Observation Search</h3>
 
-\`\`\`http
-# By patient
+<pre><code class="language-http"># By patient
 GET [base]/Observation?patient=Patient/123
 
 # By code
 GET [base]/Observation?code=http://loinc.org|718-7
 
 # By date range
-GET [base]/Observation?date=ge2024-01-01&date=le2024-12-31
+GET [base]/Observation?date=ge2024-01-01&amp;date=le2024-12-31
 
 # By value
 GET [base]/Observation?value-quantity=gt100
 
 # Combined
-GET [base]/Observation?patient=Patient/123&code=718-7&date=ge2024-01-01
-\`\`\`
+GET [base]/Observation?patient=Patient/123&amp;code=718-7&amp;date=ge2024-01-01</code></pre>
 
-### Search Modifiers
+<h3>Search Modifiers</h3>
 
-\`\`\`http
-# Exact match
+<pre><code class="language-http"># Exact match
 GET [base]/Patient?name:exact=John Smith
 
 # Contains
@@ -5004,31 +4999,29 @@ GET [base]/Patient?name:contains=Smith
 GET [base]/Patient?_text=diabetes
 
 # Missing
-GET [base]/Patient?gender:missing=true
-\`\`\`
+GET [base]/Patient?gender:missing=true</code></pre>
 
-### Search Prefixes
+<h3>Search Prefixes</h3>
 
-For numbers and dates:
+<p>For numbers and dates:</p>
 
-- **eq**: Equal (default)
-- **ne**: Not equal
-- **gt**: Greater than
-- **lt**: Less than
-- **ge**: Greater or equal
-- **le**: Less or equal
+<ul>
+<li><strong>eq</strong>: Equal (default)</li>
+<li><strong>ne</strong>: Not equal</li>
+<li><strong>gt</strong>: Greater than</li>
+<li><strong>lt</strong>: Less than</li>
+<li><strong>ge</strong>: Greater or equal</li>
+<li><strong>le</strong>: Less or equal</li>
+</ul>
 
-\`\`\`http
-GET [base]/Observation?value-quantity=gt100
-GET [base]/Observation?date=ge2024-01-01
-\`\`\`
+<pre><code class="language-http">GET [base]/Observation?value-quantity=gt100
+GET [base]/Observation?date=ge2024-01-01</code></pre>
 
-## Batch and Transaction
+<h2>Batch and Transaction</h2>
 
-### Batch Bundle
+<h3>Batch Bundle</h3>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "resourceType": "Bundle",
   "type": "batch",
   "entry": [{
@@ -5046,13 +5039,11 @@ GET [base]/Observation?date=ge2024-01-01
       "url": "Patient?family=Jones"
     }
   }]
-}
-\`\`\`
+}</code></pre>
 
-### Transaction Bundle
+<h3>Transaction Bundle</h3>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "resourceType": "Bundle",
   "type": "transaction",
   "entry": [{
@@ -5076,15 +5067,13 @@ GET [base]/Observation?date=ge2024-01-01
       }
     }
   }]
-}
-\`\`\`
+}</code></pre>
 
-## Python Examples
+<h2>Python Examples</h2>
 
-### Using requests
+<h3>Using requests</h3>
 
-\`\`\`python
-import requests
+<pre><code class="language-python">import requests
 
 BASE_URL = "https://hapi.fhir.org/baseR4"
 headers = {"Content-Type": "application/fhir+json"}
@@ -5117,13 +5106,11 @@ response = requests.put(
 )
 
 # Delete
-response = requests.delete(f"{BASE_URL}/Patient/123")
-\`\`\`
+response = requests.delete(f"{BASE_URL}/Patient/123")</code></pre>
 
-### Using fhirclient
+<h3>Using fhirclient</h3>
 
-\`\`\`python
-from fhirclient import client
+<pre><code class="language-python">from fhirclient import client
 
 settings = {
     'app_id': 'my_app',
@@ -5139,90 +5126,172 @@ patients = search.perform_resources(smart.server)
 
 # Read
 patient = p.Patient.read('123', smart.server)
-print(patient.name[0].family)
-\`\`\`
+print(patient.name[0].family)</code></pre>
 
-## Response Codes
+<h2>Response Codes</h2>
 
-| Code | Meaning | Description |
-|------|---------|-------------|
-| 200 | OK | Successful read |
-| 201 | Created | Resource created |
-| 204 | No Content | Successful delete |
-| 400 | Bad Request | Invalid request |
-| 401 | Unauthorized | Authentication required |
-| 403 | Forbidden | Insufficient permissions |
-| 404 | Not Found | Resource not found |
-| 409 | Conflict | Version conflict |
-| 422 | Unprocessable Entity | Validation error |
-| 500 | Server Error | Internal server error |
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+<td>Successful read</td>
+</tr>
+<tr>
+<td>201</td>
+<td>Created</td>
+<td>Resource created</td>
+</tr>
+<tr>
+<td>204</td>
+<td>No Content</td>
+<td>Successful delete</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+<td>Invalid request</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+<td>Authentication required</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+<td>Insufficient permissions</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+<td>Resource not found</td>
+</tr>
+<tr>
+<td>409</td>
+<td>Conflict</td>
+<td>Version conflict</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Unprocessable Entity</td>
+<td>Validation error</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Server Error</td>
+<td>Internal server error</td>
+</tr>
+</tbody>
+</table>
 
-## Common Headers
+<h2>Common Headers</h2>
 
-### Request Headers
+<h3>Request Headers</h3>
 
-\`\`\`http
-Content-Type: application/fhir+json
+<pre><code class="language-http">Content-Type: application/fhir+json
 Accept: application/fhir+json
 Authorization: Bearer [token]
 If-Match: W/"3"
-Prefer: return=representation
-\`\`\`
+Prefer: return=representation</code></pre>
 
-### Response Headers
+<h3>Response Headers</h3>
 
-\`\`\`http
-Location: http://example.org/fhir/Patient/123/_history/1
+<pre><code class="language-http">Location: http://example.org/fhir/Patient/123/_history/1
 ETag: W/"1"
-Last-Modified: Mon, 15 Jan 2024 10:00:00 GMT
-\`\`\`
+Last-Modified: Mon, 15 Jan 2024 10:00:00 GMT</code></pre>
 
-## Resources
+<h2>Resources</h2>
 
-- [FHIR RESTful API](http://hl7.org/fhir/http.html)
-- [FHIR Search](http://hl7.org/fhir/search.html)
-- [HAPI FHIR Server](https://hapifhir.io/)
+<ul>
+<li><a href="http://hl7.org/fhir/http.html" target="_blank">FHIR RESTful API</a></li>
+<li><a href="http://hl7.org/fhir/search.html" target="_blank">FHIR Search</a></li>
+<li><a href="https://hapifhir.io/" target="_blank">HAPI FHIR Server</a></li>
+</ul>
         `
     },
 
     'fhir-versions': {
         title: 'FHIR Versions',
         content: `
-# FHIR Versions
+<h1>FHIR Versions</h1>
 
-Understanding FHIR versions and migration strategies.
+<p>Understanding FHIR versions and migration strategies.</p>
 
-## FHIR Version History
+<h2>FHIR Version History</h2>
 
-| Version | Release | Status | Common Use |
-|---------|---------|--------|------------|
-| DSTU2 | 2015 | Retired | Legacy systems |
-| STU3 | 2017 | Mature | Some production |
-| R4 | 2019 | **Normative** | **Current standard** |
-| R4B | 2022 | Normative | Updates to R4 |
-| R5 | 2023 | Trial Use | Future/Testing |
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Release</th>
+<th>Status</th>
+<th>Common Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DSTU2</td>
+<td>2015</td>
+<td>Retired</td>
+<td>Legacy systems</td>
+</tr>
+<tr>
+<td>STU3</td>
+<td>2017</td>
+<td>Mature</td>
+<td>Some production</td>
+</tr>
+<tr>
+<td>R4</td>
+<td>2019</td>
+<td><strong>Normative</strong></td>
+<td><strong>Current standard</strong></td>
+</tr>
+<tr>
+<td>R4B</td>
+<td>2022</td>
+<td>Normative</td>
+<td>Updates to R4</td>
+</tr>
+<tr>
+<td>R5</td>
+<td>2023</td>
+<td>Trial Use</td>
+<td>Future/Testing</td>
+</tr>
+</tbody>
+</table>
 
-## Current Recommendation: R4
+<h2>Current Recommendation: R4</h2>
 
-**FHIR R4** is the current normative version and recommended for all new implementations.
+<p><strong>FHIR R4</strong> is the current normative version and recommended for all new implementations.</p>
 
-### Why R4?
+<h3>Why R4?</h3>
 
-- ✅ Normative status (stable, no breaking changes)
-- ✅ Wide industry adoption
-- ✅ US Core 3.1+ based on R4
-- ✅ Best tooling support
-- ✅ Mature implementation guides
+<ul>
+<li>Normative status (stable, no breaking changes)</li>
+<li>Wide industry adoption</li>
+<li>US Core 3.1+ based on R4</li>
+<li>Best tooling support</li>
+<li>Mature implementation guides</li>
+</ul>
 
-## Version Differences
+<h2>Version Differences</h2>
 
-### DSTU2 vs R4
+<h3>DSTU2 vs R4</h3>
 
-Major changes between DSTU2 and R4:
+<p>Major changes between DSTU2 and R4:</p>
 
-**Patient Resource**
-\`\`\`json
-// DSTU2
+<p><strong>Patient Resource</strong></p>
+<pre><code class="language-json">// DSTU2
 {
   "name": {
     "family": ["Smith"],
@@ -5236,87 +5305,87 @@ Major changes between DSTU2 and R4:
     "family": "Smith",
     "given": ["John"]
   }]
-}
-\`\`\`
+}</code></pre>
 
-**Observation Status**
-- DSTU2: \`status\` values different
-- R4: Standardized status codes
+<p><strong>Observation Status</strong></p>
+<ul>
+<li>DSTU2: <code>status</code> values different</li>
+<li>R4: Standardized status codes</li>
+</ul>
 
-### STU3 vs R4
+<h3>STU3 vs R4</h3>
 
-More minor changes:
+<p>More minor changes:</p>
 
-**CodeableConcept**
-- Structure mostly same
-- Some value sets updated
+<p><strong>CodeableConcept</strong></p>
+<ul>
+<li>Structure mostly same</li>
+<li>Some value sets updated</li>
+</ul>
 
-**References**
-- R4 added \`identifier\` to Reference type
+<p><strong>References</strong></p>
+<ul>
+<li>R4 added <code>identifier</code> to Reference type</li>
+</ul>
 
-### R4 vs R5
+<h3>R4 vs R5</h3>
 
-R5 introduces new features:
+<p>R5 introduces new features:</p>
 
-- New resource types
-- Enhanced search capabilities
-- Improved subscription framework
-- Better support for genomics
+<ul>
+<li>New resource types</li>
+<li>Enhanced search capabilities</li>
+<li>Improved subscription framework</li>
+<li>Better support for genomics</li>
+</ul>
 
-## Checking FHIR Version
+<h2>Checking FHIR Version</h2>
 
-### From Resource
+<h3>From Resource</h3>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "resourceType": "Patient",
   "meta": {
     "versionId": "1",
     "lastUpdated": "2024-01-15T10:00:00Z"
   },
   "fhirVersion": "4.0.1"
-}
-\`\`\`
+}</code></pre>
 
-### From CapabilityStatement
+<h3>From CapabilityStatement</h3>
 
-\`\`\`http
-GET [base]/metadata
-\`\`\`
+<pre><code class="language-http">GET [base]/metadata</code></pre>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "resourceType": "CapabilityStatement",
   "fhirVersion": "4.0.1",
   "format": ["application/fhir+json"]
-}
-\`\`\`
+}</code></pre>
 
-### In Python
+<h3>In Python</h3>
 
-\`\`\`python
-from fhir.resources import FHIRAbstractModel
+<pre><code class="language-python">from fhir.resources import FHIRAbstractModel
 
 # Check library version
 print(FHIRAbstractModel.fhir_release())  # R4
 
 # Specify version when creating
 from fhir.resources.patient import Patient
-patient = Patient()  # Defaults to R4
-\`\`\`
+patient = Patient()  # Defaults to R4</code></pre>
 
-## Migration Strategies
+<h2>Migration Strategies</h2>
 
-### DSTU2 to R4
+<h3>DSTU2 to R4</h3>
 
-1. **Identify Breaking Changes**
-   - Name structure (array vs object)
-   - Status codes
-   - Removed elements
+<p><strong>1. Identify Breaking Changes</strong></p>
+<ul>
+<li>Name structure (array vs object)</li>
+<li>Status codes</li>
+<li>Removed elements</li>
+</ul>
 
-2. **Update Code**
-\`\`\`python
-def migrate_dstu2_to_r4_patient(dstu2_patient):
+<p><strong>2. Update Code</strong></p>
+<pre><code class="language-python">def migrate_dstu2_to_r4_patient(dstu2_patient):
     """Migrate DSTU2 Patient to R4"""
     r4_patient = {
         "resourceType": "Patient",
@@ -5336,25 +5405,27 @@ def migrate_dstu2_to_r4_patient(dstu2_patient):
         if field in dstu2_patient:
             r4_patient[field] = dstu2_patient[field]
 
-    return r4_patient
-\`\`\`
+    return r4_patient</code></pre>
 
-3. **Test Thoroughly**
-   - Validate migrated resources
-   - Test with actual FHIR R4 server
-   - Check all resource types
+<p><strong>3. Test Thoroughly</strong></p>
+<ul>
+<li>Validate migrated resources</li>
+<li>Test with actual FHIR R4 server</li>
+<li>Check all resource types</li>
+</ul>
 
-4. **Migrate Data**
-   - Export from DSTU2 server
-   - Transform resources
-   - Import to R4 server
+<p><strong>4. Migrate Data</strong></p>
+<ul>
+<li>Export from DSTU2 server</li>
+<li>Transform resources</li>
+<li>Import to R4 server</li>
+</ul>
 
-### Version-Agnostic Code
+<h3>Version-Agnostic Code</h3>
 
-Write code that handles multiple versions:
+<p>Write code that handles multiple versions:</p>
 
-\`\`\`python
-def get_patient_family_name(patient_resource):
+<pre><code class="language-python">def get_patient_family_name(patient_resource):
     """Get family name regardless of FHIR version"""
     name = patient_resource.get("name")
 
@@ -5369,374 +5440,497 @@ def get_patient_family_name(patient_resource):
             return family[0]
         return family
 
-    return None
-\`\`\`
+    return None</code></pre>
 
-## Version-Specific Validation
+<h2>Version-Specific Validation</h2>
 
-\`\`\`bash
-# Validate against specific version
+<pre><code class="language-bash"># Validate against specific version
 java -jar validator_cli.jar patient.json -version 4.0.1
 
 # Validate against DSTU2
 java -jar validator_cli.jar patient.json -version 1.0.2
 
 # Validate against R5
-java -jar validator_cli.jar patient.json -version 5.0.0
-\`\`\`
+java -jar validator_cli.jar patient.json -version 5.0.0</code></pre>
 
-## US Core Versions
+<h2>US Core Versions</h2>
 
-US Core versions are tied to FHIR versions:
+<p>US Core versions are tied to FHIR versions:</p>
 
-| US Core | FHIR Version | Status |
-|---------|--------------|--------|
-| 3.1.1 | R4 | Current |
-| 4.0.0 | R4 | Latest |
-| 5.0.1 | R4 | Latest |
-| 6.1.0 | R4 | Current STU |
+<table>
+<thead>
+<tr>
+<th>US Core</th>
+<th>FHIR Version</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3.1.1</td>
+<td>R4</td>
+<td>Current</td>
+</tr>
+<tr>
+<td>4.0.0</td>
+<td>R4</td>
+<td>Latest</td>
+</tr>
+<tr>
+<td>5.0.1</td>
+<td>R4</td>
+<td>Latest</td>
+</tr>
+<tr>
+<td>6.1.0</td>
+<td>R4</td>
+<td>Current STU</td>
+</tr>
+</tbody>
+</table>
 
-## Implementation Guides
+<h2>Implementation Guides</h2>
 
-Check IG FHIR version requirements:
+<p>Check IG FHIR version requirements:</p>
 
-\`\`\`json
-{
+<pre><code class="language-json">{
   "resourceType": "ImplementationGuide",
   "fhirVersion": ["4.0.1"],
   "dependsOn": [{
     "uri": "http://hl7.org/fhir/us/core/ImplementationGuide/hl7.fhir.us.core",
     "version": "3.1.1"
   }]
-}
-\`\`\`
+}</code></pre>
 
-## Best Practices
+<h2>Best Practices</h2>
 
-### 1. Stay on R4
+<h3>1. Stay on R4</h3>
 
-Unless you have a specific reason, use R4:
-- Most stable
-- Best support
-- Required for US Core
+<p>Unless you have a specific reason, use R4:</p>
+<ul>
+<li>Most stable</li>
+<li>Best support</li>
+<li>Required for US Core</li>
+</ul>
 
-### 2. Check Dependencies
+<h3>2. Check Dependencies</h3>
 
-Ensure all IGs and profiles support your FHIR version.
+<p>Ensure all IGs and profiles support your FHIR version.</p>
 
-### 3. Version in URLs
+<h3>3. Version in URLs</h3>
 
-Include version in profile URLs:
-\`\`\`
-http://hl7.org/fhir/4.0/StructureDefinition/Patient
-\`\`\`
+<p>Include version in profile URLs:</p>
+<pre><code>http://hl7.org/fhir/4.0/StructureDefinition/Patient</code></pre>
 
-### 4. Test Cross-Version
+<h3>4. Test Cross-Version</h3>
 
-If supporting multiple versions, test against each.
+<p>If supporting multiple versions, test against each.</p>
 
-### 5. Document Version Requirements
+<h3>5. Document Version Requirements</h3>
 
-In your documentation, clearly state:
-- Supported FHIR versions
-- Recommended version
-- Migration path
+<p>In your documentation, clearly state:</p>
+<ul>
+<li>Supported FHIR versions</li>
+<li>Recommended version</li>
+<li>Migration path</li>
+</ul>
 
-## Future-Proofing
+<h2>Future-Proofing</h2>
 
-### Monitor R5
+<h3>Monitor R5</h3>
 
-R5 introduces:
-- Better subscriptions
-- Expanded CodeableConcept
-- New resource types
+<p>R5 introduces:</p>
+<ul>
+<li>Better subscriptions</li>
+<li>Expanded CodeableConcept</li>
+<li>New resource types</li>
+</ul>
 
-### Plan for Migration
+<h3>Plan for Migration</h3>
 
-- Keep up with announcements
-- Test with R5 preview
-- Plan migration timeline
+<ul>
+<li>Keep up with announcements</li>
+<li>Test with R5 preview</li>
+<li>Plan migration timeline</li>
+</ul>
 
-## Resources
+<h2>Resources</h2>
 
-- [FHIR Version History](http://hl7.org/fhir/history.html)
-- [R4 Specification](http://hl7.org/fhir/R4/)
-- [R5 Preview](http://hl7.org/fhir/R5/)
-- [Version Comparison Tool](https://www.hl7.org/fhir/comparison.html)
+<ul>
+<li><a href="http://hl7.org/fhir/history.html" target="_blank">FHIR Version History</a></li>
+<li><a href="http://hl7.org/fhir/R4/" target="_blank">R4 Specification</a></li>
+<li><a href="http://hl7.org/fhir/R5/" target="_blank">R5 Preview</a></li>
+<li><a href="https://www.hl7.org/fhir/comparison.html" target="_blank">Version Comparison Tool</a></li>
+</ul>
         `
     },
 
     'glossary': {
         title: 'FHIR Glossary',
         content: `
-# FHIR Glossary
+<h1>FHIR Glossary</h1>
 
-Common FHIR terms and acronyms explained.
+<p>Common FHIR terms and acronyms explained.</p>
 
-## A
+<h2>A</h2>
 
-**API (Application Programming Interface)**
-Interface for software to interact with FHIR servers.
+<p><strong>API (Application Programming Interface)</strong><br>
+Interface for software to interact with FHIR servers.</p>
 
-## B
+<h2>B</h2>
 
-**Bundle**
-A collection of resources grouped together for transport or storage.
+<p><strong>Bundle</strong><br>
+A collection of resources grouped together for transport or storage.</p>
 
-**Base URL**
-The root URL of a FHIR server (e.g., https://example.org/fhir).
+<p><strong>Base URL</strong><br>
+The root URL of a FHIR server (e.g., https://example.org/fhir).</p>
 
-## C
+<h2>C</h2>
 
-**C-CDA (Consolidated Clinical Document Architecture)**
-HL7 standard for clinical documents, often mapped to FHIR.
+<p><strong>C-CDA (Consolidated Clinical Document Architecture)</strong><br>
+HL7 standard for clinical documents, often mapped to FHIR.</p>
 
-**Capability Statement**
-Resource describing what a FHIR server can do.
+<p><strong>Capability Statement</strong><br>
+Resource describing what a FHIR server can do.</p>
 
-**Cardinality**
-How many times an element can appear (0..1, 1..1, 0..*, 1..*).
+<p><strong>Cardinality</strong><br>
+How many times an element can appear (0..1, 1..1, 0..*, 1..*).</p>
 
-**Code**
-A symbol defined by a terminology system.
+<p><strong>Code</strong><br>
+A symbol defined by a terminology system.</p>
 
-**CodeableConcept**
-A value represented by codes from one or more terminologies.
+<p><strong>CodeableConcept</strong><br>
+A value represented by codes from one or more terminologies.</p>
 
-**Coding**
-A single code from a terminology system.
+<p><strong>Coding</strong><br>
+A single code from a terminology system.</p>
 
-**Conformance**
-How well an implementation matches FHIR specifications.
+<p><strong>Conformance</strong><br>
+How well an implementation matches FHIR specifications.</p>
 
-**Contained Resource**
-Resource embedded inside another resource.
+<p><strong>Contained Resource</strong><br>
+Resource embedded inside another resource.</p>
 
-## D
+<h2>D</h2>
 
-**DSTU (Draft Standard for Trial Use)**
-Early FHIR versions (DSTU1, DSTU2).
+<p><strong>DSTU (Draft Standard for Trial Use)</strong><br>
+Early FHIR versions (DSTU1, DSTU2).</p>
 
-## E
+<h2>E</h2>
 
-**Element**
-A single data field in a FHIR resource.
+<p><strong>Element</strong><br>
+A single data field in a FHIR resource.</p>
 
-**EHR (Electronic Health Record)**
-Digital patient health information system.
+<p><strong>EHR (Electronic Health Record)</strong><br>
+Digital patient health information system.</p>
 
-**Extension**
-Additional data not in base FHIR specification.
+<p><strong>Extension</strong><br>
+Additional data not in base FHIR specification.</p>
 
-## F
+<h2>F</h2>
 
-**FHIR (Fast Healthcare Interoperability Resources)**
-HL7 standard for healthcare data exchange.
+<p><strong>FHIR (Fast Healthcare Interoperability Resources)</strong><br>
+HL7 standard for healthcare data exchange.</p>
 
-**FHIRPath**
-Query language for navigating FHIR resources.
+<p><strong>FHIRPath</strong><br>
+Query language for navigating FHIR resources.</p>
 
-**FSH (FHIR Shorthand)**
-Domain-specific language for defining FHIR artifacts.
+<p><strong>FSH (FHIR Shorthand)</strong><br>
+Domain-specific language for defining FHIR artifacts.</p>
 
-## H
+<h2>H</h2>
 
-**HL7 (Health Level Seven)**
-International standards organization for healthcare IT.
+<p><strong>HL7 (Health Level Seven)</strong><br>
+International standards organization for healthcare IT.</p>
 
-**HAPI FHIR**
-Popular open-source FHIR server and library.
+<p><strong>HAPI FHIR</strong><br>
+Popular open-source FHIR server and library.</p>
 
-## I
+<h2>I</h2>
 
-**Identifier**
-Unique ID for a resource or entity.
+<p><strong>Identifier</strong><br>
+Unique ID for a resource or entity.</p>
 
-**IG (Implementation Guide)**
-Documentation for using FHIR in specific contexts.
+<p><strong>IG (Implementation Guide)</strong><br>
+Documentation for using FHIR in specific contexts.</p>
 
-**Interoperability**
-Ability of systems to exchange and use information.
+<p><strong>Interoperability</strong><br>
+Ability of systems to exchange and use information.</p>
 
-## L
+<h2>L</h2>
 
-**LOINC (Logical Observation Identifiers Names and Codes)**
-Standard for lab and clinical observations.
+<p><strong>LOINC (Logical Observation Identifiers Names and Codes)</strong><br>
+Standard for lab and clinical observations.</p>
 
-## M
+<h2>M</h2>
 
-**Mapping**
-Transformation from one data format to FHIR.
+<p><strong>Mapping</strong><br>
+Transformation from one data format to FHIR.</p>
 
-**Meta**
-Metadata about a resource (version, profile, tags).
+<p><strong>Meta</strong><br>
+Metadata about a resource (version, profile, tags).</p>
 
-**Modifier Extension**
-Extension that changes the meaning of a resource.
+<p><strong>Modifier Extension</strong><br>
+Extension that changes the meaning of a resource.</p>
 
-## N
+<h2>N</h2>
 
-**Narrative**
-Human-readable summary of a resource.
+<p><strong>Narrative</strong><br>
+Human-readable summary of a resource.</p>
 
-**NDJSON (Newline Delimited JSON)**
-Format for bulk FHIR data (one resource per line).
+<p><strong>NDJSON (Newline Delimited JSON)</strong><br>
+Format for bulk FHIR data (one resource per line).</p>
 
-**Normative**
-Stable FHIR specification that won't have breaking changes.
+<p><strong>Normative</strong><br>
+Stable FHIR specification that won't have breaking changes.</p>
 
-## O
+<h2>O</h2>
 
-**Observation**
-FHIR resource for measurements and assertions.
+<p><strong>Observation</strong><br>
+FHIR resource for measurements and assertions.</p>
 
-## P
+<h2>P</h2>
 
-**Patient**
-FHIR resource representing an individual receiving care.
+<p><strong>Patient</strong><br>
+FHIR resource representing an individual receiving care.</p>
 
-**Profile**
-Constraints on base FHIR resources for specific use cases.
+<p><strong>Profile</strong><br>
+Constraints on base FHIR resources for specific use cases.</p>
 
-**Practitioner**
-FHIR resource for healthcare providers.
+<p><strong>Practitioner</strong><br>
+FHIR resource for healthcare providers.</p>
 
-## Q
+<h2>Q</h2>
 
-**Quantity**
-Numerical value with unit of measure.
+<p><strong>Quantity</strong><br>
+Numerical value with unit of measure.</p>
 
-## R
+<h2>R</h2>
 
-**R4**
-Current normative version of FHIR (4.0).
+<p><strong>R4</strong><br>
+Current normative version of FHIR (4.0).</p>
 
-**Reference**
-Link from one resource to another.
+<p><strong>Reference</strong><br>
+Link from one resource to another.</p>
 
-**Resource**
-Basic unit of interoperability in FHIR.
+<p><strong>Resource</strong><br>
+Basic unit of interoperability in FHIR.</p>
 
-**REST (Representational State Transfer)**
-API architectural style used by FHIR.
+<p><strong>REST (Representational State Transfer)</strong><br>
+API architectural style used by FHIR.</p>
 
-**RxNorm**
-Standard for medications and drugs.
+<p><strong>RxNorm</strong><br>
+Standard for medications and drugs.</p>
 
-## S
+<h2>S</h2>
 
-**Search Parameter**
-Query criteria for finding FHIR resources.
+<p><strong>Search Parameter</strong><br>
+Query criteria for finding FHIR resources.</p>
 
-**SNOMED CT**
-Comprehensive clinical terminology system.
-
-**STU (Standard for Trial Use)**
-FHIR version in testing (STU3).
-
-**StructureDefinition**
-Defines the structure of resources and profiles.
-
-**StructureMap**
-FHIR resource for defining data transformations.
-
-## T
-
-**Terminology**
-Systems of codes and concepts (LOINC, SNOMED, etc.).
-
-**Transaction**
-Atomic bundle of operations that succeed or fail together.
-
-## U
-
-**UCUM (Unified Code for Units of Measure)**
-Standard for units of measurement.
-
-**US Core**
-US-specific FHIR profiles and requirements.
-
-**USCDI (United States Core Data for Interoperability)**
-Standardized set of health data classes and elements.
-
-## V
-
-**Validation**
-Checking if resources conform to FHIR specifications.
-
-**Value Set**
-Set of codes from one or more terminologies.
-
-**Version**
-Specific release of FHIR (DSTU2, STU3, R4, R5).
-
-## Common Acronyms
-
-- **API**: Application Programming Interface
-- **C-CDA**: Consolidated Clinical Document Architecture
-- **CMS**: Centers for Medicare & Medicaid Services
-- **DSTU**: Draft Standard for Trial Use
-- **EHR**: Electronic Health Record
-- **FHIR**: Fast Healthcare Interoperability Resources
-- **FSH**: FHIR Shorthand
-- **HL7**: Health Level Seven
-- **HIPAA**: Health Insurance Portability and Accountability Act
-- **ICD**: International Classification of Diseases
-- **IG**: Implementation Guide
-- **JSON**: JavaScript Object Notation
-- **LOINC**: Logical Observation Identifiers Names and Codes
-- **NDJSON**: Newline Delimited JSON
-- **ONC**: Office of the National Coordinator for Health IT
-- **REST**: Representational State Transfer
-- **RxNorm**: Normalized naming system for medications
-- **SMART**: Substitutable Medical Applications, Reusable Technologies
-- **SNOMED**: Systematized Nomenclature of Medicine
-- **STU**: Standard for Trial Use
-- **UCUM**: Unified Code for Units of Measure
-- **URI**: Uniform Resource Identifier
-- **URL**: Uniform Resource Locator
-- **XML**: Extensible Markup Language
-
-## Resource Types Quick Reference
-
-| Resource | Purpose |
-|----------|---------|
-| Patient | Individual receiving care |
-| Observation | Measurements and assertions |
-| Condition | Problems and diagnoses |
-| Medication | Medication definitions |
-| MedicationRequest | Prescription orders |
-| Procedure | Actions performed |
-| Encounter | Healthcare visits |
-| Practitioner | Healthcare providers |
-| Organization | Healthcare organizations |
-| Location | Physical places |
-| AllergyIntolerance | Allergies and intolerances |
-| Immunization | Vaccinations |
-| DiagnosticReport | Diagnostic test results |
-| DocumentReference | Clinical documents |
-
-## Data Types Quick Reference
-
-| Type | Example |
-|------|---------|
-| string | "John Smith" |
-| integer | 42 |
-| decimal | 98.6 |
-| boolean | true |
-| date | "2024-01-15" |
-| dateTime | "2024-01-15T10:30:00Z" |
-| code | "male" |
-| uri | "http://example.org" |
-| Reference | {"reference": "Patient/123"} |
-| CodeableConcept | {"coding": [{"system": "...", "code": "..."}]} |
-| Quantity | {"value": 5, "unit": "mg"} |
-
-## See Also
-
-- [FHIR Specification](http://hl7.org/fhir/)
-- [US Core](http://hl7.org/fhir/us/core/)
-- [FHIR Mapping Guide](#intro)
+<p><strong>SNOMED CT</strong><br>
+Comprehensive clinical terminology system.</p>
+
+<p><strong>STU (Standard for Trial Use)</strong><br>
+FHIR version in testing (STU3).</p>
+
+<p><strong>StructureDefinition</strong><br>
+Defines the structure of resources and profiles.</p>
+
+<p><strong>StructureMap</strong><br>
+FHIR resource for defining data transformations.</p>
+
+<h2>T</h2>
+
+<p><strong>Terminology</strong><br>
+Systems of codes and concepts (LOINC, SNOMED, etc.).</p>
+
+<p><strong>Transaction</strong><br>
+Atomic bundle of operations that succeed or fail together.</p>
+
+<h2>U</h2>
+
+<p><strong>UCUM (Unified Code for Units of Measure)</strong><br>
+Standard for units of measurement.</p>
+
+<p><strong>US Core</strong><br>
+US-specific FHIR profiles and requirements.</p>
+
+<p><strong>USCDI (United States Core Data for Interoperability)</strong><br>
+Standardized set of health data classes and elements.</p>
+
+<h2>V</h2>
+
+<p><strong>Validation</strong><br>
+Checking if resources conform to FHIR specifications.</p>
+
+<p><strong>Value Set</strong><br>
+Set of codes from one or more terminologies.</p>
+
+<p><strong>Version</strong><br>
+Specific release of FHIR (DSTU2, STU3, R4, R5).</p>
+
+<h2>Common Acronyms</h2>
+
+<ul>
+<li><strong>API</strong>: Application Programming Interface</li>
+<li><strong>C-CDA</strong>: Consolidated Clinical Document Architecture</li>
+<li><strong>CMS</strong>: Centers for Medicare &amp; Medicaid Services</li>
+<li><strong>DSTU</strong>: Draft Standard for Trial Use</li>
+<li><strong>EHR</strong>: Electronic Health Record</li>
+<li><strong>FHIR</strong>: Fast Healthcare Interoperability Resources</li>
+<li><strong>FSH</strong>: FHIR Shorthand</li>
+<li><strong>HL7</strong>: Health Level Seven</li>
+<li><strong>HIPAA</strong>: Health Insurance Portability and Accountability Act</li>
+<li><strong>ICD</strong>: International Classification of Diseases</li>
+<li><strong>IG</strong>: Implementation Guide</li>
+<li><strong>JSON</strong>: JavaScript Object Notation</li>
+<li><strong>LOINC</strong>: Logical Observation Identifiers Names and Codes</li>
+<li><strong>NDJSON</strong>: Newline Delimited JSON</li>
+<li><strong>ONC</strong>: Office of the National Coordinator for Health IT</li>
+<li><strong>REST</strong>: Representational State Transfer</li>
+<li><strong>RxNorm</strong>: Normalized naming system for medications</li>
+<li><strong>SMART</strong>: Substitutable Medical Applications, Reusable Technologies</li>
+<li><strong>SNOMED</strong>: Systematized Nomenclature of Medicine</li>
+<li><strong>STU</strong>: Standard for Trial Use</li>
+<li><strong>UCUM</strong>: Unified Code for Units of Measure</li>
+<li><strong>URI</strong>: Uniform Resource Identifier</li>
+<li><strong>URL</strong>: Uniform Resource Locator</li>
+<li><strong>XML</strong>: Extensible Markup Language</li>
+</ul>
+
+<h2>Resource Types Quick Reference</h2>
+
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Patient</td>
+<td>Individual receiving care</td>
+</tr>
+<tr>
+<td>Observation</td>
+<td>Measurements and assertions</td>
+</tr>
+<tr>
+<td>Condition</td>
+<td>Problems and diagnoses</td>
+</tr>
+<tr>
+<td>Medication</td>
+<td>Medication definitions</td>
+</tr>
+<tr>
+<td>MedicationRequest</td>
+<td>Prescription orders</td>
+</tr>
+<tr>
+<td>Procedure</td>
+<td>Actions performed</td>
+</tr>
+<tr>
+<td>Encounter</td>
+<td>Healthcare visits</td>
+</tr>
+<tr>
+<td>Practitioner</td>
+<td>Healthcare providers</td>
+</tr>
+<tr>
+<td>Organization</td>
+<td>Healthcare organizations</td>
+</tr>
+<tr>
+<td>Location</td>
+<td>Physical places</td>
+</tr>
+<tr>
+<td>AllergyIntolerance</td>
+<td>Allergies and intolerances</td>
+</tr>
+<tr>
+<td>Immunization</td>
+<td>Vaccinations</td>
+</tr>
+<tr>
+<td>DiagnosticReport</td>
+<td>Diagnostic test results</td>
+</tr>
+<tr>
+<td>DocumentReference</td>
+<td>Clinical documents</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Data Types Quick Reference</h2>
+
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>string</td>
+<td>"John Smith"</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>42</td>
+</tr>
+<tr>
+<td>decimal</td>
+<td>98.6</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>true</td>
+</tr>
+<tr>
+<td>date</td>
+<td>"2024-01-15"</td>
+</tr>
+<tr>
+<td>dateTime</td>
+<td>"2024-01-15T10:30:00Z"</td>
+</tr>
+<tr>
+<td>code</td>
+<td>"male"</td>
+</tr>
+<tr>
+<td>uri</td>
+<td>"http://example.org"</td>
+</tr>
+<tr>
+<td>Reference</td>
+<td>{"reference": "Patient/123"}</td>
+</tr>
+<tr>
+<td>CodeableConcept</td>
+<td>{"coding": [{"system": "...", "code": "..."}]}</td>
+</tr>
+<tr>
+<td>Quantity</td>
+<td>{"value": 5, "unit": "mg"}</td>
+</tr>
+</tbody>
+</table>
+
+<h2>See Also</h2>
+
+<ul>
+<li><a href="http://hl7.org/fhir/" target="_blank">FHIR Specification</a></li>
+<li><a href="http://hl7.org/fhir/us/core/" target="_blank">US Core</a></li>
+<li><a href="#intro">FHIR Mapping Guide</a></li>
+</ul>
         `
     }
 };
