@@ -5932,6 +5932,2519 @@ Specific release of FHIR (DSTU2, STU3, R4, R5).</p>
 <li><a href="#intro">FHIR Mapping Guide</a></li>
 </ul>
         `
+    },
+
+    'us-core-crosswalks': {
+        title: 'US Core & CARIN BB Crosswalks',
+        content: `
+<h1>US Core & CARIN BB Crosswalks</h1>
+
+<p>Resource-by-resource mapping guidance for US Core and CARIN Blue Button (CARIN BB) implementation guides.</p>
+
+<h2>Overview</h2>
+
+<p>This section provides detailed crosswalks for mapping source data to US Core and CARIN BB profiles, including Must Support elements, cardinality requirements, and terminology bindings.</p>
+
+<div class="info-box">
+<strong>Must Support Definition:</strong> Elements marked as "Must Support" must be populated if the data is available in the source system. If you don't have the data, you can omit it, but if you have it, you must include it.
+</div>
+
+<h2>US Core Patient Crosswalk</h2>
+
+<h3>Profile: US Core Patient (v6.1.0)</h3>
+
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Cardinality</th>
+<th>Must Support</th>
+<th>Terminology</th>
+<th>Source Mapping Guidance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>identifier</td>
+<td>1..*</td>
+<td>✓</td>
+<td>-</td>
+<td>Map MRN, SSN (last 4), or other patient identifiers. Include system URL.</td>
+</tr>
+<tr>
+<td>identifier.system</td>
+<td>1..1</td>
+<td>✓</td>
+<td>-</td>
+<td>Use organization-specific URN (e.g., urn:oid:2.16.840.1.113883.4.1 for SSN)</td>
+</tr>
+<tr>
+<td>identifier.value</td>
+<td>1..1</td>
+<td>✓</td>
+<td>-</td>
+<td>The actual identifier value</td>
+</tr>
+<tr>
+<td>name</td>
+<td>1..*</td>
+<td>✓</td>
+<td>-</td>
+<td>At least one name required. Include family and given.</td>
+</tr>
+<tr>
+<td>name.family</td>
+<td>0..1</td>
+<td>✓</td>
+<td>-</td>
+<td>Last name / surname</td>
+</tr>
+<tr>
+<td>name.given</td>
+<td>0..*</td>
+<td>✓</td>
+<td>-</td>
+<td>First name, middle name(s)</td>
+</tr>
+<tr>
+<td>telecom</td>
+<td>0..*</td>
+<td>✓</td>
+<td>ContactPointSystem</td>
+<td>Phone, email, fax. Include system (phone/email) and value.</td>
+</tr>
+<tr>
+<td>gender</td>
+<td>1..1</td>
+<td>✓</td>
+<td>male | female | other | unknown</td>
+<td>Required. Use 'unknown' if not available.</td>
+</tr>
+<tr>
+<td>birthDate</td>
+<td>0..1</td>
+<td>✓</td>
+<td>-</td>
+<td>Format: YYYY-MM-DD. Partial dates allowed (YYYY or YYYY-MM).</td>
+</tr>
+<tr>
+<td>address</td>
+<td>0..*</td>
+<td>✓</td>
+<td>-</td>
+<td>Street, city, state, postal code, country</td>
+</tr>
+<tr>
+<td>communication</td>
+<td>0..*</td>
+<td>✓</td>
+<td>ValueSet: Languages</td>
+<td>Preferred language(s). Use ISO 639-1 codes (en, es, etc.)</td>
+</tr>
+<tr>
+<td>extension: race</td>
+<td>0..1</td>
+<td>✓</td>
+<td>US Core Race</td>
+<td>OMB race categories + detailed race codes</td>
+</tr>
+<tr>
+<td>extension: ethnicity</td>
+<td>0..1</td>
+<td>✓</td>
+<td>US Core Ethnicity</td>
+<td>Hispanic/Latino ethnicity</td>
+</tr>
+<tr>
+<td>extension: birthsex</td>
+<td>0..1</td>
+<td>✓</td>
+<td>M | F | UNK</td>
+<td>Birth sex (different from gender identity)</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Example US Core Patient Mapping</h3>
+
+<pre><code class="language-python">from fhir.resources.patient import Patient
+from fhir.resources.extension import Extension
+from fhir.resources.coding import Coding
+
+def map_to_us_core_patient(source_data):
+    """Map source data to US Core Patient profile"""
+
+    patient = Patient(
+        identifier=[{
+            "use": "usual",
+            "type": {
+                "coding": [{
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "MR"
+                }]
+            },
+            "system": "urn:oid:2.16.840.1.113883.3.example",
+            "value": source_data["mrn"]
+        }],
+        name=[{
+            "use": "official",
+            "family": source_data["last_name"],
+            "given": [source_data["first_name"], source_data.get("middle_name")]
+        }],
+        telecom=[
+            {
+                "system": "phone",
+                "value": source_data.get("phone"),
+                "use": "home"
+            },
+            {
+                "system": "email",
+                "value": source_data.get("email"),
+                "use": "home"
+            }
+        ],
+        gender=source_data.get("gender", "unknown"),
+        birthDate=source_data["birth_date"],
+        address=[{
+            "use": "home",
+            "line": [source_data.get("street_address")],
+            "city": source_data.get("city"),
+            "state": source_data.get("state"),
+            "postalCode": source_data.get("zip"),
+            "country": "US"
+        }]
+    )
+
+    # Add US Core race extension
+    if source_data.get("race"):
+        race_ext = Extension(
+            url="http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            extension=[
+                {
+                    "url": "ombCategory",
+                    "valueCoding": {
+                        "system": "urn:oid:2.16.840.1.113883.6.238",
+                        "code": source_data["race"],
+                        "display": get_race_display(source_data["race"])
+                    }
+                },
+                {
+                    "url": "text",
+                    "valueString": get_race_display(source_data["race"])
+                }
+            ]
+        )
+        patient.extension = patient.extension or []
+        patient.extension.append(race_ext)
+
+    # Add US Core ethnicity extension
+    if source_data.get("ethnicity"):
+        ethnicity_ext = Extension(
+            url="http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            extension=[
+                {
+                    "url": "ombCategory",
+                    "valueCoding": {
+                        "system": "urn:oid:2.16.840.1.113883.6.238",
+                        "code": source_data["ethnicity"],
+                        "display": get_ethnicity_display(source_data["ethnicity"])
+                    }
+                },
+                {
+                    "url": "text",
+                    "valueString": get_ethnicity_display(source_data["ethnicity"])
+                }
+            ]
+        )
+        patient.extension = patient.extension or []
+        patient.extension.append(ethnicity_ext)
+
+    # Add birth sex extension
+    if source_data.get("birth_sex"):
+        birthsex_ext = Extension(
+            url="http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            valueCode=source_data["birth_sex"]
+        )
+        patient.extension = patient.extension or []
+        patient.extension.append(birthsex_ext)
+
+    return patient
+</code></pre>
+
+<h2>US Core Observation (Lab) Crosswalk</h2>
+
+<h3>Profile: US Core Laboratory Result Observation</h3>
+
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Cardinality</th>
+<th>Must Support</th>
+<th>Terminology</th>
+<th>Source Mapping Guidance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>status</td>
+<td>1..1</td>
+<td>✓</td>
+<td>registered | preliminary | final | amended +</td>
+<td>Result status. Use 'final' for completed results.</td>
+</tr>
+<tr>
+<td>category</td>
+<td>1..*</td>
+<td>✓</td>
+<td>US Core Category</td>
+<td>Must include "laboratory". Can add additional categories.</td>
+</tr>
+<tr>
+<td>code</td>
+<td>1..1</td>
+<td>✓</td>
+<td>LOINC (extensible)</td>
+<td>Test code. LOINC preferred, local codes allowed with mapping.</td>
+</tr>
+<tr>
+<td>subject</td>
+<td>1..1</td>
+<td>✓</td>
+<td>Reference(US Core Patient)</td>
+<td>Patient reference. Must resolve to US Core Patient.</td>
+</tr>
+<tr>
+<td>effectiveDateTime</td>
+<td>0..1</td>
+<td>✓</td>
+<td>-</td>
+<td>Specimen collection or observation time. Required if available.</td>
+</tr>
+<tr>
+<td>valueQuantity</td>
+<td>0..1</td>
+<td>✓</td>
+<td>UCUM for units</td>
+<td>Numeric result with unit. Use UCUM units (mg/dL, mmol/L, etc.).</td>
+</tr>
+<tr>
+<td>valueCodeableConcept</td>
+<td>0..1</td>
+<td>✓</td>
+<td>SNOMED CT (preferred)</td>
+<td>Coded result (e.g., Positive/Negative)</td>
+</tr>
+<tr>
+<td>valueString</td>
+<td>0..1</td>
+<td>✓</td>
+<td>-</td>
+<td>Text result when numeric/coded not applicable</td>
+</tr>
+<tr>
+<td>dataAbsentReason</td>
+<td>0..1</td>
+<td>-</td>
+<td>DataAbsentReason</td>
+<td>Why value is absent (if no value* present)</td>
+</tr>
+<tr>
+<td>interpretation</td>
+<td>0..*</td>
+<td>-</td>
+<td>ObservationInterpretation</td>
+<td>High, Low, Normal, Abnormal, Critical</td>
+</tr>
+<tr>
+<td>referenceRange</td>
+<td>0..*</td>
+<td>-</td>
+<td>-</td>
+<td>Normal range (low/high values with units)</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Example Lab Result Mapping</h3>
+
+<pre><code class="language-python">from fhir.resources.observation import Observation
+
+def map_lab_result(lab_data):
+    """Map lab result to US Core Lab Observation"""
+
+    obs = Observation(
+        status="final",
+        category=[{
+            "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+            }]
+        }],
+        code={
+            "coding": [{
+                "system": "http://loinc.org",
+                "code": lab_data["loinc_code"],
+                "display": lab_data["test_name"]
+            }],
+            "text": lab_data["test_name"]
+        },
+        subject={
+            "reference": f"Patient/{lab_data['patient_id']}"
+        },
+        effectiveDateTime=lab_data["collection_date"],
+        valueQuantity={
+            "value": lab_data["result_value"],
+            "unit": lab_data["unit"],
+            "system": "http://unitsofmeasure.org",
+            "code": lab_data["ucum_code"]
+        }
+    )
+
+    # Add interpretation if available
+    if lab_data.get("interpretation"):
+        obs.interpretation = [{
+            "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                "code": lab_data["interpretation"],  # "H", "L", "N", etc.
+                "display": get_interpretation_display(lab_data["interpretation"])
+            }]
+        }]
+
+    # Add reference range
+    if lab_data.get("ref_range_low") or lab_data.get("ref_range_high"):
+        obs.referenceRange = [{
+            "low": {
+                "value": lab_data.get("ref_range_low"),
+                "unit": lab_data["unit"],
+                "system": "http://unitsofmeasure.org",
+                "code": lab_data["ucum_code"]
+            } if lab_data.get("ref_range_low") else None,
+            "high": {
+                "value": lab_data.get("ref_range_high"),
+                "unit": lab_data["unit"],
+                "system": "http://unitsofmeasure.org",
+                "code": lab_data["ucum_code"]
+            } if lab_data.get("ref_range_high") else None
+        }]
+
+    return obs
+</code></pre>
+
+<h2>CARIN Blue Button (BB) Crosswalks</h2>
+
+<h3>Overview</h3>
+
+<p>CARIN BB is designed for payer-to-member data exchange, focusing on claims, coverage, and explanations of benefit.</p>
+
+<h3>CARIN BB ExplanationOfBenefit (Inpatient)</h3>
+
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Cardinality</th>
+<th>Must Support</th>
+<th>Source Mapping Guidance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>identifier</td>
+<td>1..*</td>
+<td>✓</td>
+<td>Claim number/identifier from payer system</td>
+</tr>
+<tr>
+<td>status</td>
+<td>1..1</td>
+<td>✓</td>
+<td>active | cancelled | draft | entered-in-error</td>
+</tr>
+<tr>
+<td>type</td>
+<td>1..1</td>
+<td>✓</td>
+<td>institutional | professional | pharmacy | oral</td>
+</tr>
+<tr>
+<td>use</td>
+<td>1..1</td>
+<td>✓</td>
+<td>claim | preauthorization | predetermination</td>
+</tr>
+<tr>
+<td>patient</td>
+<td>1..1</td>
+<td>✓</td>
+<td>Reference to CARIN BB Patient (member)</td>
+</tr>
+<tr>
+<td>billablePeriod</td>
+<td>1..1</td>
+<td>✓</td>
+<td>Service start and end dates</td>
+</tr>
+<tr>
+<td>created</td>
+<td>1..1</td>
+<td>✓</td>
+<td>Date EOB was created</td>
+</tr>
+<tr>
+<td>insurer</td>
+<td>1..1</td>
+<td>✓</td>
+<td>Reference to payer Organization</td>
+</tr>
+<tr>
+<td>provider</td>
+<td>1..1</td>
+<td>✓</td>
+<td>Billing provider (Practitioner or Organization)</td>
+</tr>
+<tr>
+<td>outcome</td>
+<td>1..1</td>
+<td>✓</td>
+<td>queued | complete | error | partial</td>
+</tr>
+<tr>
+<td>insurance</td>
+<td>1..*</td>
+<td>✓</td>
+<td>Patient insurance coverage information</td>
+</tr>
+<tr>
+<td>item</td>
+<td>1..*</td>
+<td>✓</td>
+<td>Line items (procedures, services)</td>
+</tr>
+<tr>
+<td>item.revenue</td>
+<td>0..1</td>
+<td>✓</td>
+<td>Revenue code (NUBC)</td>
+</tr>
+<tr>
+<td>item.productOrService</td>
+<td>1..1</td>
+<td>✓</td>
+<td>Procedure code (CPT, HCPCS, ICD-10-PCS)</td>
+</tr>
+<tr>
+<td>adjudication</td>
+<td>1..*</td>
+<td>✓</td>
+<td>Payment adjudication details (allowed, paid, etc.)</td>
+</tr>
+<tr>
+<td>total</td>
+<td>1..*</td>
+<td>✓</td>
+<td>Totals: submitted, allowed, paid, patient responsibility</td>
+</tr>
+</tbody>
+</table>
+
+<h3>CARIN BB Coverage Crosswalk</h3>
+
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Cardinality</th>
+<th>Must Support</th>
+<th>Source Mapping Guidance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>identifier</td>
+<td>0..*</td>
+<td>✓</td>
+<td>Member ID, subscriber ID</td>
+</tr>
+<tr>
+<td>status</td>
+<td>1..1</td>
+<td>✓</td>
+<td>active | cancelled | draft | entered-in-error</td>
+</tr>
+<tr>
+<td>type</td>
+<td>0..1</td>
+<td>-</td>
+<td>Coverage type (medical, dental, vision, etc.)</td>
+</tr>
+<tr>
+<td>subscriber</td>
+<td>0..1</td>
+<td>✓</td>
+<td>Reference to subscriber (if different from beneficiary)</td>
+</tr>
+<tr>
+<td>subscriberId</td>
+<td>0..1</td>
+<td>✓</td>
+<td>Subscriber identifier</td>
+</tr>
+<tr>
+<td>beneficiary</td>
+<td>1..1</td>
+<td>✓</td>
+<td>Reference to Patient (member)</td>
+</tr>
+<tr>
+<td>relationship</td>
+<td>1..1</td>
+<td>✓</td>
+<td>Beneficiary relationship to subscriber</td>
+</tr>
+<tr>
+<td>period</td>
+<td>0..1</td>
+<td>✓</td>
+<td>Coverage effective dates</td>
+</tr>
+<tr>
+<td>payor</td>
+<td>1..*</td>
+<td>✓</td>
+<td>Reference to payer Organization</td>
+</tr>
+<tr>
+<td>class</td>
+<td>0..*</td>
+<td>✓</td>
+<td>Plan, group, division classifications</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Common Mapping Challenges</h2>
+
+<h3>1. Race and Ethnicity Extensions</h3>
+
+<p>US Core requires specific extension structure for race/ethnicity:</p>
+
+<pre><code class="language-json">{
+  "extension": [{
+    "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+    "extension": [
+      {
+        "url": "ombCategory",
+        "valueCoding": {
+          "system": "urn:oid:2.16.840.1.113883.6.238",
+          "code": "2106-3",
+          "display": "White"
+        }
+      },
+      {
+        "url": "text",
+        "valueString": "White"
+      }
+    ]
+  }]
+}
+</code></pre>
+
+<h3>2. Terminology Binding Strength</h3>
+
+<ul>
+<li><strong>Required</strong>: Must use codes from the specified value set</li>
+<li><strong>Extensible</strong>: Should use codes from value set, but can use others if no suitable code exists</li>
+<li><strong>Preferred</strong>: Recommended but not required</li>
+<li><strong>Example</strong>: Just an example, use any appropriate code</li>
+</ul>
+
+<h3>3. Missing Data Handling</h3>
+
+<pre><code class="language-python"># Use dataAbsentReason when required element has no value
+observation = Observation(
+    status="final",
+    code={"coding": [...]},
+    subject={"reference": "Patient/123"},
+    # No value available
+    dataAbsentReason={
+        "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+            "code": "unknown",
+            "display": "Unknown"
+        }]
+    }
+)
+</code></pre>
+
+<h2>Validation Tools</h2>
+
+<h3>Validate Against Profiles</h3>
+
+<pre><code class="language-bash"># Validate against US Core Patient profile
+java -jar validator_cli.jar patient.json \\
+  -version 4.0.1 \\
+  -ig hl7.fhir.us.core#6.1.0
+
+# Validate against CARIN BB EOB profile
+java -jar validator_cli.jar eob.json \\
+  -version 4.0.1 \\
+  -ig hl7.fhir.us.carin-bb#2.0.0
+</code></pre>
+
+<h2>Resources</h2>
+
+<ul>
+<li><a href="http://hl7.org/fhir/us/core/" target="_blank">US Core Implementation Guide</a></li>
+<li><a href="https://build.fhir.org/ig/HL7/carin-bb/" target="_blank">CARIN Blue Button IG</a></li>
+<li><a href="https://www.cms.gov/regulations-and-guidance/guidance/interoperability" target="_blank">CMS Interoperability Rules</a></li>
+<li><a href="https://confluence.hl7.org/display/DVP/Da+Vinci+Project" target="_blank">Da Vinci Project</a></li>
+</ul>
+        `
+    },
+
+    'data-quality-playbooks': {
+        title: 'Data Quality & Validation Playbooks',
+        content: `
+<h1>Data Quality & Validation Playbooks</h1>
+
+<p>Comprehensive strategies for ensuring data quality in FHIR mapping pipelines using Great Expectations, automated testing, and CI/CD patterns.</p>
+
+<h2>Overview</h2>
+
+<p>Data quality is critical for FHIR interoperability. This playbook provides practical patterns for validating source data, ensuring mapping accuracy, and maintaining quality throughout the pipeline.</p>
+
+<div class="warning-box">
+<strong>Critical Point:</strong> Validate early, validate often. Catching data quality issues before FHIR transformation saves time and prevents downstream errors.
+</div>
+
+<h2>Data Quality Dimensions</h2>
+
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Description</th>
+<th>Example Checks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Completeness</strong></td>
+<td>All required fields present</td>
+<td>Patient has identifier, name, gender, birthDate</td>
+</tr>
+<tr>
+<td><strong>Validity</strong></td>
+<td>Data matches expected format/type</td>
+<td>Dates in YYYY-MM-DD, phone matches pattern</td>
+</tr>
+<tr>
+<td><strong>Accuracy</strong></td>
+<td>Data is correct and up-to-date</td>
+<td>Age calculated from birthDate is reasonable</td>
+</tr>
+<tr>
+<td><strong>Consistency</strong></td>
+<td>Data agrees across sources</td>
+<td>Gender consistent across records</td>
+</tr>
+<tr>
+<td><strong>Uniqueness</strong></td>
+<td>No unwanted duplicates</td>
+<td>Each patient has unique identifier</td>
+</tr>
+<tr>
+<td><strong>Timeliness</strong></td>
+<td>Data is current and available when needed</td>
+<td>Lab results within expected timeframe</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Great Expectations for FHIR Data</h2>
+
+<h3>Setup</h3>
+
+<pre><code class="language-bash"># Install Great Expectations
+pip install great-expectations pandas polars
+
+# Initialize Great Expectations project
+great_expectations init
+</code></pre>
+
+<h3>Define Expectations for Source Data</h3>
+
+<pre><code class="language-python">import great_expectations as gx
+import pandas as pd
+from datetime import datetime, timedelta
+
+# Create Data Context
+context = gx.get_context()
+
+# Define expectations for patient source data
+def create_patient_expectations(context, df):
+    """Create expectations suite for patient source data"""
+
+    # Create validator
+    validator = context.sources.pandas_default.read_dataframe(df)
+    validator.expectation_suite_name = "patient_source_suite"
+
+    # Completeness checks
+    validator.expect_column_values_to_not_be_null(
+        column="patient_id",
+        meta={"description": "Patient ID is required"}
+    )
+
+    validator.expect_column_values_to_not_be_null(
+        column="last_name",
+        meta={"description": "Last name is required for US Core"}
+    )
+
+    # Validity checks
+    validator.expect_column_values_to_match_regex(
+        column="birth_date",
+        regex=r"^\d{4}-\d{2}-\d{2}$",
+        meta={"description": "Birth date must be YYYY-MM-DD"}
+    )
+
+    validator.expect_column_values_to_be_in_set(
+        column="gender",
+        value_set=["male", "female", "other", "unknown"],
+        meta={"description": "Gender must be valid FHIR value"}
+    )
+
+    validator.expect_column_values_to_match_regex(
+        column="phone",
+        regex=r"^\+?1?\d{10,15}$",
+        mostly=0.95,  # Allow 5% missing/invalid
+        meta={"description": "Phone should be valid format"}
+    )
+
+    validator.expect_column_values_to_match_regex(
+        column="email",
+        regex=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+        mostly=0.9,
+        meta={"description": "Email should be valid format"}
+    )
+
+    # Uniqueness check
+    validator.expect_column_values_to_be_unique(
+        column="patient_id",
+        meta={"description": "Patient IDs must be unique"}
+    )
+
+    # Range checks
+    validator.expect_column_values_to_be_between(
+        column="age",
+        min_value=0,
+        max_value=120,
+        meta={"description": "Age must be reasonable"}
+    )
+
+    # Custom validation: Birth date not in future
+    def birth_date_not_future(df):
+        today = datetime.now().date()
+        return all(pd.to_datetime(df["birth_date"]).dt.date <= today)
+
+    validator.expect_column_values_to_match_custom_query(
+        query=birth_date_not_future,
+        meta={"description": "Birth date cannot be in future"}
+    )
+
+    return validator
+
+# Run validation
+df = pd.read_csv("patient_source_data.csv")
+validator = create_patient_expectations(context, df)
+results = validator.validate()
+
+# Generate report
+context.build_data_docs()
+
+print(f"Validation {'PASSED' if results.success else 'FAILED'}")
+print(f"Success rate: {results.statistics['success_percent']:.2f}%")
+</code></pre>
+
+<h3>Lab Results Expectations</h3>
+
+<pre><code class="language-python">def create_lab_expectations(context, df):
+    """Expectations for lab result source data"""
+
+    validator = context.sources.pandas_default.read_dataframe(df)
+    validator.expectation_suite_name = "lab_results_suite"
+
+    # Required fields
+    validator.expect_column_values_to_not_be_null(column="patient_id")
+    validator.expect_column_values_to_not_be_null(column="test_code")
+    validator.expect_column_values_to_not_be_null(column="test_date")
+
+    # Terminology validation - LOINC codes
+    validator.expect_column_values_to_match_regex(
+        column="loinc_code",
+        regex=r"^\d{4,5}-\d$",
+        meta={"description": "LOINC codes must match pattern"}
+    )
+
+    # Numeric results should be numeric
+    validator.expect_column_values_to_be_of_type(
+        column="numeric_result",
+        type_="float64"
+    )
+
+    # Status values
+    validator.expect_column_values_to_be_in_set(
+        column="status",
+        value_set=["final", "preliminary", "corrected", "cancelled"],
+        meta={"description": "Valid FHIR observation statuses"}
+    )
+
+    # Units should be UCUM compliant (basic check)
+    common_ucum_units = ["mg/dL", "mmol/L", "g/dL", "10*3/uL", "%", "mm[Hg]"]
+    validator.expect_column_values_to_be_in_set(
+        column="unit",
+        value_set=common_ucum_units,
+        mostly=0.8,  # Allow some variation
+        meta={"description": "Units should be UCUM format"}
+    )
+
+    # Reference ranges should be logical
+    def ref_range_logical(df):
+        return all(df["ref_range_low"] < df["ref_range_high"])
+
+    validator.expect_column_values_to_match_custom_query(
+        query=ref_range_logical,
+        meta={"description": "Low ref range < high ref range"}
+    )
+
+    return validator
+</code></pre>
+
+<h2>Post-Mapping FHIR Validation</h2>
+
+<h3>Validate FHIR Resources</h3>
+
+<pre><code class="language-python">import subprocess
+import json
+from pathlib import Path
+
+class FHIRValidator:
+    """Validate FHIR resources against profiles"""
+
+    def __init__(self, validator_jar_path, fhir_version="4.0.1"):
+        self.validator_jar = validator_jar_path
+        self.fhir_version = fhir_version
+
+    def validate_resource(self, resource_path, profile=None):
+        """Validate a FHIR resource file"""
+
+        cmd = [
+            "java", "-jar", self.validator_jar,
+            str(resource_path),
+            "-version", self.fhir_version
+        ]
+
+        if profile:
+            cmd.extend(["-profile", profile])
+
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True
+        )
+
+        return {
+            "success": result.returncode == 0,
+            "output": result.stdout,
+            "errors": result.stderr
+        }
+
+    def validate_bundle(self, bundle_path, profiles=None):
+        """Validate all resources in a FHIR Bundle"""
+
+        with open(bundle_path) as f:
+            bundle = json.load(f)
+
+        results = []
+        for entry in bundle.get("entry", []):
+            resource = entry.get("resource", {})
+            resource_type = resource.get("resourceType")
+
+            # Write resource to temp file
+            temp_file = Path(f"/tmp/{resource_type}_{resource.get('id', 'temp')}.json")
+            temp_file.write_text(json.dumps(resource, indent=2))
+
+            # Validate with appropriate profile
+            profile = profiles.get(resource_type) if profiles else None
+            result = self.validate_resource(temp_file, profile)
+
+            results.append({
+                "resource_type": resource_type,
+                "resource_id": resource.get("id"),
+                "valid": result["success"],
+                "errors": self.parse_errors(result["output"])
+            })
+
+            temp_file.unlink()
+
+        return results
+
+    def parse_errors(self, output):
+        """Parse validation errors from output"""
+        errors = []
+        for line in output.split("\n"):
+            if "Error" in line or "Warning" in line:
+                errors.append(line.strip())
+        return errors
+
+# Usage
+validator = FHIRValidator("/path/to/validator_cli.jar")
+
+# Validate against US Core
+us_core_profiles = {
+    "Patient": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient",
+    "Observation": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab"
+}
+
+results = validator.validate_bundle("output_bundle.json", us_core_profiles)
+
+for result in results:
+    print(f"{result['resource_type']}/{result['resource_id']}: {'✓' if result['valid'] else '✗'}")
+    if result['errors']:
+        for error in result['errors']:
+            print(f"  - {error}")
+</code></pre>
+
+<h2>CI/CD Pipeline Patterns</h2>
+
+<h3>GitHub Actions Workflow</h3>
+
+<pre><code class="language-yaml"># .github/workflows/fhir-validation.yml
+name: FHIR Data Quality Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-source-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install great-expectations pandas polars pydantic fhir.resources
+
+      - name: Run Great Expectations on source data
+        run: |
+          python scripts/validate_source_data.py
+
+      - name: Upload validation results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: source-validation-results
+          path: gx/uncommitted/data_docs/
+
+  transform-and-validate-fhir:
+    runs-on: ubuntu-latest
+    needs: validate-source-data
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Download FHIR Validator
+        run: |
+          wget https://github.com/hapifhir/org.hl7.fhir.core/releases/latest/download/validator_cli.jar
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run FHIR mapping pipeline
+        run: |
+          python scripts/run_mapping_pipeline.py
+
+      - name: Validate FHIR output
+        run: |
+          # Validate against US Core
+          java -jar validator_cli.jar output/bundle.json \\
+            -version 4.0.1 \\
+            -ig hl7.fhir.us.core#6.1.0 \\
+            | tee validation_results.txt
+
+      - name: Check validation success
+        run: |
+          if grep -q "Error" validation_results.txt; then
+            echo "FHIR validation failed!"
+            exit 1
+          fi
+
+      - name: Upload FHIR validation results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: fhir-validation-results
+          path: validation_results.txt
+
+      - name: Run data quality metrics
+        run: |
+          python scripts/calculate_quality_metrics.py
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const metrics = fs.readFileSync('quality_metrics.json', 'utf8');
+            const metricsData = JSON.parse(metrics);
+
+            const comment = \`## FHIR Data Quality Report
+
+            **Source Data Validation**: ${metricsData.source_valid ? '✅ Passed' : '❌ Failed'}
+            **FHIR Validation**: ${metricsData.fhir_valid ? '✅ Passed' : '❌ Failed'}
+            **Completeness**: ${metricsData.completeness}%
+            **Accuracy**: ${metricsData.accuracy}%
+
+            See artifacts for detailed reports.
+            \`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+</code></pre>
+
+<h3>Pre-commit Hooks</h3>
+
+<pre><code class="language-yaml"># .pre-commit-config.yaml
+repos:
+  - repo: local
+    hooks:
+      - id: validate-mapping-configs
+        name: Validate YAML mapping configs
+        entry: python scripts/validate_mappings.py
+        language: python
+        files: \\.yaml$
+
+      - id: check-terminology
+        name: Check terminology codes
+        entry: python scripts/check_terminology.py
+        language: python
+        files: mappings/.*\\.yaml$
+
+      - id: format-fhir-json
+        name: Format FHIR JSON
+        entry: python -m json.tool
+        language: system
+        files: \\.json$
+</code></pre>
+
+<h2>Data Quality Metrics Dashboard</h2>
+
+<pre><code class="language-python">import polars as pl
+from datetime import datetime
+import json
+
+class DataQualityMetrics:
+    """Calculate and track data quality metrics"""
+
+    def __init__(self):
+        self.metrics = {}
+
+    def calculate_completeness(self, df, required_fields):
+        """Calculate completeness for required fields"""
+        completeness = {}
+
+        for field in required_fields:
+            if field in df.columns:
+                non_null = df[field].is_not_null().sum()
+                total = len(df)
+                completeness[field] = (non_null / total * 100) if total > 0 else 0
+
+        return completeness
+
+    def calculate_validity(self, df, validation_rules):
+        """Calculate validity based on validation rules"""
+        validity = {}
+
+        for field, rule in validation_rules.items():
+            if field not in df.columns:
+                continue
+
+            if rule["type"] == "regex":
+                valid = df[field].str.contains(rule["pattern"]).sum()
+            elif rule["type"] == "range":
+                valid = df.filter(
+                    (pl.col(field) >= rule["min"]) &
+                    (pl.col(field) <= rule["max"])
+                ).height
+            elif rule["type"] == "set":
+                valid = df.filter(pl.col(field).is_in(rule["values"])).height
+
+            validity[field] = (valid / len(df) * 100) if len(df) > 0 else 0
+
+        return validity
+
+    def calculate_consistency(self, df1, df2, key_field):
+        """Calculate consistency between two datasets"""
+        # Join on key field and compare
+        joined = df1.join(df2, on=key_field, suffix="_right")
+
+        consistency = {}
+        for col in df1.columns:
+            if col == key_field or col not in df2.columns:
+                continue
+
+            col_right = f"{col}_right"
+            if col_right in joined.columns:
+                consistent = (joined[col] == joined[col_right]).sum()
+                consistency[col] = (consistent / len(joined) * 100) if len(joined) > 0 else 0
+
+        return consistency
+
+    def generate_report(self, output_file="quality_metrics.json"):
+        """Generate comprehensive quality report"""
+        report = {
+            "timestamp": datetime.now().isoformat(),
+            "metrics": self.metrics,
+            "summary": {
+                "overall_score": self.calculate_overall_score(),
+                "issues": self.identify_issues()
+            }
+        }
+
+        with open(output_file, "w") as f:
+            json.dump(report, f, indent=2)
+
+        return report
+
+    def calculate_overall_score(self):
+        """Calculate weighted overall quality score"""
+        scores = []
+
+        if "completeness" in self.metrics:
+            avg_completeness = sum(self.metrics["completeness"].values()) / len(self.metrics["completeness"])
+            scores.append(avg_completeness * 0.3)  # 30% weight
+
+        if "validity" in self.metrics:
+            avg_validity = sum(self.metrics["validity"].values()) / len(self.metrics["validity"])
+            scores.append(avg_validity * 0.4)  # 40% weight
+
+        if "consistency" in self.metrics:
+            avg_consistency = sum(self.metrics["consistency"].values()) / len(self.metrics["consistency"])
+            scores.append(avg_consistency * 0.3)  # 30% weight
+
+        return sum(scores) if scores else 0
+
+    def identify_issues(self):
+        """Identify fields with quality issues"""
+        issues = []
+
+        for metric_type, values in self.metrics.items():
+            for field, score in values.items():
+                if score < 90:  # Threshold: 90%
+                    issues.append({
+                        "field": field,
+                        "metric": metric_type,
+                        "score": score,
+                        "severity": "critical" if score < 70 else "warning"
+                    })
+
+        return sorted(issues, key=lambda x: x["score"])
+
+# Usage
+metrics = DataQualityMetrics()
+
+# Calculate metrics
+df = pl.read_csv("patient_data.csv")
+
+metrics.metrics["completeness"] = metrics.calculate_completeness(
+    df,
+    required_fields=["patient_id", "last_name", "birth_date", "gender"]
+)
+
+metrics.metrics["validity"] = metrics.calculate_validity(
+    df,
+    validation_rules={
+        "birth_date": {"type": "regex", "pattern": r"^\d{4}-\d{2}-\d{2}$"},
+        "gender": {"type": "set", "values": ["male", "female", "other", "unknown"]},
+        "age": {"type": "range", "min": 0, "max": 120}
+    }
+)
+
+report = metrics.generate_report()
+print(f"Overall Quality Score: {report['summary']['overall_score']:.2f}%")
+</code></pre>
+
+<h2>Best Practices</h2>
+
+<div class="success-box">
+<h3>Validation Strategy</h3>
+<ol>
+<li><strong>Validate Early</strong>: Check source data before transformation</li>
+<li><strong>Validate Often</strong>: Run checks at each pipeline stage</li>
+<li><strong>Automate Everything</strong>: Use CI/CD for continuous validation</li>
+<li><strong>Track Metrics</strong>: Monitor quality trends over time</li>
+<li><strong>Document Expectations</strong>: Make validation rules explicit and versioned</li>
+</ol>
+</div>
+
+<h2>Common Validation Failures</h2>
+
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Impact</th>
+<th>Prevention</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Missing required identifiers</td>
+<td>High - Resource won't validate</td>
+<td>Add NOT NULL constraints, Great Expectations checks</td>
+</tr>
+<tr>
+<td>Invalid date formats</td>
+<td>High - Parsing failures</td>
+<td>Regex validation, automated date parsing tests</td>
+</tr>
+<tr>
+<td>Wrong terminology codes</td>
+<td>Medium - Semantic errors</td>
+<td>Terminology service validation, value set checks</td>
+</tr>
+<tr>
+<td>Incorrect cardinality</td>
+<td>High - Profile violations</td>
+<td>Profile validation in CI/CD</td>
+</tr>
+<tr>
+<td>Missing Must Support elements</td>
+<td>Medium - US Core violations</td>
+<td>Profile-specific validation rules</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Resources</h2>
+
+<ul>
+<li><a href="https://greatexpectations.io/" target="_blank">Great Expectations Documentation</a></li>
+<li><a href="https://github.com/hapifhir/org.hl7.fhir.core" target="_blank">FHIR Validator</a></li>
+<li><a href="https://www.hl7.org/fhir/validation.html" target="_blank">FHIR Validation Guide</a></li>
+<li><a href="https://github.com/features/actions" target="_blank">GitHub Actions</a></li>
+</ul>
+        `
+    },
+
+    'mapping-governance': {
+        title: 'Mapping Governance & Security',
+        content: `
+<h1>Mapping Governance & Security</h1>
+
+<p>Comprehensive guidance on governance, security, and secure MCP (Model Context Protocol) workflows for FHIR mapping projects.</p>
+
+<h2>Overview</h2>
+
+<p>Effective governance ensures mapping quality, security, compliance, and maintainability across the organization.</p>
+
+<div class="warning-box">
+<strong>Security First:</strong> FHIR mapping often involves PHI/PII. Implement security controls from day one, not as an afterthought.
+</div>
+
+<h2>Mapping Governance Framework</h2>
+
+<h3>1. Governance Structure</h3>
+
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Responsibilities</th>
+<th>Skills Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mapping Owner</strong></td>
+<td>Define business requirements, approve mappings</td>
+<td>Domain expertise, FHIR knowledge</td>
+</tr>
+<tr>
+<td><strong>Technical Lead</strong></td>
+<td>Architecture, technical standards, reviews</td>
+<td>FHIR expert, software architecture</td>
+</tr>
+<tr>
+<td><strong>Data Steward</strong></td>
+<td>Data quality, terminology management</td>
+<td>Data governance, healthcare standards</td>
+</tr>
+<tr>
+<td><strong>Security Officer</strong></td>
+<td>Security controls, compliance, audits</td>
+<td>Security, HIPAA/GDPR, risk management</td>
+</tr>
+<tr>
+<td><strong>Developer</strong></td>
+<td>Implement mappings, unit tests</td>
+<td>Python/Java, FHIR APIs, testing</td>
+</tr>
+<tr>
+<td><strong>QA Analyst</strong></td>
+<td>Validation, testing, quality assurance</td>
+<td>Testing methodologies, FHIR validation</td>
+</tr>
+</tbody>
+</table>
+
+<h3>2. Mapping Lifecycle</h3>
+
+<pre><code class="language-text">1. Requirements → 2. Design → 3. Development → 4. Review → 5. Testing → 6. Approval → 7. Deployment → 8. Monitoring
+</code></pre>
+
+<h3>3. Documentation Standards</h3>
+
+<pre><code class="language-yaml"># mapping-metadata.yaml
+mapping_id: PAT-001
+version: 2.1.0
+status: active  # draft | review | active | deprecated
+effective_date: 2024-01-15
+expiration_date: null
+
+owner:
+  name: Jane Smith
+  email: jane.smith@example.com
+  department: Health Informatics
+
+technical_lead:
+  name: John Doe
+  email: john.doe@example.com
+
+source:
+  system: Epic EHR
+  version: 2023.1
+  format: HL7 v2.5.1 ADT
+
+target:
+  profile: US Core Patient v6.1.0
+  profile_url: http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+
+dependencies:
+  - mapping_id: TERM-001
+    description: Race code mapping
+  - mapping_id: TERM-002
+    description: Ethnicity code mapping
+
+change_history:
+  - version: 2.1.0
+    date: 2024-01-15
+    author: John Doe
+    changes: Added support for multiple phone numbers
+  - version: 2.0.0
+    date: 2023-11-01
+    author: Jane Smith
+    changes: Updated to US Core 6.1.0
+
+quality_metrics:
+  completeness_threshold: 95%
+  validation_pass_rate: 98%
+  performance_sla: 100ms per record
+
+security_classification: PHI
+encryption_required: true
+audit_logging: required
+</code></pre>
+
+<h2>Version Control Best Practices</h2>
+
+<h3>Repository Structure</h3>
+
+<pre><code class="language-text">fhir-mapping-project/
+├── mappings/
+│   ├── patient/
+│   │   ├── epic_to_uscore_patient.yaml
+│   │   ├── cerner_to_uscore_patient.yaml
+│   │   └── metadata.yaml
+│   ├── observation/
+│   │   └── lab_to_uscore_observation.yaml
+│   └── terminology/
+│       ├── race_codes.yaml
+│       └── ethnicity_codes.yaml
+├── schemas/
+│   ├── source_schemas/
+│   │   ├── epic_adt.json
+│   │   └── cerner_patient.json
+│   └── target_profiles/
+│       └── us_core_6.1.0/
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── fixtures/
+├── docs/
+│   ├── mapping_specifications/
+│   ├── change_logs/
+│   └── runbooks/
+├── scripts/
+│   ├── validate_mappings.py
+│   ├── deploy_mappings.py
+│   └── generate_docs.py
+└── .github/
+    └── workflows/
+        ├── validate.yml
+        ├── test.yml
+        └── deploy.yml
+</code></pre>
+
+<h3>Git Workflow</h3>
+
+<pre><code class="language-bash"># Feature branch workflow
+git checkout -b feature/add-uscore-condition-mapping
+
+# Make changes
+git add mappings/condition/epic_to_uscore_condition.yaml
+git commit -m "Add US Core Condition mapping for Epic
+
+- Map Epic problem list to US Core Condition
+- Include clinical status and verification status
+- Add SNOMED CT code mapping
+- Tests: 100% pass rate
+
+Reviewed-by: @jane-smith
+Ticket: FHIR-123"
+
+# Create pull request
+gh pr create --title "Add US Core Condition mapping" \\
+  --body "## Changes
+  - New mapping for Epic problems to US Core Condition
+  - Added terminology mapping for condition codes
+
+  ## Testing
+  - Unit tests: ✓
+  - Integration tests: ✓
+  - Validation: ✓
+
+  ## Checklist
+  - [x] Documentation updated
+  - [x] Tests passing
+  - [x] Security review completed
+  - [x] Data steward approval"
+
+# After approval
+git checkout main
+git merge feature/add-uscore-condition-mapping
+git tag -a v2.1.0 -m "Release 2.1.0: Added Condition mapping"
+git push origin main --tags
+</code></pre>
+
+<h3>Code Review Checklist</h3>
+
+<pre><code class="language-markdown">## Mapping Review Checklist
+
+### Correctness
+- [ ] All source fields mapped correctly
+- [ ] Required FHIR elements populated
+- [ ] Must Support elements handled
+- [ ] Cardinality requirements met
+- [ ] Data types correct
+
+### Quality
+- [ ] Terminology codes validated
+- [ ] Default values appropriate
+- [ ] Error handling defined
+- [ ] Edge cases considered
+- [ ] Performance acceptable
+
+### Compliance
+- [ ] Profile conformance verified
+- [ ] US Core requirements met
+- [ ] Security controls applied
+- [ ] PHI handling appropriate
+- [ ] Audit logging configured
+
+### Documentation
+- [ ] Mapping documented
+- [ ] Examples provided
+- [ ] Change log updated
+- [ ] Test cases documented
+
+### Testing
+- [ ] Unit tests pass (100%)
+- [ ] Integration tests pass
+- [ ] Validation tests pass
+- [ ] Performance tests pass
+
+### Security
+- [ ] No hardcoded credentials
+- [ ] Sensitive data encrypted
+- [ ] Access controls defined
+- [ ] Audit trail configured
+</code></pre>
+
+<h2>Security Controls</h2>
+
+<h3>Data Classification</h3>
+
+<table>
+<thead>
+<tr>
+<th>Classification</th>
+<th>Examples</th>
+<th>Controls Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Public</strong></td>
+<td>FHIR profiles, schemas</td>
+<td>Standard version control</td>
+</tr>
+<tr>
+<td><strong>Internal</strong></td>
+<td>Mapping configurations, test data (de-identified)</td>
+<td>Access control, code review</td>
+</tr>
+<tr>
+<td><strong>Confidential</strong></td>
+<td>Connection strings, API keys</td>
+<td>Secrets management, encryption</td>
+</tr>
+<tr>
+<td><strong>PHI/PII</strong></td>
+<td>Patient data, identifiers</td>
+<td>Encryption at rest/transit, audit logging, access controls</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Secrets Management</h3>
+
+<pre><code class="language-python"># Use environment variables and secrets management
+import os
+from azure.keyvault.secrets import SecretClient
+from azure.identity import DefaultAzureCredential
+
+class SecureConfig:
+    """Secure configuration management"""
+
+    def __init__(self):
+        self.key_vault_name = os.environ["KEY_VAULT_NAME"]
+        self.credential = DefaultAzureCredential()
+        self.client = SecretClient(
+            vault_url=f"https://{self.key_vault_name}.vault.azure.net",
+            credential=self.credential
+        )
+
+    def get_fhir_server_url(self):
+        """Get FHIR server URL from Key Vault"""
+        return self.client.get_secret("fhir-server-url").value
+
+    def get_fhir_api_key(self):
+        """Get FHIR API key from Key Vault"""
+        return self.client.get_secret("fhir-api-key").value
+
+    def get_database_connection_string(self):
+        """Get encrypted database connection string"""
+        return self.client.get_secret("database-connection-string").value
+
+# Never hardcode secrets!
+# ❌ BAD
+# fhir_url = "https://fhir.example.com"
+# api_key = "abc123secret"
+
+# ✓ GOOD
+config = SecureConfig()
+fhir_url = config.get_fhir_server_url()
+api_key = config.get_fhir_api_key()
+</code></pre>
+
+<h3>Encryption</h3>
+
+<pre><code class="language-python">from cryptography.fernet import Fernet
+import base64
+import os
+
+class DataEncryption:
+    """Encrypt sensitive data in mapping pipeline"""
+
+    def __init__(self):
+        # Get encryption key from environment or Key Vault
+        key = os.environ.get("ENCRYPTION_KEY")
+        if not key:
+            raise ValueError("ENCRYPTION_KEY not set")
+        self.cipher = Fernet(key.encode())
+
+    def encrypt_identifier(self, identifier: str) -> str:
+        """Encrypt patient identifier"""
+        encrypted = self.cipher.encrypt(identifier.encode())
+        return base64.urlsafe_b64encode(encrypted).decode()
+
+    def decrypt_identifier(self, encrypted: str) -> str:
+        """Decrypt patient identifier"""
+        encrypted_bytes = base64.urlsafe_b64decode(encrypted.encode())
+        decrypted = self.cipher.decrypt(encrypted_bytes)
+        return decrypted.decode()
+
+    def hash_identifier(self, identifier: str) -> str:
+        """One-way hash for de-identification"""
+        import hashlib
+        return hashlib.sha256(identifier.encode()).hexdigest()
+
+# Usage in mapping pipeline
+encryptor = DataEncryption()
+
+# Encrypt PHI before storage
+encrypted_mrn = encryptor.encrypt_identifier(patient_mrn)
+
+# Hash for de-identified datasets
+hashed_id = encryptor.hash_identifier(patient_mrn)
+</code></pre>
+
+<h3>Audit Logging</h3>
+
+<pre><code class="language-python">import logging
+import json
+from datetime import datetime
+
+class AuditLogger:
+    """HIPAA-compliant audit logging"""
+
+    def __init__(self, log_file="audit.log"):
+        self.logger = logging.getLogger("fhir_mapping_audit")
+        handler = logging.FileHandler(log_file)
+        handler.setFormatter(logging.Formatter('%(message)s'))
+        self.logger.addHandler(handler)
+        self.logger.setLevel(logging.INFO)
+
+    def log_access(self, user, resource_type, resource_id, action):
+        """Log access to PHI"""
+        audit_entry = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "event_type": "access",
+            "user": user,
+            "resource_type": resource_type,
+            "resource_id": resource_id,
+            "action": action,
+            "ip_address": self.get_client_ip(),
+            "session_id": self.get_session_id()
+        }
+        self.logger.info(json.dumps(audit_entry))
+
+    def log_transformation(self, source_id, target_id, mapping_version):
+        """Log data transformation"""
+        audit_entry = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "event_type": "transformation",
+            "source_id": source_id,
+            "target_id": target_id,
+            "mapping_version": mapping_version
+        }
+        self.logger.info(json.dumps(audit_entry))
+
+    def log_validation_failure(self, resource_id, errors):
+        """Log validation failures"""
+        audit_entry = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "event_type": "validation_failure",
+            "resource_id": resource_id,
+            "errors": errors
+        }
+        self.logger.info(json.dumps(audit_entry))
+
+# Usage
+audit = AuditLogger()
+audit.log_access("john.doe@example.com", "Patient", "12345", "read")
+audit.log_transformation("epic_123", "fhir_patient_123", "v2.1.0")
+</code></pre>
+
+<h2>Secure MCP Workflows</h2>
+
+<h3>Model Context Protocol (MCP) Security</h3>
+
+<p>When using LLMs or MCP servers for FHIR mapping assistance:</p>
+
+<div class="warning-box">
+<strong>Never send PHI to external LLM services!</strong> Use only de-identified or synthetic data for LLM-assisted mapping.
+</div>
+
+<h3>Secure MCP Configuration</h3>
+
+<pre><code class="language-json">{
+  "mcpServers": {
+    "fhir-mapping-assistant": {
+      "command": "python",
+      "args": ["-m", "mcp_server.fhir_mapping"],
+      "env": {
+        "FHIR_SERVER_URL": "${FHIR_SERVER_URL}",
+        "API_KEY": "${API_KEY}",
+        "DATA_CLASSIFICATION": "internal",
+        "PHI_ALLOWED": "false"
+      },
+      "security": {
+        "sandbox": true,
+        "network_isolation": true,
+        "allowed_hosts": ["fhir.example.com"],
+        "max_memory": "512MB",
+        "timeout": 30
+      }
+    }
+  }
+}
+</code></pre>
+
+<h3>Data Sanitization for MCP</h3>
+
+<pre><code class="language-python">class DataSanitizer:
+    """Sanitize data before sending to MCP/LLM"""
+
+    PHI_PATTERNS = [
+        r'\b\d{3}-\d{2}-\d{4}\b',  # SSN
+        r'\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b',  # Email
+        r'\b\d{10}\b',  # Phone
+        r'\b\d{5}(-\d{4})?\b',  # ZIP
+    ]
+
+    def sanitize_for_llm(self, data):
+        """Remove PHI before sending to LLM"""
+        sanitized = data.copy()
+
+        # Replace names with placeholders
+        if "name" in sanitized:
+            sanitized["name"] = [{"family": "DOE", "given": ["JOHN"]}]
+
+        # Remove identifiers
+        if "identifier" in sanitized:
+            sanitized["identifier"] = [{
+                "system": "urn:oid:example",
+                "value": "REDACTED"
+            }]
+
+        # Mask dates (keep format)
+        if "birthDate" in sanitized:
+            sanitized["birthDate"] = "1970-01-01"
+
+        # Remove addresses
+        if "address" in sanitized:
+            sanitized["address"] = [{
+                "city": "ANYTOWN",
+                "state": "CA",
+                "postalCode": "00000"
+            }]
+
+        return sanitized
+
+    def validate_no_phi(self, text):
+        """Verify no PHI in text"""
+        import re
+        for pattern in self.PHI_PATTERNS:
+            if re.search(pattern, text, re.IGNORECASE):
+                raise ValueError(f"Potential PHI detected: {pattern}")
+        return True
+
+# Usage
+sanitizer = DataSanitizer()
+
+# Before sending to MCP/LLM
+original_patient = get_patient_from_source()
+sanitized_patient = sanitizer.sanitize_for_llm(original_patient)
+
+# Safe to send to LLM for mapping assistance
+llm_response = mcp_client.get_mapping_suggestion(sanitized_patient)
+</code></pre>
+
+<h2>Compliance Requirements</h2>
+
+<h3>HIPAA Compliance Checklist</h3>
+
+<ul>
+<li>☐ Encryption at rest (AES-256)</li>
+<li>☐ Encryption in transit (TLS 1.2+)</li>
+<li>☐ Access controls (RBAC)</li>
+<li>☐ Audit logging (all access to PHI)</li>
+<li>☐ Data minimization (only necessary data)</li>
+<li>☐ Business Associate Agreements (BAAs)</li>
+<li>☐ Breach notification procedures</li>
+<li>☐ Data retention policies</li>
+<li>☐ Secure data disposal</li>
+<li>☐ Employee training</li>
+</ul>
+
+<h3>GDPR Considerations</h3>
+
+<ul>
+<li>☐ Data subject rights (access, deletion, portability)</li>
+<li>☐ Consent management</li>
+<li>☐ Data processing agreements</li>
+<li>☐ Privacy by design</li>
+<li>☐ Data protection impact assessment (DPIA)</li>
+</ul>
+
+<h2>Change Management</h2>
+
+<h3>Mapping Change Process</h3>
+
+<pre><code class="language-text">1. Submit Change Request (CR)
+   ↓
+2. Impact Analysis
+   ↓
+3. Security Review
+   ↓
+4. Technical Review
+   ↓
+5. Testing in Dev/QA
+   ↓
+6. Stakeholder Approval
+   ↓
+7. Schedule Deployment
+   ↓
+8. Deploy to Production
+   ↓
+9. Monitor & Validate
+   ↓
+10. Close CR
+</code></pre>
+
+<h2>Resources</h2>
+
+<ul>
+<li><a href="https://www.hhs.gov/hipaa/for-professionals/security/index.html" target="_blank">HIPAA Security Rule</a></li>
+<li><a href="https://gdpr.eu/" target="_blank">GDPR Official Text</a></li>
+<li><a href="https://www.nist.gov/cyberframework" target="_blank">NIST Cybersecurity Framework</a></li>
+<li><a href="https://owasp.org/www-project-top-ten/" target="_blank">OWASP Top 10</a></li>
+</ul>
+        `
+    },
+
+    'llms-fhir-guardrails': {
+        title: 'LLMs + FHIR: Guardrails & Best Practices',
+        content: `
+<h1>LLMs + FHIR: Guardrails & Best Practices</h1>
+
+<p>Practical, security-first guidance for using Large Language Models (LLMs) in FHIR mapping workflows—focusing on guardrails, not hype.</p>
+
+<div class="warning-box">
+<strong>Critical Warning:</strong> LLMs are powerful tools but carry significant risks when handling healthcare data. This guide focuses on safe, compliant, and effective use.
+</div>
+
+<h2>Core Principles</h2>
+
+<ol>
+<li><strong>Never send PHI to external LLM services</strong></li>
+<li><strong>Validate all LLM-generated mappings</strong></li>
+<li><strong>Use LLMs as assistants, not authorities</strong></li>
+<li><strong>Implement layered validation</strong></li>
+<li><strong>Maintain human oversight</strong></li>
+</ol>
+
+<h2>Appropriate Use Cases</h2>
+
+<h3>✅ Safe LLM Applications</h3>
+
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Risk Level</th>
+<th>Guardrails</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Generating mapping specs from de-identified samples</td>
+<td>Low</td>
+<td>Manual review, validation</td>
+</tr>
+<tr>
+<td>FHIR profile documentation assistance</td>
+<td>Low</td>
+<td>Fact-checking against specs</td>
+</tr>
+<tr>
+<td>Code generation for mapping logic</td>
+<td>Medium</td>
+<td>Code review, unit tests, validation</td>
+</tr>
+<tr>
+<td>Terminology mapping suggestions</td>
+<td>Medium</td>
+<td>Verify against official code systems</td>
+</tr>
+<tr>
+<td>Test data generation (synthetic)</td>
+<td>Low</td>
+<td>Format validation only</td>
+</tr>
+<tr>
+<td>Documentation and training materials</td>
+<td>Low</td>
+<td>Expert review</td>
+</tr>
+</tbody>
+</table>
+
+<h3>❌ Inappropriate LLM Applications</h3>
+
+<ul>
+<li>Processing real patient data without de-identification</li>
+<li>Automated mapping without validation</li>
+<li>Clinical decision-making</li>
+<li>Production deployments without human review</li>
+<li>Direct patient care applications</li>
+<li>Compliance determination</li>
+</ul>
+
+<h2>PHI Protection Strategies</h2>
+
+<h3>1. Data De-identification Pipeline</h3>
+
+<pre><code class="language-python">from typing import Dict, Any
+import re
+import hashlib
+
+class FHIRDeidentifier:
+    """De-identify FHIR resources for safe LLM processing"""
+
+    PLACEHOLDER_MAP = {}  # Track original → placeholder mapping
+
+    def deidentify_patient(self, patient: Dict[str, Any]) -> Dict[str, Any]:
+        """Remove all PHI from Patient resource"""
+        deidentified = {
+            "resourceType": "Patient",
+            "id": self._create_placeholder_id(patient.get("id", "unknown"))
+        }
+
+        # Replace name with placeholder
+        if "name" in patient:
+            deidentified["name"] = [{
+                "family": "PLACEHOLDER_FAMILY",
+                "given": ["PLACEHOLDER_GIVEN"]
+            }]
+
+        # Keep structure but remove identifying info
+        if "birthDate" in patient:
+            # Keep year for age calculation, remove month/day
+            year = patient["birthDate"][:4]
+            deidentified["birthDate"] = f"{year}-01-01"
+
+        # Keep gender (low risk)
+        if "gender" in patient:
+            deidentified["gender"] = patient["gender"]
+
+        # Remove telecom
+        if "telecom" in patient:
+            deidentified["telecom"] = [{
+                "system": "phone",
+                "value": "555-0000"
+            }]
+
+        # Replace address with generic
+        if "address" in patient:
+            deidentified["address"] = [{
+                "city": "Example City",
+                "state": "XX",
+                "postalCode": "00000",
+                "country": "US"
+            }]
+
+        # Remove all identifiers or replace with placeholders
+        if "identifier" in patient:
+            deidentified["identifier"] = [{
+                "system": "urn:example:placeholder",
+                "value": self._create_placeholder_id(
+                    str(patient["identifier"][0].get("value", ""))
+                )
+            }]
+
+        # Keep extensions structure but remove data
+        if "extension" in patient:
+            deidentified["extension"] = self._sanitize_extensions(
+                patient["extension"]
+            )
+
+        return deidentified
+
+    def _create_placeholder_id(self, original_id: str) -> str:
+        """Create consistent placeholder ID"""
+        # Use hash for consistent but de-identified ID
+        hash_value = hashlib.sha256(original_id.encode()).hexdigest()[:8]
+        placeholder = f"PLACEHOLDER_{hash_value}"
+        self.PLACEHOLDER_MAP[placeholder] = original_id  # Track for re-identification
+        return placeholder
+
+    def _sanitize_extensions(self, extensions: list) -> list:
+        """Keep extension structure, remove values"""
+        sanitized = []
+        for ext in extensions:
+            sanitized_ext = {
+                "url": ext.get("url")
+            }
+            # For complex extensions, keep structure only
+            if "extension" in ext:
+                sanitized_ext["extension"] = self._sanitize_extensions(ext["extension"])
+            # Replace values with placeholders
+            if "valueString" in ext:
+                sanitized_ext["valueString"] = "PLACEHOLDER"
+            if "valueCode" in ext:
+                sanitized_ext["valueCode"] = ext["valueCode"]  # Codes are generally safe
+            if "valueCoding" in ext:
+                sanitized_ext["valueCoding"] = ext["valueCoding"]  # Keep for mapping
+
+            sanitized.append(sanitized_ext)
+
+        return sanitized
+
+    def validate_no_phi(self, resource: Dict[str, Any]) -> bool:
+        """Verify resource contains no PHI"""
+        resource_str = str(resource)
+
+        # Check for common PHI patterns
+        phi_patterns = [
+            (r'\b[A-Z][a-z]+ [A-Z][a-z]+\b', 'Possible name'),
+            (r'\b\d{3}-\d{2}-\d{4}\b', 'SSN'),
+            (r'\b[\w\.-]+@[\w\.-]+\.\w+\b', 'Email'),
+            (r'\b\d{10}\b', 'Phone number'),
+            (r'\b\d{5}(-\d{4})?\b', 'ZIP code'),
+        ]
+
+        for pattern, description in phi_patterns:
+            if re.search(pattern, resource_str):
+                raise ValueError(f"Potential PHI detected: {description}")
+
+        return True
+
+# Usage
+deidentifier = FHIRDeidentifier()
+
+# Original patient with PHI
+original = {
+    "resourceType": "Patient",
+    "id": "12345",
+    "name": [{"family": "Smith", "given": ["John", "Robert"]}],
+    "birthDate": "1980-05-15",
+    "identifier": [{"system": "urn:oid:example", "value": "MRN-98765"}]
+}
+
+# Safe for LLM
+deidentified = deidentifier.deidentify_patient(original)
+deidentifier.validate_no_phi(deidentified)
+
+# Now safe to send to LLM
+llm_prompt = f"""
+Given this de-identified FHIR Patient resource structure:
+{json.dumps(deidentified, indent=2)}
+
+Generate a mapping specification from this source format to US Core Patient profile.
+"""
+</code></pre>
+
+<h3>2. Synthetic Data Generation</h3>
+
+<pre><code class="language-python">from fhir.resources.patient import Patient
+from faker import Faker
+import random
+
+class SyntheticFHIRGenerator:
+    """Generate realistic but synthetic FHIR data for LLM training/testing"""
+
+    def __init__(self):
+        self.fake = Faker()
+
+    def generate_synthetic_patient(self) -> Patient:
+        """Generate completely synthetic patient"""
+
+        gender = random.choice(["male", "female", "other"])
+
+        patient = Patient(
+            id=self.fake.uuid4(),
+            identifier=[{
+                "system": "urn:oid:synthetic.example",
+                "value": f"SYN-{self.fake.random_number(digits=8)}"
+            }],
+            name=[{
+                "use": "official",
+                "family": self.fake.last_name(),
+                "given": [self.fake.first_name()]
+            }],
+            gender=gender,
+            birthDate=self.fake.date_of_birth(minimum_age=0, maximum_age=100).isoformat(),
+            telecom=[
+                {
+                    "system": "phone",
+                    "value": self.fake.phone_number(),
+                    "use": "home"
+                },
+                {
+                    "system": "email",
+                    "value": self.fake.email(),
+                    "use": "home"
+                }
+            ],
+            address=[{
+                "use": "home",
+                "line": [self.fake.street_address()],
+                "city": self.fake.city(),
+                "state": self.fake.state_abbr(),
+                "postalCode": self.fake.zipcode(),
+                "country": "US"
+            }]
+        )
+
+        return patient
+
+    def generate_dataset(self, size: int = 100):
+        """Generate synthetic dataset for testing"""
+        return [self.generate_synthetic_patient() for _ in range(size)]
+
+# Use synthetic data for LLM examples
+generator = SyntheticFHIRGenerator()
+synthetic_patients = generator.generate_dataset(10)
+
+# Safe to use with LLM
+llm_training_data = [p.dict() for p in synthetic_patients]
+</code></pre>
+
+<h2>LLM-Assisted Mapping with Validation</h2>
+
+<h3>Layered Validation Approach</h3>
+
+<pre><code class="language-python">from typing import Dict, List
+import json
+
+class LLMAssistedMapper:
+    """Use LLM for mapping assistance with strong validation"""
+
+    def __init__(self, llm_client, validator):
+        self.llm = llm_client
+        self.validator = validator  # FHIR validator
+        self.approved_mappings = {}  # Cache validated mappings
+
+    def generate_mapping_with_validation(
+        self,
+        source_sample: Dict,
+        target_profile: str
+    ) -> Dict:
+        """Generate mapping with multi-layer validation"""
+
+        # Layer 1: De-identify source sample
+        deidentified = self.deidentify(source_sample)
+
+        # Layer 2: Get LLM suggestion
+        llm_mapping = self.get_llm_mapping_suggestion(
+            deidentified,
+            target_profile
+        )
+
+        # Layer 3: Validate syntax
+        if not self.validate_mapping_syntax(llm_mapping):
+            raise ValueError("LLM generated invalid mapping syntax")
+
+        # Layer 4: Test with synthetic data
+        test_result = self.test_mapping_with_synthetic_data(llm_mapping)
+        if not test_result["success"]:
+            raise ValueError(f"Mapping test failed: {test_result['errors']}")
+
+        # Layer 5: FHIR profile validation
+        sample_output = self.apply_mapping(deidentified, llm_mapping)
+        validation_result = self.validator.validate_resource(
+            sample_output,
+            target_profile
+        )
+        if not validation_result["success"]:
+            raise ValueError(f"FHIR validation failed: {validation_result['errors']}")
+
+        # Layer 6: Human review flag
+        llm_mapping["requires_human_review"] = True
+        llm_mapping["llm_generated"] = True
+        llm_mapping["validation_timestamp"] = datetime.now().isoformat()
+
+        return llm_mapping
+
+    def get_llm_mapping_suggestion(
+        self,
+        source: Dict,
+        target_profile: str
+    ) -> Dict:
+        """Get mapping suggestion from LLM with constrained prompt"""
+
+        prompt = f"""You are a FHIR mapping expert. Generate a field-level mapping specification.
+
+SOURCE STRUCTURE (de-identified):
+{json.dumps(source, indent=2)}
+
+TARGET PROFILE: {target_profile}
+
+Generate a mapping in this exact JSON format:
+{{
+  "source_field": "target_fhir_path",
+  "source_field2": "target_fhir_path2"
+}}
+
+Requirements:
+1. Only use valid FHIR paths
+2. Include required elements only
+3. No hardcoded values
+4. No assumptions about data
+
+Respond with JSON only, no explanation."""
+
+        response = self.llm.generate(
+            prompt,
+            max_tokens=2000,
+            temperature=0.1,  # Low temperature for consistency
+            stop=["```"]
+        )
+
+        try:
+            mapping = json.loads(response)
+            return mapping
+        except json.JSONDecodeError:
+            raise ValueError("LLM did not return valid JSON")
+
+    def validate_mapping_syntax(self, mapping: Dict) -> bool:
+        """Validate mapping has correct structure"""
+        if not isinstance(mapping, dict):
+            return False
+
+        # Check all values are strings (FHIR paths)
+        for key, value in mapping.items():
+            if not isinstance(key, str) or not isinstance(value, str):
+                return False
+
+            # Basic FHIR path validation
+            if not self.is_valid_fhir_path(value):
+                return False
+
+        return True
+
+    def is_valid_fhir_path(self, path: str) -> bool:
+        """Basic FHIR path syntax validation"""
+        # Simple check: should contain resource element
+        valid_patterns = [
+            r'^[A-Z][a-zA-Z]+\.[a-z][a-zA-Z0-9]*',  # Patient.name
+            r'^[a-z][a-zA-Z0-9]*$',  # name
+        ]
+
+        import re
+        return any(re.match(pattern, path) for pattern in valid_patterns)
+
+    def test_mapping_with_synthetic_data(self, mapping: Dict) -> Dict:
+        """Test mapping with synthetic data"""
+        generator = SyntheticFHIRGenerator()
+        synthetic_samples = generator.generate_dataset(10)
+
+        errors = []
+        for sample in synthetic_samples:
+            try:
+                result = self.apply_mapping(sample.dict(), mapping)
+                # Validate result structure
+                if not result:
+                    errors.append("Empty result")
+            except Exception as e:
+                errors.append(str(e))
+
+        return {
+            "success": len(errors) == 0,
+            "errors": errors,
+            "samples_tested": len(synthetic_samples)
+        }
+
+# Usage
+mapper = LLMAssistedMapper(llm_client, fhir_validator)
+
+source_sample = deidentifier.deidentify_patient(real_patient)
+mapping = mapper.generate_mapping_with_validation(
+    source_sample,
+    "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+)
+
+print(f"Mapping generated and validated")
+print(f"Requires human review: {mapping['requires_human_review']}")
+</code></pre>
+
+<h2>Guardrails Checklist</h2>
+
+<h3>Before Using LLM</h3>
+
+<ul>
+<li>☐ Data is de-identified or synthetic</li>
+<li>☐ No PHI/PII in prompts</li>
+<li>☐ Clear use case documented</li>
+<li>☐ Validation strategy defined</li>
+<li>☐ Human review process established</li>
+<li>☐ Audit logging configured</li>
+</ul>
+
+<h3>During LLM Use</h3>
+
+<ul>
+<li>☐ Monitor for PHI leakage</li>
+<li>☐ Validate all outputs</li>
+<li>☐ Track token usage and costs</li>
+<li>☐ Log all interactions</li>
+<li>☐ Rate limit requests</li>
+</ul>
+
+<h3>After LLM Use</h3>
+
+<ul>
+<li>☐ Human expert review</li>
+<li>☐ Profile validation passed</li>
+<li>☐ Unit tests created</li>
+<li>☐ Integration tests passed</li>
+<li>☐ Documentation updated</li>
+<li>☐ Audit trail complete</li>
+</ul>
+
+<h2>Common Pitfalls and Solutions</h2>
+
+<table>
+<thead>
+<tr>
+<th>Pitfall</th>
+<th>Risk</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Trusting LLM output without validation</td>
+<td>High - Incorrect mappings</td>
+<td>Always validate with FHIR validator and tests</td>
+</tr>
+<tr>
+<td>Sending real patient data to LLM</td>
+<td>Critical - HIPAA violation</td>
+<td>De-identify or use synthetic data only</td>
+</tr>
+<tr>
+<td>Using LLM for production without review</td>
+<td>High - Quality issues</td>
+<td>Require human expert review</td>
+</tr>
+<tr>
+<td>Hallucinated FHIR elements</td>
+<td>Medium - Invalid resources</td>
+<td>Validate against official FHIR specs</td>
+</tr>
+<tr>
+<td>Inconsistent mappings</td>
+<td>Medium - Data quality</td>
+<td>Use low temperature, cache validated mappings</td>
+</tr>
+<tr>
+<td>No audit trail</td>
+<td>High - Compliance issues</td>
+<td>Log all LLM interactions and validations</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Metrics and Monitoring</h2>
+
+<pre><code class="language-python">class LLMMappingMetrics:
+    """Track LLM-assisted mapping metrics"""
+
+    def __init__(self):
+        self.metrics = {
+            "total_suggestions": 0,
+            "validated_suggestions": 0,
+            "human_approved": 0,
+            "rejected": 0,
+            "avg_validation_time": 0,
+            "phi_detection_alerts": 0
+        }
+
+    def track_suggestion(self, validated: bool, approved: bool = None):
+        self.metrics["total_suggestions"] += 1
+        if validated:
+            self.metrics["validated_suggestions"] += 1
+        if approved is not None:
+            if approved:
+                self.metrics["human_approved"] += 1
+            else:
+                self.metrics["rejected"] += 1
+
+    def get_success_rate(self) -> float:
+        """Calculate success rate of LLM suggestions"""
+        if self.metrics["total_suggestions"] == 0:
+            return 0.0
+        return (self.metrics["human_approved"] /
+                self.metrics["total_suggestions"]) * 100
+
+    def generate_report(self) -> Dict:
+        """Generate metrics report"""
+        return {
+            **self.metrics,
+            "success_rate": self.get_success_rate(),
+            "validation_rate": (
+                self.metrics["validated_suggestions"] /
+                self.metrics["total_suggestions"] * 100
+                if self.metrics["total_suggestions"] > 0 else 0
+            )
+        }
+</code></pre>
+
+<h2>Best Practices Summary</h2>
+
+<div class="success-box">
+<h3>Golden Rules for LLMs + FHIR</h3>
+<ol>
+<li><strong>De-identify First</strong>: Never send PHI to external LLMs</li>
+<li><strong>Validate Always</strong>: Multi-layer validation (syntax, FHIR, profile, tests)</li>
+<li><strong>Human in the Loop</strong>: Expert review for all generated mappings</li>
+<li><strong>Start Small</strong>: Pilot with synthetic data, scale carefully</li>
+<li><strong>Audit Everything</strong>: Log all LLM interactions and decisions</li>
+<li><strong>Monitor Continuously</strong>: Track success rates and failures</li>
+<li><strong>Document Thoroughly</strong>: Record LLM-assisted vs. human-created mappings</li>
+</ol>
+</div>
+
+<h2>Future-Proofing</h2>
+
+<ul>
+<li><strong>Model Updates</strong>: Plan for LLM model version changes</li>
+<li><strong>Cost Management</strong>: Monitor token usage and implement budgets</li>
+<li><strong>Alternative Models</strong>: Test multiple LLMs for best results</li>
+<li><strong>Local Models</strong>: Consider on-premise LLMs for sensitive workflows</li>
+<li><strong>Continuous Improvement</strong>: Track which suggestions work best</li>
+</ul>
+
+<h2>Resources</h2>
+
+<ul>
+<li><a href="https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/artificial-intelligence/index.html" target="_blank">HHS Guidance on AI and HIPAA</a></li>
+<li><a href="https://www.nist.gov/itl/ai-risk-management-framework" target="_blank">NIST AI Risk Management Framework</a></li>
+<li><a href="https://www.fda.gov/medical-devices/software-medical-device-samd/artificial-intelligence-and-machine-learning-aiml-enabled-medical-devices" target="_blank">FDA AI/ML in Medical Devices</a></li>
+<li><a href="https://www.hl7.org/fhir/validation.html" target="_blank">FHIR Validation Documentation</a></li>
+</ul>
+        `
     }
 };
 
