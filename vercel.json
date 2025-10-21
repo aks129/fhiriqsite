@@ -1,0 +1,5 @@
+{
+  "buildCommand": "echo 'No build needed - static files only'",
+  "outputDirectory": "wix/velo/public",
+  "installCommand": "echo 'No install needed - static files only'"
+}
