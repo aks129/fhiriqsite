@@ -323,6 +323,23 @@ export default function Home() {
         </div>
       </nav>
 
+      {/* New Mapping Guide Announcement */}
+      <div className="bg-gradient-to-r from-accent-teal to-accent-purple text-white py-3">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-center gap-3 text-sm md:text-base">
+            <span className="font-semibold">🎉 NEW:</span>
+            <span>Comprehensive FHIR Mapping Wiki now available!</span>
+            <Link
+              href="/mappingguide"
+              className="underline hover:text-gray-200 font-semibold"
+              onClick={() => trackEvent('mapping_guide_banner_clicked')}
+            >
+              Explore Now →
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section - Updated per PRD value proposition */}
       <section className="bg-gradient-to-r from-primary-blue to-accent-purple text-white py-20">
         <div className="max-w-7xl mx-auto px-4">
@@ -623,6 +640,16 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
+            <Link href="/mappingguide" className="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6 border-2 border-accent-teal">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="text-accent-teal font-semibold text-sm">MAPPING WIKI</div>
+                <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-semibold">NEW</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Comprehensive FHIR Mapping Guide</h3>
+              <p className="text-gray-600 mb-4">Complete reference for data mapping, transformations, pipelines, and best practices</p>
+              <div className="text-sm text-gray-500">Interactive wiki with code examples</div>
+            </Link>
+
             <Link href="/blog" className="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6">
               <div className="text-primary-blue font-semibold text-sm mb-2">BLOG</div>
               <h3 className="text-xl font-semibold mb-2">Getting Started with FHIR R4</h3>
@@ -635,13 +662,6 @@ export default function Home() {
               <h3 className="text-xl font-semibold mb-2">FHIR Implementation Workshop</h3>
               <p className="text-gray-600 mb-4">Hands-on training for building SMART on FHIR applications</p>
               <div className="text-sm text-gray-500">4-hour workshop</div>
-            </Link>
-
-            <Link href="/podcast" className="bg-white rounded-lg shadow-sm hover:shadow-md transition p-6">
-              <div className="text-accent-teal font-semibold text-sm mb-2">PODCAST</div>
-              <h3 className="text-xl font-semibold mb-2">FHIR in Practice</h3>
-              <p className="text-gray-600 mb-4">Real-world implementation stories from healthcare technology leaders</p>
-              <div className="text-sm text-gray-500">Weekly episodes</div>
             </Link>
           </div>
 
@@ -722,6 +742,7 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Resources</h4>
               <ul className="space-y-2 text-gray-400">
+                <li><Link href="/mappingguide" className="hover:text-white">Mapping Guide</Link></li>
                 <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
                 <li><Link href="/builder" className="hover:text-white">AI Builder</Link></li>
                 <li><Link href="/docs" className="hover:text-white">Documentation</Link></li>
