@@ -3380,760 +3380,436 @@ def map_lab_code(local_code, local_system):
     },
 
     'pipeline-faq': {
-        title: 'FHIR Pipeline Example',
+        title: 'FHIR Pipeline FAQ',
         content: `
-# Building a FHIR Data Pipeline
+# FHIR Pipeline FAQ
 
-A comprehensive example of building a production-ready FHIR data transformation pipeline using Python, covering architecture, validation, mapping, and deployment.
+Technical documentation for backend architecture and libraries
 
 ---
 
-## Overview
+## Table of Contents
 
-This guide demonstrates how to build a complete FHIR data pipeline that transforms CSV clinical data into validated FHIR resources. The example uses modern Python libraries and follows healthcare data best practices.
+- [Backend Architecture](#backend-architecture)
+- [FHIR.Resources Library](#fhir-resources-library)
+- [Pydantic Validation](#pydantic-validation)
+- [Polars Data Processing](#polars-data-processing)
+- [YAML Mappings](#yaml-mappings)
+- [Processing Pipeline](#processing-pipeline)
+- [Validation Layers](#validation-layers)
+- [Deployment & Integration](#deployment-integration)
 
-### Pipeline Architecture
+---
+
+## Backend Architecture
+
+**Q: What is the overall architecture of the FHIR pipeline?**
 
 <div class="info-box">
-<strong>Data Flow:</strong><br>
-CSV Upload → Validation → YAML Mapping → FHIR Generation → Export (NDJSON/Bundle)
+<strong>Pipeline Flow:</strong><br>
+CSV Upload → Data Validation → YAML Mapping → FHIR Generation → Export
 </div>
 
-**Key Components:**
+**A:** The FHIR pipeline uses a modular Flask-based architecture with the following components:
 
-- **Web Layer**: Flask application with REST API
-- **Validation**: Polars + Pydantic for data quality
-- **Mapping Engine**: YAML-driven transformations
-- **FHIR Builder**: Python classes using fhir.resources library
-- **Export System**: Multiple output formats
-
----
-
-## Project Structure
+- **Web Layer**: Flask application serving the UI and API endpoints
+- **Validation Layer**: Pydantic and Polars-based data validation
+- **Mapping Engine**: YAML-driven field transformation system
+- **FHIR Builder**: Python class that constructs FHIR Observation resources
+- **Export System**: Multi-format output generation (NDJSON, Bundle, Summary)
 
 \`\`\`plaintext
-fhir-pipeline/
-├── web_app.py                    # Flask application entry point
-├── requirements.txt              # Python dependencies
+Project Structure:
+├── web_app.py              # Flask web application & API
 ├── app/
 │   ├── mapping/
-│   │   ├── apply.py             # YAML mapping engine
-│   │   └── config.yaml          # Mapping configurations
+│   │   └── apply.py        # YAML mapping application
 │   ├── models/
-│   │   ├── observation.py       # Observation builder
-│   │   ├── patient.py           # Patient builder
-│   │   └── bundle.py            # Bundle creator
+│   │   └── observation_builder.py  # FHIR resource builder
 │   ├── validate/
-│   │   ├── schema.py            # Pydantic models
-│   │   └── checks.py            # Data validation rules
-│   └── export/
-│       ├── ndjson.py            # NDJSON exporter
-│       └── bundle.py            # Bundle exporter
-└── tests/
-    ├── test_validation.py
-    └── test_mapping.py
+│   │   └── dataframe_checks.py     # Data validation logic
+│   └── io/
+│       ├── mapping.yaml    # Field transformation rules
+│       └── sample_input.csv # Demo data
+└── templates/
+    └── fhir_pipeline.html  # Web interface
 \`\`\`
 
 ---
 
-## Step 1: Data Validation with Polars
+## FHIR.Resources Library
 
-Polars provides high-performance data processing with strong type safety—critical for healthcare data.
+**Q: What is fhir.resources and how does it work in the pipeline?**
 
-### Why Polars?
+**A:** The \`fhir.resources\` library provides Python classes for all FHIR resource types, ensuring compliance with the FHIR R4 standard. It handles:
 
-| Feature | Benefit |
-|---------|---------|
-| **Speed** | 10-30x faster than Pandas |
-| **Memory** | Efficient for large datasets |
-| **Type Safety** | Catches data quality issues early |
-| **NULL Handling** | Better for clinical data with missing values |
-
-### Validation Example
+- **Resource Modeling**: Python classes that mirror FHIR resource structures
+- **Validation**: Built-in validation for required fields and data types
+- **Serialization**: Convert Python objects to/from JSON
+- **Profile Support**: Compliance with US Core and other FHIR profiles
 
 \`\`\`python
-import polars as pl
-from datetime import datetime
+from fhir.resources.observation import Observation
 
-def validate_clinical_csv(filepath: str) -> dict:
-    """
-    Validate CSV structure and data quality using Polars.
-    Returns validation report with errors and warnings.
-    """
-    # Read CSV with automatic type inference
-    df = pl.read_csv(filepath, try_parse_dates=True)
-
-    errors = []
-    warnings = []
-
-    # Check required columns
-    required_cols = ['patient_id', 'loinc_code', 'value', 'unit', 'date']
-    missing_cols = [col for col in required_cols if col not in df.columns]
-    if missing_cols:
-        errors.append(f"Missing required columns: {missing_cols}")
-
-    # Data quality checks
-    quality_report = df.select([
-        pl.col("patient_id").is_null().sum().alias("missing_patient_ids"),
-        pl.col("value").is_numeric().all().alias("all_values_numeric"),
-        pl.col("loinc_code").str.contains("-").all().alias("valid_loinc_format"),
-        pl.len().alias("total_rows")
-    ])
-
-    report = quality_report.to_dicts()[0]
-
-    # Add warnings for data quality issues
-    if report['missing_patient_ids'] > 0:
-        warnings.append(f"{report['missing_patient_ids']} rows missing patient ID")
-
-    if not report['all_values_numeric']:
-        warnings.append("Some values are not numeric")
-
-    return {
-        'valid': len(errors) == 0,
-        'errors': errors,
-        'warnings': warnings,
-        'stats': report,
-        'dataframe': df if len(errors) == 0 else None
+# Create FHIR Observation resource
+observation = Observation(
+    status="final",
+    code={
+        "coding": [{
+            "system": "http://loinc.org",
+            "code": "718-7",
+            "display": "Hemoglobin [Mass/volume] in Blood"
+        }]
+    },
+    subject={"reference": "Patient/12345"},
+    valueQuantity={
+        "value": 14.5,
+        "unit": "g/dL",
+        "system": "http://unitsofmeasure.org"
     }
+)
+
+# Validates structure and required fields automatically
+fhir_json = observation.json(indent=2)
 \`\`\`
+
+**Q: Why use fhir.resources instead of building JSON manually?**
+
+**A:** Manual JSON construction is error-prone and doesn't guarantee FHIR compliance. The library provides:
+
+- Type safety and validation
+- Automatic compliance with FHIR specifications
+- Easy serialization to multiple formats
+- Integration with FHIR servers and validators
 
 ---
 
-## Step 2: Pydantic Data Models
+## Pydantic Validation
 
-Pydantic provides runtime validation with clear error messages for invalid data.
+**Q: How does Pydantic contribute to data validation?**
+
+**A:** Pydantic provides runtime type checking and data validation throughout the pipeline:
+
+- **Data Models**: Type-safe classes for CSV row structures
+- **Validation Rules**: Custom validators for clinical data formats
+- **Error Handling**: Detailed error messages for invalid data
+- **Integration**: Works seamlessly with fhir.resources (which is built on Pydantic)
 
 \`\`\`python
-from pydantic import BaseModel, validator, Field
+from pydantic import BaseModel, validator
 from datetime import datetime
 from typing import Optional
 
-class ClinicalObservationRow(BaseModel):
-    """Pydantic model for validating each row of clinical data."""
-
-    patient_id: str = Field(..., min_length=1, description="Patient identifier")
-    encounter_id: Optional[str] = Field(None, description="Encounter reference")
-    observation_date: datetime = Field(..., description="When observation was made")
-    loinc_code: str = Field(..., pattern=r"^\d+-\d+$", description="LOINC code")
-    value: float = Field(..., description="Numeric value")
-    unit: str = Field(..., description="Unit of measure")
-    status: str = Field(default="final", description="Observation status")
+class ClinicalObservation(BaseModel):
+    patient_id: str
+    encounter_id: Optional[str]
+    obs_datetime: datetime
+    loinc: str
+    system: str = "http://loinc.org"
+    value: float
+    unit: str
+    status: str = "final"
 
     @validator('patient_id')
     def validate_patient_id(cls, v):
-        """Ensure patient ID is not empty or whitespace."""
-        if not v or not v.strip():
+        if not v or len(v.strip()) == 0:
             raise ValueError('Patient ID cannot be empty')
         return v.strip()
 
-    @validator('loinc_code')
-    def validate_loinc(cls, v):
-        """Validate LOINC code format (e.g., 718-7)."""
-        parts = v.split('-')
-        if len(parts) != 2:
-            raise ValueError('LOINC must have format: number-number')
-        try:
-            int(parts[0])
-            int(parts[1])
-        except ValueError:
-            raise ValueError('LOINC parts must be numeric')
+    @validator('loinc')
+    def validate_loinc_format(cls, v):
+        if not v or '-' not in v:
+            raise ValueError('LOINC code must contain hyphen (e.g., 718-7)')
         return v
-
-    @validator('value')
-    def validate_value(cls, v):
-        """Ensure value is within reasonable clinical range."""
-        if v < 0:
-            raise ValueError('Clinical values cannot be negative')
-        if v > 10000:
-            raise ValueError('Value seems unrealistically high')
-        return v
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "patient_id": "PAT-12345",
-                "observation_date": "2024-01-15T10:30:00",
-                "loinc_code": "718-7",
-                "value": 14.5,
-                "unit": "g/dL",
-                "status": "final"
-            }
-        }
 \`\`\`
+
+**Q: What types of validation errors does Pydantic catch?**
+
+- Missing required fields
+- Incorrect data types (string instead of number)
+- Invalid date formats
+- Custom business rule violations
+- Range validation for numeric values
 
 ---
 
-## Step 3: YAML Mapping Configuration
+## Polars Data Processing
 
-YAML mappings allow non-developers to configure field transformations without code changes.
+**Q: Why use Polars instead of Pandas for data processing?**
+
+**A:** Polars provides several advantages for healthcare data processing:
+
+- **Performance**: 10-30x faster than Pandas for many operations
+- **Memory Efficiency**: Better handling of large clinical datasets
+- **Type Safety**: Stricter type system catches data quality issues
+- **Lazy Evaluation**: Optimized query planning for complex operations
+- **Better NULL handling**: Important for clinical data with missing values
+
+\`\`\`python
+import polars as pl
+
+# Load and validate CSV data
+df = pl.read_csv("clinical_data.csv", try_parse_dates=True)
+
+# Data quality checks with Polars expressions
+validation_results = df.select([
+    pl.col("patient_id").is_null().sum().alias("missing_patient_ids"),
+    pl.col("value").is_numeric().sum().alias("valid_numeric_values"),
+    pl.col("obs_datetime").str.strptime(pl.Date, "%Y-%m-%d").is_not_null().sum().alias("valid_dates"),
+    pl.col("loinc").str.contains("-").sum().alias("valid_loinc_codes")
+])
+
+# Type casting with error handling
+df_clean = df.with_columns([
+    pl.col("value").cast(pl.Float64, strict=False),
+    pl.col("obs_datetime").str.strptime(pl.Datetime, "%Y-%m-%d %H:%M:%S")
+])
+\`\`\`
+
+**Q: How does Polars integrate with the validation pipeline?**
+
+**A:** Polars handles the initial data processing and quality checks:
+
+- CSV parsing with automatic type inference
+- Data quality assessments (missing values, type mismatches)
+- Efficient batch processing of large datasets
+- Integration with Pydantic for row-level validation
+
+---
+
+## YAML Mappings
+
+**Q: How do YAML mappings transform CSV data to FHIR?**
+
+**A:** YAML mappings define declarative transformation rules without requiring code changes:
 
 \`\`\`yaml
-# config/observation_mapping.yaml
-version: "1.0"
-resource_type: "Observation"
-
-mappings:
+# mapping.yaml
+observation:
+  resourceType: "Observation"
   status:
-    source_field: "status"
-    default_value: "final"
-    required: true
+    source: "status"
+    default: "final"
 
   code:
-    type: "CodeableConcept"
     coding:
       - system:
-          default_value: "http://loinc.org"
+          source: "system"
+          default: "http://loinc.org"
         code:
-          source_field: "loinc_code"
-          required: true
+          source: "loinc"
         display:
-          lookup_table: "loinc_descriptions"
+          lookup: "loinc_displays"
 
   subject:
-    type: "Reference"
     reference:
       template: "Patient/{patient_id}"
-      required: true
-
-  encounter:
-    type: "Reference"
-    reference:
-      template: "Encounter/{encounter_id}"
-      required: false
-
-  effectiveDateTime:
-    source_field: "observation_date"
-    format: "iso8601"
-    required: true
 
   valueQuantity:
-    type: "Quantity"
     value:
-      source_field: "value"
-      data_type: "decimal"
+      source: "value"
+      type: "number"
     unit:
-      source_field: "unit"
+      source: "unit"
     system:
-      default_value: "http://unitsofmeasure.org"
-    code:
-      source_field: "unit"
+      default: "http://unitsofmeasure.org"
 
-# Lookup tables
-lookup_tables:
-  loinc_descriptions:
-    "718-7": "Hemoglobin [Mass/volume] in Blood"
-    "2339-0": "Glucose [Mass/volume] in Blood"
-    "2571-8": "Triglyceride [Mass/volume] in Serum or Plasma"
+  effectiveDateTime:
+    source: "obs_datetime"
+    format: "datetime"
 \`\`\`
 
-### Applying YAML Mappings
+**Q: What mapping features are supported?**
 
-\`\`\`python
-import yaml
-from typing import Dict, Any
+- **Direct Field Mapping**: \`source: "field_name"\`
+- **Default Values**: \`default: "final"\`
+- **Template Substitution**: \`template: "Patient/{patient_id}"\`
+- **Type Conversion**: \`type: "number"\`
+- **Conditional Logic**: Based on source data values
+- **Lookup Tables**: Reference external code systems
 
-def apply_yaml_mapping(row_data: dict, mapping_config: dict) -> dict:
-    """
-    Transform a data row using YAML mapping configuration.
-    Returns FHIR-formatted dictionary.
-    """
-    result = {
-        "resourceType": mapping_config['resource_type']
-    }
+**Q: Why use YAML instead of hardcoded transformations?**
 
-    for field_name, mapping in mapping_config['mappings'].items():
-        # Handle simple field mapping
-        if 'source_field' in mapping:
-            source_value = row_data.get(mapping['source_field'])
-            if source_value is not None:
-                result[field_name] = source_value
-            elif 'default_value' in mapping:
-                result[field_name] = mapping['default_value']
-
-        # Handle template-based mapping
-        elif 'template' in mapping.get('reference', {}):
-            template = mapping['reference']['template']
-            # Replace placeholders like {patient_id}
-            for key, value in row_data.items():
-                template = template.replace(f"{{{key}}}", str(value))
-            result[field_name] = {"reference": template}
-
-        # Handle CodeableConcept
-        elif mapping.get('type') == 'CodeableConcept':
-            result[field_name] = build_codeable_concept(mapping, row_data)
-
-    return result
-
-def build_codeable_concept(mapping: dict, row_data: dict) -> dict:
-    """Build FHIR CodeableConcept from mapping configuration."""
-    coding_list = []
-
-    for coding_spec in mapping.get('coding', []):
-        coding = {}
-
-        if 'system' in coding_spec:
-            coding['system'] = coding_spec['system'].get('default_value')
-
-        if 'code' in coding_spec:
-            code_value = row_data.get(coding_spec['code']['source_field'])
-            coding['code'] = code_value
-
-            # Lookup display value if configured
-            if 'display' in coding_spec:
-                lookup_table_name = coding_spec['display'].get('lookup_table')
-                if lookup_table_name:
-                    lookup_table = mapping.get('lookup_tables', {}).get(lookup_table_name, {})
-                    coding['display'] = lookup_table.get(code_value, code_value)
-
-        coding_list.append(coding)
-
-    return {"coding": coding_list}
-\`\`\`
+- Easy to modify mappings without code changes
+- Version control for mapping specifications
+- Non-technical users can modify mappings
+- Support for multiple mapping profiles
+- Clear documentation of transformation logic
 
 ---
 
-## Step 4: Building FHIR Resources
+## Processing Pipeline
 
-Use the fhir.resources library to create validated FHIR Observation resources.
-
-\`\`\`python
-from fhir.resources.observation import Observation
-from fhir.resources.quantity import Quantity
-from fhir.resources.codeableconcept import CodeableConcept
-from fhir.resources.coding import Coding
-from fhir.resources.reference import Reference
-from datetime import datetime
-from typing import Optional
-
-class ObservationBuilder:
-    """Builder class for creating FHIR Observation resources."""
-
-    @staticmethod
-    def create_observation(
-        patient_id: str,
-        loinc_code: str,
-        loinc_display: str,
-        value: float,
-        unit: str,
-        observation_date: datetime,
-        encounter_id: Optional[str] = None,
-        status: str = "final"
-    ) -> Observation:
-        """
-        Create a validated FHIR Observation resource.
-
-        Args:
-            patient_id: Patient reference ID
-            loinc_code: LOINC code (e.g., "718-7")
-            loinc_display: Human-readable description
-            value: Numeric observation value
-            unit: Unit of measure (e.g., "g/dL")
-            observation_date: When observation was made
-            encounter_id: Optional encounter reference
-            status: Observation status (default: "final")
-
-        Returns:
-            Validated FHIR Observation resource
-        """
-
-        # Build code (what was observed)
-        code = CodeableConcept(
-            coding=[
-                Coding(
-                    system="http://loinc.org",
-                    code=loinc_code,
-                    display=loinc_display
-                )
-            ]
-        )
-
-        # Build subject (who was observed)
-        subject = Reference(reference=f"Patient/{patient_id}")
-
-        # Build value (observation result)
-        value_quantity = Quantity(
-            value=value,
-            unit=unit,
-            system="http://unitsofmeasure.org",
-            code=unit
-        )
-
-        # Create observation
-        observation_data = {
-            "status": status,
-            "code": code,
-            "subject": subject,
-            "effectiveDateTime": observation_date.isoformat(),
-            "valueQuantity": value_quantity
-        }
-
-        # Add optional encounter reference
-        if encounter_id:
-            observation_data["encounter"] = Reference(
-                reference=f"Encounter/{encounter_id}"
-            )
-
-        # Create and validate
-        observation = Observation(**observation_data)
-
-        return observation
-
-# Example usage
-obs = ObservationBuilder.create_observation(
-    patient_id="12345",
-    loinc_code="718-7",
-    loinc_display="Hemoglobin [Mass/volume] in Blood",
-    value=14.5,
-    unit="g/dL",
-    observation_date=datetime(2024, 1, 15, 10, 30, 0)
-)
-
-# Output as JSON
-print(obs.json(indent=2))
-\`\`\`
-
----
-
-## Step 5: Export Formats
-
-### NDJSON Export (Newline Delimited JSON)
-
-NDJSON is the standard format for bulk FHIR data exchange.
-
-\`\`\`python
-from pathlib import Path
-from typing import List
-from fhir.resources.observation import Observation
-
-def export_ndjson(observations: List[Observation], output_path: Path):
-    """
-    Export FHIR resources to NDJSON format.
-    Each line is a complete JSON object.
-    """
-    with output_path.open('w') as f:
-        for obs in observations:
-            # Write each resource as a single line
-            f.write(obs.json() + '\\n')
-
-    print(f"Exported {len(observations)} observations to {output_path}")
-
-# Usage
-observations = [obs1, obs2, obs3]  # List of Observation resources
-export_ndjson(observations, Path("output/observations.ndjson"))
-\`\`\`
-
-### Bundle Export
-
-Bundles group multiple resources together for transaction or batch operations.
-
-\`\`\`python
-from fhir.resources.bundle import Bundle, BundleEntry
-from typing import List
-
-def create_transaction_bundle(observations: List[Observation]) -> Bundle:
-    """
-    Create a FHIR transaction Bundle with Observation resources.
-    """
-    entries = []
-
-    for obs in observations:
-        entry = BundleEntry(
-            resource=obs,
-            request={
-                "method": "POST",
-                "url": "Observation"
-            }
-        )
-        entries.append(entry)
-
-    bundle = Bundle(
-        type="transaction",
-        entry=entries
-    )
-
-    return bundle
-
-# Usage
-bundle = create_transaction_bundle(observations)
-with open('output/bundle.json', 'w') as f:
-    f.write(bundle.json(indent=2))
-\`\`\`
-
----
-
-## Step 6: Complete Pipeline
-
-Putting it all together into a complete data processing pipeline.
-
-\`\`\`python
-from pathlib import Path
-from typing import List, Dict
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-class FHIRPipeline:
-    """Complete FHIR data transformation pipeline."""
-
-    def __init__(self, mapping_config_path: Path):
-        with mapping_config_path.open() as f:
-            self.mapping_config = yaml.safe_load(f)
-
-    def process_file(self, input_csv: Path, output_dir: Path) -> Dict:
-        """
-        Process CSV file through complete pipeline.
-
-        Returns:
-            Dictionary with processing results and statistics
-        """
-        logger.info(f"Starting pipeline for {input_csv}")
-
-        # Step 1: Validate CSV structure
-        validation_result = validate_clinical_csv(str(input_csv))
-
-        if not validation_result['valid']:
-            logger.error(f"Validation failed: {validation_result['errors']}")
-            return {'success': False, 'errors': validation_result['errors']}
-
-        df = validation_result['dataframe']
-        logger.info(f"Loaded {len(df)} rows from CSV")
-
-        # Step 2: Process each row
-        observations = []
-        errors = []
-
-        for idx, row in enumerate(df.iter_rows(named=True)):
-            try:
-                # Validate row with Pydantic
-                validated_row = ClinicalObservationRow(**row)
-
-                # Apply YAML mapping
-                mapped_data = apply_yaml_mapping(
-                    validated_row.dict(),
-                    self.mapping_config
-                )
-
-                # Build FHIR Observation
-                obs = Observation(**mapped_data)
-                observations.append(obs)
-
-            except Exception as e:
-                logger.warning(f"Row {idx + 1} failed: {str(e)}")
-                errors.append({
-                    'row': idx + 1,
-                    'error': str(e),
-                    'data': row
-                })
-
-        # Step 3: Export results
-        output_dir.mkdir(parents=True, exist_ok=True)
-
-        # Export NDJSON
-        ndjson_path = output_dir / "observations.ndjson"
-        export_ndjson(observations, ndjson_path)
-
-        # Export Bundle
-        bundle = create_transaction_bundle(observations)
-        bundle_path = output_dir / "bundle.json"
-        with bundle_path.open('w') as f:
-            f.write(bundle.json(indent=2))
-
-        # Step 4: Generate summary report
-        summary = {
-            'success': True,
-            'total_rows': len(df),
-            'successful': len(observations),
-            'failed': len(errors),
-            'success_rate': f"{(len(observations) / len(df) * 100):.1f}%",
-            'outputs': {
-                'ndjson': str(ndjson_path),
-                'bundle': str(bundle_path)
-            },
-            'errors': errors
-        }
-
-        logger.info(f"Pipeline complete: {summary['success_rate']} success rate")
-
-        return summary
-
-# Usage
-pipeline = FHIRPipeline(
-    mapping_config_path=Path("config/observation_mapping.yaml")
-)
-
-result = pipeline.process_file(
-    input_csv=Path("data/clinical_observations.csv"),
-    output_dir=Path("output")
-)
-
-print(f"Processed {result['successful']} observations successfully")
-\`\`\`
-
----
-
-## Deployment Options
-
-### Option 1: Flask Web Application
-
-\`\`\`python
-from flask import Flask, request, jsonify, send_file
-from werkzeug.utils import secure_filename
-import tempfile
-
-app = Flask(__name__)
-pipeline = FHIRPipeline(Path("config/observation_mapping.yaml"))
-
-@app.route('/api/transform', methods=['POST'])
-def transform_csv():
-    """API endpoint to transform CSV to FHIR."""
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file provided'}), 400
-
-    file = request.files['file']
-
-    # Save uploaded file
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.csv') as tmp:
-        file.save(tmp.name)
-        input_path = Path(tmp.name)
-
-    # Process through pipeline
-    output_dir = Path(tempfile.mkdtemp())
-    result = pipeline.process_file(input_path, output_dir)
-
-    return jsonify(result)
-
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    return jsonify({'status': 'healthy', 'version': '1.0.0'})
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-\`\`\`
-
-### Option 2: Docker Deployment
-
-\`\`\`dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
-COPY . .
-
-# Expose port
-EXPOSE 5000
-
-# Run application
-CMD ["python", "web_app.py"]
-\`\`\`
-
-### Option 3: AWS Lambda (Serverless)
-
-\`\`\`python
-import json
-import boto3
-from pathlib import Path
-
-def lambda_handler(event, context):
-    """AWS Lambda handler for FHIR transformation."""
-
-    # Get S3 bucket and key from event
-    bucket = event['Records'][0]['s3']['bucket']['name']
-    key = event['Records'][0]['s3']['object']['key']
-
-    # Download file from S3
-    s3 = boto3.client('s3')
-    local_path = Path('/tmp/input.csv')
-    s3.download_file(bucket, key, str(local_path))
-
-    # Process through pipeline
-    pipeline = FHIRPipeline(Path("config/observation_mapping.yaml"))
-    output_dir = Path('/tmp/output')
-    result = pipeline.process_file(local_path, output_dir)
-
-    # Upload results back to S3
-    output_bucket = 'fhir-output-bucket'
-    for output_file in output_dir.glob('*'):
-        s3.upload_file(
-            str(output_file),
-            output_bucket,
-            f"processed/{output_file.name}"
-        )
-
-    return {
-        'statusCode': 200,
-        'body': json.dumps(result)
-    }
-\`\`\`
-
----
-
-## Testing & Validation
-
-### Unit Tests
-
-\`\`\`python
-import pytest
-from datetime import datetime
-
-def test_observation_builder():
-    """Test FHIR Observation creation."""
-    obs = ObservationBuilder.create_observation(
-        patient_id="test-123",
-        loinc_code="718-7",
-        loinc_display="Hemoglobin",
-        value=14.5,
-        unit="g/dL",
-        observation_date=datetime.now()
-    )
-
-    assert obs.status == "final"
-    assert obs.subject.reference == "Patient/test-123"
-    assert obs.valueQuantity.value == 14.5
-
-def test_pydantic_validation():
-    """Test Pydantic validation catches invalid data."""
-    with pytest.raises(ValueError):
-        ClinicalObservationRow(
-            patient_id="",  # Should fail - empty patient ID
-            observation_date=datetime.now(),
-            loinc_code="718-7",
-            value=14.5,
-            unit="g/dL"
-        )
-\`\`\`
-
----
-
-## Resources & References
-
-### Documentation
-
-- [FHIR R4 Specification](https://hl7.org/fhir/R4/)
-- [fhir.resources Python Library](https://pypi.org/project/fhir.resources/)
-- [Pydantic Documentation](https://docs.pydantic.dev/)
-- [Polars User Guide](https://pola-rs.github.io/polars/)
-
-### Code Systems
-
-- [LOINC](https://loinc.org/) - Laboratory observations
-- [SNOMED CT](http://www.snomed.org/) - Clinical terminology
-- [UCUM](https://ucum.org/) - Units of measure
-
-### Tools
-
-- [HAPI FHIR Validator](https://hapifhir.io/hapi-fhir/docs/validation/introduction.html)
-- [FHIR Shorthand (FSH)](https://build.fhir.org/ig/HL7/fhir-shorthand/)
-- [Synthea](https://synthetichealth.github.io/synthea/) - Synthetic patient data
+**Q: What are the steps in the processing pipeline?**
 
 <div class="info-box">
-<strong>Next Steps:</strong> Review the <a href="#yaml-mapping">YAML Mapping</a> and <a href="#python-fhir">Python fhir.resources</a> sections for more detailed examples of specific mapping approaches.
+<strong>Pipeline Stages:</strong><br>
+1. Upload (CSV File Input) → 2. Parse (Polars DataFrame) → 3. Validate (Pydantic Models) → 4. Map (YAML Rules) → 5. Build (FHIR Resources) → 6. Export (Multiple Formats)
+</div>
+
+**A:** The pipeline processes data through six distinct stages:
+
+1. **File Upload**: Accept CSV files with clinical observations
+2. **Data Parsing**: Use Polars to read and analyze CSV structure
+3. **Data Validation**: Apply Pydantic models to ensure data quality
+4. **Field Mapping**: Transform data using YAML mapping specifications
+5. **FHIR Building**: Generate compliant FHIR Observation resources
+6. **Export Generation**: Create NDJSON, Bundle, and Summary outputs
+
+\`\`\`python
+def process_pipeline():
+    # 1. Load and validate CSV
+    csv_result = load_and_validate_csv(filepath)
+
+    # 2. Apply YAML mappings
+    mapping_spec = load_mapping_spec("mapping.yaml")
+    mapped_data = apply_mappings(csv_result['dataframe'], mapping_spec)
+
+    # 3. Build FHIR resources
+    observations = []
+    for row in mapped_data:
+        obs = ObservationBuilder.build_from_dict(row)
+        observations.append(obs)
+
+    # 4. Validate FHIR resources
+    valid_observations = validate_fhir_resources(observations)
+
+    # 5. Generate exports
+    export_results = generate_exports(valid_observations)
+
+    return ProcessingResult(
+        success_rate=len(valid_observations) / len(observations),
+        observations=valid_observations,
+        exports=export_results
+    )
+\`\`\`
+
+**Q: How does error handling work in the pipeline?**
+
+- **Graceful Degradation**: Invalid rows are skipped, not the entire batch
+- **Error Categorization**: Separate validation, mapping, and FHIR errors
+- **Detailed Logging**: Each error includes row number and specific issue
+- **Success Metrics**: Report percentage of successfully processed records
+
+---
+
+## Validation Layers
+
+**Q: What validation layers ensure data quality?**
+
+**A:** The system implements multiple validation layers:
+
+### Validation Layers
+
+| Layer | Focus | Tools |
+|-------|-------|-------|
+| **CSV Structure** | File format, encoding, columns | Polars |
+| **Data Types** | Numeric, date, string validation | Pydantic |
+| **Business Rules** | Clinical data requirements | Custom validators |
+| **FHIR Compliance** | Resource structure validation | fhir.resources |
+| **US Core Profile** | Healthcare interoperability standards | Profile validators |
+
+### Common Validation Errors
+
+- Missing required fields (patient_id, loinc)
+- Invalid LOINC codes or formats
+- Non-numeric values in numeric fields
+- Invalid date formats
+- Empty or whitespace-only values
+
+\`\`\`python
+# Validation pipeline example
+def validate_observation_data(df):
+    results = ValidationResult()
+
+    # Layer 1: Required field validation
+    required_fields = ['patient_id', 'loinc', 'value', 'unit']
+    for field in required_fields:
+        if field not in df.columns:
+            results.add_error(f"Missing required column: {field}")
+
+    # Layer 2: Data type validation
+    numeric_validations = df.select([
+        pl.col("value").is_numeric().alias("value_numeric"),
+        pl.col("patient_id").is_not_null().alias("patient_id_present")
+    ])
+
+    # Layer 3: Business rule validation
+    loinc_validation = df.filter(
+        pl.col("loinc").str.contains("-") == False
+    ).select("row_nr", "loinc")
+
+    # Layer 4: FHIR resource validation (after mapping)
+    for obs_dict in mapped_observations:
+        try:
+            observation = Observation(**obs_dict)  # Validates FHIR structure
+            results.add_valid_observation(observation)
+        except ValidationError as e:
+            results.add_fhir_error(str(e))
+
+    return results
+\`\`\`
+
+---
+
+## Deployment & Integration
+
+**Q: How can the FHIR pipeline be deployed and integrated?**
+
+**A:** The pipeline supports multiple deployment scenarios:
+
+### Deployment Options
+
+- **Replit Deployment**: One-click deployment with automatic scaling
+- **Docker Container**: Containerized deployment for any environment
+- **Cloud Platforms**: AWS, GCP, Azure with managed services
+- **On-Premises**: Local installation for sensitive healthcare data
+
+### Integration Points
+
+- **HAPI FHIR Server**: Direct upload to FHIR repositories
+- **EHR Systems**: Integration via FHIR APIs
+- **Data Lakes**: Bulk export to analytics platforms
+- **HL7 Networks**: Standard healthcare data exchange
+
+\`\`\`python
+# Example HAPI FHIR server integration
+import requests
+
+def upload_to_fhir_server(observations, server_base_url):
+    headers = {
+        'Content-Type': 'application/fhir+json',
+        'Accept': 'application/fhir+json'
+    }
+
+    results = []
+    for obs in observations:
+        response = requests.post(
+            f"{server_base_url}/Observation",
+            json=obs.dict(exclude_none=True),
+            headers=headers
+        )
+        results.append({
+            'status': response.status_code,
+            'resource_id': response.json().get('id') if response.ok else None,
+            'errors': response.json().get('issue', []) if not response.ok else []
+        })
+
+    return results
+\`\`\`
+
+### Security & Compliance
+
+- **HIPAA Compliance**: Secure handling of PHI data
+- **Data Encryption**: At rest and in transit
+- **Access Controls**: Role-based authentication
+- **Audit Logging**: Comprehensive processing logs
+- **Data Residency**: Control over data location
+
+---
+
+<div class="info-box">
+For additional questions or technical support, please refer to the <a href="https://hl7.org/fhir/" target="_blank">HL7 FHIR Documentation</a> or the project repository.
 </div>
         `
     }
