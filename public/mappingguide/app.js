@@ -2808,6 +2808,1010 @@ def map_prescription_to_medication_request(prescription):
                 <li><a href="http://hl7.org/fhir/medicationrequest.html" target="_blank">FHIR MedicationRequest</a></li>
             </ul>
         `
+    },
+
+    'data-types': {
+        title: 'FHIR Data Types',
+        content: `
+            <h1>FHIR Data Types</h1>
+
+            <h2>Overview</h2>
+            <p>FHIR defines a rich set of data types that are used across all resources. Understanding these types is crucial for proper data mapping.</p>
+
+            <h2>Primitive Data Types</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                        <th>Regex/Format</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>boolean</td>
+                        <td>True or false</td>
+                        <td>true, false</td>
+                        <td>true | false</td>
+                    </tr>
+                    <tr>
+                        <td>integer</td>
+                        <td>Whole number</td>
+                        <td>42, -7</td>
+                        <td>-?[0-9]+</td>
+                    </tr>
+                    <tr>
+                        <td>string</td>
+                        <td>Sequence of Unicode characters</td>
+                        <td>"Hello World"</td>
+                        <td>Any UTF-8 string</td>
+                    </tr>
+                    <tr>
+                        <td>decimal</td>
+                        <td>Rational number</td>
+                        <td>3.14, -0.5</td>
+                        <td>-?([0-9]+\.[0-9]+)</td>
+                    </tr>
+                    <tr>
+                        <td>uri</td>
+                        <td>Uniform Resource Identifier</td>
+                        <td>"http://example.org"</td>
+                        <td>\\S+</td>
+                    </tr>
+                    <tr>
+                        <td>date</td>
+                        <td>Date (no time)</td>
+                        <td>"2024-01-15"</td>
+                        <td>YYYY-MM-DD</td>
+                    </tr>
+                    <tr>
+                        <td>dateTime</td>
+                        <td>Date and time</td>
+                        <td>"2024-01-15T10:30:00Z"</td>
+                        <td>YYYY-MM-DDThh:mm:ss+zz:zz</td>
+                    </tr>
+                    <tr>
+                        <td>time</td>
+                        <td>Time of day</td>
+                        <td>"10:30:00"</td>
+                        <td>hh:mm:ss</td>
+                    </tr>
+                    <tr>
+                        <td>code</td>
+                        <td>String from controlled vocabulary</td>
+                        <td>"male"</td>
+                        <td>[^\\s]+</td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>Logical id</td>
+                        <td>"example-123"</td>
+                        <td>[A-Za-z0-9\\-\\.]{1,64}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Complex Data Types</h2>
+
+            <h3>CodeableConcept</h3>
+            <p>A value that is usually supplied by providing a reference to one or more terminologies.</p>
+
+            <pre><code class="language-json">{
+  "coding": [{
+    "system": "http://snomed.info/sct",
+    "code": "44054006",
+    "display": "Diabetes mellitus type 2"
+  }],
+  "text": "Type 2 Diabetes"
+}</code></pre>
+
+            <h3>Coding</h3>
+            <p>A reference to a code defined by a terminology system.</p>
+
+            <pre><code class="language-json">{
+  "system": "http://loinc.org",
+  "code": "15074-8",
+  "display": "Glucose [Moles/volume] in Blood"
+}</code></pre>
+
+            <h3>Identifier</h3>
+            <p>A unique identifier for a resource or element.</p>
+
+            <pre><code class="language-json">{
+  "use": "official",
+  "type": {
+    "coding": [{
+      "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+      "code": "MR"
+    }]
+  },
+  "system": "http://hospital.example.org",
+  "value": "12345"
+}</code></pre>
+
+            <h3>HumanName</h3>
+            <p>A name of a person.</p>
+
+            <pre><code class="language-json">{
+  "use": "official",
+  "family": "Doe",
+  "given": ["John", "Robert"],
+  "prefix": ["Mr."],
+  "suffix": ["Jr."]
+}</code></pre>
+
+            <h3>Address</h3>
+            <p>Physical location.</p>
+
+            <pre><code class="language-json">{
+  "use": "home",
+  "type": "physical",
+  "line": ["123 Main St", "Apt 4B"],
+  "city": "Springfield",
+  "state": "IL",
+  "postalCode": "62701",
+  "country": "US"
+}</code></pre>
+
+            <h3>ContactPoint</h3>
+            <p>Contact detail such as phone or email.</p>
+
+            <pre><code class="language-json">{
+  "system": "phone",
+  "value": "555-123-4567",
+  "use": "home",
+  "rank": 1
+}</code></pre>
+
+            <h3>Quantity</h3>
+            <p>Measured amount.</p>
+
+            <pre><code class="language-json">{
+  "value": 95,
+  "unit": "mg/dL",
+  "system": "http://unitsofmeasure.org",
+  "code": "mg/dL"
+}</code></pre>
+
+            <h3>Reference</h3>
+            <p>Reference to another resource.</p>
+
+            <pre><code class="language-json">{
+  "reference": "Patient/example",
+  "type": "Patient",
+  "display": "John Doe"
+}</code></pre>
+
+            <h3>Period</h3>
+            <p>Time range.</p>
+
+            <pre><code class="language-json">{
+  "start": "2024-01-15T10:00:00Z",
+  "end": "2024-01-15T11:00:00Z"
+}</code></pre>
+
+            <h2>Mapping Data Types</h2>
+
+            <h3>Example: Mapping to CodeableConcept</h3>
+
+            <pre><code class="language-python">def map_to_codeable_concept(code, display, system="http://snomed.info/sct"):
+    """Map a code to FHIR CodeableConcept"""
+    return {
+        "coding": [{
+            "system": system,
+            "code": code,
+            "display": display
+        }],
+        "text": display
+    }</code></pre>
+
+            <h3>Example: Mapping to Identifier</h3>
+
+            <pre><code class="language-python">def map_to_identifier(value, system, type_code=None):
+    """Map value to FHIR Identifier"""
+    identifier = {
+        "system": system,
+        "value": value
+    }
+
+    if type_code:
+        identifier["type"] = {
+            "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": type_code
+            }]
+        }
+
+    return identifier</code></pre>
+
+            <h2>Common Mapping Scenarios</h2>
+
+            <h3>Date Format Conversion</h3>
+
+            <pre><code class="language-python">from datetime import datetime
+
+def convert_to_fhir_date(date_string, input_format="%m/%d/%Y"):
+    """Convert various date formats to FHIR date (YYYY-MM-DD)"""
+    try:
+        dt = datetime.strptime(date_string, input_format)
+        return dt.strftime("%Y-%m-%d")
+    except ValueError:
+        return None</code></pre>
+
+            <h3>Phone Number Formatting</h3>
+
+            <pre><code class="language-python">def format_phone_to_contactpoint(phone, use="home"):
+    """Convert phone number to ContactPoint"""
+    # Clean phone number
+    cleaned = ''.join(filter(str.isdigit, phone))
+
+    # Format for E.164 if it's a US number
+    if len(cleaned) == 10:
+        formatted = f"+1-{cleaned[:3]}-{cleaned[3:6]}-{cleaned[6:]}"
+    else:
+        formatted = phone
+
+    return {
+        "system": "phone",
+        "value": formatted,
+        "use": use
+    }</code></pre>
+
+            <h2>Best Practices</h2>
+
+            <div class="success-box">
+                <ul>
+                    <li>Always validate data types before mapping</li>
+                    <li>Use the most specific data type (e.g., code vs string)</li>
+                    <li>Include both system and code in Coding elements</li>
+                    <li>Provide display text for human readability</li>
+                    <li>Use standard code systems (LOINC, SNOMED CT, RxNorm)</li>
+                    <li>Handle null/missing values appropriately</li>
+                    <li>Preserve precision in decimal values</li>
+                </ul>
+            </div>
+
+            <h2>Resources</h2>
+            <ul>
+                <li><a href="http://hl7.org/fhir/datatypes.html" target="_blank">FHIR Data Types Specification</a></li>
+                <li><a href="http://hl7.org/fhir/terminologies.html" target="_blank">Using Terminologies</a></li>
+            </ul>
+        `
+    },
+
+    'terminology': {
+        title: 'Terminology Mapping',
+        content: `
+            <h1>Terminology Mapping</h1>
+
+            <h2>Overview</h2>
+            <p>Terminology mapping is the process of converting codes from one coding system to another. This is essential for FHIR interoperability as different systems may use different code systems.</p>
+
+            <div class="info-box">
+                <strong>Why Terminology Mapping Matters:</strong><br>
+                Proper code mapping ensures semantic interoperability - that the meaning of data is preserved when exchanged between systems.
+            </div>
+
+            <h2>Common Code Systems</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code System</th>
+                        <th>Purpose</th>
+                        <th>URI</th>
+                        <th>Example Use</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>LOINC</td>
+                        <td>Lab tests, observations</td>
+                        <td>http://loinc.org</td>
+                        <td>Observation.code</td>
+                    </tr>
+                    <tr>
+                        <td>SNOMED CT</td>
+                        <td>Clinical terms, diagnoses</td>
+                        <td>http://snomed.info/sct</td>
+                        <td>Condition.code</td>
+                    </tr>
+                    <tr>
+                        <td>RxNorm</td>
+                        <td>Medications</td>
+                        <td>http://www.nlm.nih.gov/research/umls/rxnorm</td>
+                        <td>Medication.code</td>
+                    </tr>
+                    <tr>
+                        <td>ICD-10</td>
+                        <td>Diagnoses (billing)</td>
+                        <td>http://hl7.org/fhir/sid/icd-10</td>
+                        <td>Condition.code</td>
+                    </tr>
+                    <tr>
+                        <td>CPT</td>
+                        <td>Procedures (billing)</td>
+                        <td>http://www.ama-assn.org/go/cpt</td>
+                        <td>Procedure.code</td>
+                    </tr>
+                    <tr>
+                        <td>CVX</td>
+                        <td>Vaccines</td>
+                        <td>http://hl7.org/fhir/sid/cvx</td>
+                        <td>Immunization.vaccineCode</td>
+                    </tr>
+                    <tr>
+                        <td>UCUM</td>
+                        <td>Units of measure</td>
+                        <td>http://unitsofmeasure.org</td>
+                        <td>Quantity.code</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Mapping Strategies</h2>
+
+            <h3>1. Direct Mapping (1:1)</h3>
+            <p>Simple one-to-one correspondence between codes.</p>
+
+            <pre><code class="language-python">GENDER_MAP = {
+    'M': 'male',
+    'F': 'female',
+    'O': 'other',
+    'U': 'unknown'
+}
+
+def map_gender(source_gender):
+    return GENDER_MAP.get(source_gender, 'unknown')</code></pre>
+
+            <h3>2. Lookup Table Mapping</h3>
+            <p>Use a mapping table for complex conversions.</p>
+
+            <pre><code class="language-python">import pandas as pd
+
+# Load mapping table
+icd10_to_snomed = pd.read_csv('icd10_snomed_map.csv')
+
+def map_icd10_to_snomed(icd10_code):
+    """Map ICD-10 to SNOMED CT"""
+    row = icd10_to_snomed[icd10_to_snomed['icd10_code'] == icd10_code]
+
+    if not row.empty:
+        return {
+            'system': 'http://snomed.info/sct',
+            'code': row.iloc[0]['snomed_code'],
+            'display': row.iloc[0]['snomed_display']
+        }
+    return None</code></pre>
+
+            <h3>3. Terminology Server Mapping</h3>
+            <p>Use a FHIR terminology server for dynamic mapping.</p>
+
+            <pre><code class="language-python">import requests
+
+def translate_code(code, source_system, target_system, tx_server_url):
+    """Use $translate operation on terminology server"""
+    params = {
+        'code': code,
+        'system': source_system,
+        'target': target_system
+    }
+
+    response = requests.get(
+        f"{tx_server_url}/ConceptMap/$translate",
+        params=params
+    )
+
+    if response.status_code == 200:
+        result = response.json()
+        if 'parameter' in result:
+            for param in result['parameter']:
+                if param['name'] == 'match':
+                    return param['part'][0]['valueCoding']
+
+    return None
+
+# Example usage
+tx_server = "https://tx.fhir.org/r4"
+snomed_code = translate_code(
+    code="E11.9",
+    source_system="http://hl7.org/fhir/sid/icd-10",
+    target_system="http://snomed.info/sct",
+    tx_server_url=tx_server
+)</code></pre>
+
+            <h2>Common Mapping Scenarios</h2>
+
+            <h3>ICD-10 to SNOMED CT</h3>
+
+            <pre><code class="language-python">ICD10_SNOMED_MAP = {
+    'E11.9': {  # Type 2 diabetes without complications
+        'system': 'http://snomed.info/sct',
+        'code': '44054006',
+        'display': 'Diabetes mellitus type 2'
+    },
+    'I10': {  # Essential hypertension
+        'system': 'http://snomed.info/sct',
+        'code': '59621000',
+        'display': 'Essential hypertension'
+    }
+}
+
+def map_diagnosis_code(icd10_code):
+    """Map ICD-10 diagnosis to SNOMED CT"""
+    if icd10_code in ICD10_SNOMED_MAP:
+        return {
+            'coding': [
+                {
+                    'system': 'http://hl7.org/fhir/sid/icd-10',
+                    'code': icd10_code
+                },
+                ICD10_SNOMED_MAP[icd10_code]
+            ]
+        }
+    else:
+        # Return ICD-10 only if no SNOMED mapping
+        return {
+            'coding': [{
+                'system': 'http://hl7.org/fhir/sid/icd-10',
+                'code': icd10_code
+            }]
+        }</code></pre>
+
+            <h3>Local Codes to Standard Codes</h3>
+
+            <pre><code class="language-python">LOCAL_TO_LOINC = {
+    'GLU': {
+        'system': 'http://loinc.org',
+        'code': '15074-8',
+        'display': 'Glucose [Moles/volume] in Blood'
+    },
+    'HGB': {
+        'system': 'http://loinc.org',
+        'code': '718-7',
+        'display': 'Hemoglobin [Mass/volume] in Blood'
+    }
+}
+
+def map_lab_code(local_code, local_system):
+    """Map local lab code to LOINC"""
+    return {
+        'coding': [
+            {
+                'system': local_system,
+                'code': local_code
+            },
+            LOCAL_TO_LOINC.get(local_code, {})
+        ] if local_code in LOCAL_TO_LOINC else [{
+            'system': local_system,
+            'code': local_code
+        }]
+    }</code></pre>
+
+            <h2>Using ConceptMap Resources</h2>
+
+            <p>FHIR ConceptMap resources define mappings between code systems.</p>
+
+            <pre><code class="language-json">{
+  "resourceType": "ConceptMap",
+  "id": "gender-mapping",
+  "url": "http://example.org/fhir/ConceptMap/gender-mapping",
+  "name": "GenderCodeMapping",
+  "status": "active",
+  "sourceUri": "http://example.org/fhir/ValueSet/local-gender",
+  "targetUri": "http://hl7.org/fhir/ValueSet/administrative-gender",
+  "group": [{
+    "source": "http://example.org/codes/gender",
+    "target": "http://hl7.org/fhir/administrative-gender",
+    "element": [
+      {
+        "code": "M",
+        "target": [{
+          "code": "male",
+          "equivalence": "equivalent"
+        }]
+      },
+      {
+        "code": "F",
+        "target": [{
+          "code": "female",
+          "equivalence": "equivalent"
+        }]
+      }
+    ]
+  }]
+}</code></pre>
+
+            <h2>Handling Unmappable Codes</h2>
+
+            <pre><code class="language-python">def safe_code_mapping(source_code, mapping_dict, source_system):
+    """Safely map codes with fallback"""
+    if source_code in mapping_dict:
+        # Return both source and target codes
+        return {
+            'coding': [
+                {
+                    'system': source_system,
+                    'code': source_code
+                },
+                mapping_dict[source_code]
+            ]
+        }
+    else:
+        # Return source code only with extension noting unmapped
+        return {
+            'coding': [{
+                'system': source_system,
+                'code': source_code
+            }],
+            'extension': [{
+                'url': 'http://example.org/fhir/StructureDefinition/unmapped-code',
+                'valueBoolean': True
+            }]
+        }</code></pre>
+
+            <h2>Best Practices</h2>
+
+            <div class="success-box">
+                <ul>
+                    <li>Always include the source code system alongside mapped codes</li>
+                    <li>Document mapping decisions and equivalence levels</li>
+                    <li>Use standard code systems (LOINC, SNOMED CT, RxNorm) when possible</li>
+                    <li>Maintain mapping tables in version control</li>
+                    <li>Use ConceptMap resources for reusable mappings</li>
+                    <li>Test mappings with real-world data</li>
+                    <li>Plan for codes that don't map cleanly (1:many, many:1)</li>
+                    <li>Keep original codes when mapping is uncertain</li>
+                </ul>
+            </div>
+
+            <h2>Tools and Resources</h2>
+
+            <ul>
+                <li><a href="https://www.nlm.nih.gov/research/umls/mapping_projects/index.html" target="_blank">UMLS Mapping Projects</a></li>
+                <li><a href="https://loinc.org/relma/" target="_blank">RELMA (LOINC Mapping Tool)</a></li>
+                <li><a href="https://www.nlm.nih.gov/research/umls/rxnorm/index.html" target="_blank">RxNorm</a></li>
+                <li><a href="https://tx.fhir.org/" target="_blank">FHIR Terminology Server</a></li>
+                <li><a href="http://hl7.org/fhir/conceptmap.html" target="_blank">FHIR ConceptMap Resource</a></li>
+            </ul>
+        `
+    },
+
+    'pipeline-faq': {
+        title: 'FHIR Pipeline FAQ',
+        content: `
+# FHIR Pipeline FAQ
+
+Technical documentation for backend architecture and libraries
+
+---
+
+## Table of Contents
+
+- [Backend Architecture](#backend-architecture)
+- [FHIR.Resources Library](#fhir-resources-library)
+- [Pydantic Validation](#pydantic-validation)
+- [Polars Data Processing](#polars-data-processing)
+- [YAML Mappings](#yaml-mappings)
+- [Processing Pipeline](#processing-pipeline)
+- [Validation Layers](#validation-layers)
+- [Deployment & Integration](#deployment-integration)
+
+---
+
+## Backend Architecture
+
+**Q: What is the overall architecture of the FHIR pipeline?**
+
+<div class="info-box">
+<strong>Pipeline Flow:</strong><br>
+CSV Upload → Data Validation → YAML Mapping → FHIR Generation → Export
+</div>
+
+**A:** The FHIR pipeline uses a modular Flask-based architecture with the following components:
+
+- **Web Layer**: Flask application serving the UI and API endpoints
+- **Validation Layer**: Pydantic and Polars-based data validation
+- **Mapping Engine**: YAML-driven field transformation system
+- **FHIR Builder**: Python class that constructs FHIR Observation resources
+- **Export System**: Multi-format output generation (NDJSON, Bundle, Summary)
+
+\`\`\`plaintext
+Project Structure:
+├── web_app.py              # Flask web application & API
+├── app/
+│   ├── mapping/
+│   │   └── apply.py        # YAML mapping application
+│   ├── models/
+│   │   └── observation_builder.py  # FHIR resource builder
+│   ├── validate/
+│   │   └── dataframe_checks.py     # Data validation logic
+│   └── io/
+│       ├── mapping.yaml    # Field transformation rules
+│       └── sample_input.csv # Demo data
+└── templates/
+    └── fhir_pipeline.html  # Web interface
+\`\`\`
+
+---
+
+## FHIR.Resources Library
+
+**Q: What is fhir.resources and how does it work in the pipeline?**
+
+**A:** The \`fhir.resources\` library provides Python classes for all FHIR resource types, ensuring compliance with the FHIR R4 standard. It handles:
+
+- **Resource Modeling**: Python classes that mirror FHIR resource structures
+- **Validation**: Built-in validation for required fields and data types
+- **Serialization**: Convert Python objects to/from JSON
+- **Profile Support**: Compliance with US Core and other FHIR profiles
+
+\`\`\`python
+from fhir.resources.observation import Observation
+
+# Create FHIR Observation resource
+observation = Observation(
+    status="final",
+    code={
+        "coding": [{
+            "system": "http://loinc.org",
+            "code": "718-7",
+            "display": "Hemoglobin [Mass/volume] in Blood"
+        }]
+    },
+    subject={"reference": "Patient/12345"},
+    valueQuantity={
+        "value": 14.5,
+        "unit": "g/dL",
+        "system": "http://unitsofmeasure.org"
+    }
+)
+
+# Validates structure and required fields automatically
+fhir_json = observation.json(indent=2)
+\`\`\`
+
+**Q: Why use fhir.resources instead of building JSON manually?**
+
+**A:** Manual JSON construction is error-prone and doesn't guarantee FHIR compliance. The library provides:
+
+- Type safety and validation
+- Automatic compliance with FHIR specifications
+- Easy serialization to multiple formats
+- Integration with FHIR servers and validators
+
+---
+
+## Pydantic Validation
+
+**Q: How does Pydantic contribute to data validation?**
+
+**A:** Pydantic provides runtime type checking and data validation throughout the pipeline:
+
+- **Data Models**: Type-safe classes for CSV row structures
+- **Validation Rules**: Custom validators for clinical data formats
+- **Error Handling**: Detailed error messages for invalid data
+- **Integration**: Works seamlessly with fhir.resources (which is built on Pydantic)
+
+\`\`\`python
+from pydantic import BaseModel, validator
+from datetime import datetime
+from typing import Optional
+
+class ClinicalObservation(BaseModel):
+    patient_id: str
+    encounter_id: Optional[str]
+    obs_datetime: datetime
+    loinc: str
+    system: str = "http://loinc.org"
+    value: float
+    unit: str
+    status: str = "final"
+
+    @validator('patient_id')
+    def validate_patient_id(cls, v):
+        if not v or len(v.strip()) == 0:
+            raise ValueError('Patient ID cannot be empty')
+        return v.strip()
+
+    @validator('loinc')
+    def validate_loinc_format(cls, v):
+        if not v or '-' not in v:
+            raise ValueError('LOINC code must contain hyphen (e.g., 718-7)')
+        return v
+\`\`\`
+
+**Q: What types of validation errors does Pydantic catch?**
+
+- Missing required fields
+- Incorrect data types (string instead of number)
+- Invalid date formats
+- Custom business rule violations
+- Range validation for numeric values
+
+---
+
+## Polars Data Processing
+
+**Q: Why use Polars instead of Pandas for data processing?**
+
+**A:** Polars provides several advantages for healthcare data processing:
+
+- **Performance**: 10-30x faster than Pandas for many operations
+- **Memory Efficiency**: Better handling of large clinical datasets
+- **Type Safety**: Stricter type system catches data quality issues
+- **Lazy Evaluation**: Optimized query planning for complex operations
+- **Better NULL handling**: Important for clinical data with missing values
+
+\`\`\`python
+import polars as pl
+
+# Load and validate CSV data
+df = pl.read_csv("clinical_data.csv", try_parse_dates=True)
+
+# Data quality checks with Polars expressions
+validation_results = df.select([
+    pl.col("patient_id").is_null().sum().alias("missing_patient_ids"),
+    pl.col("value").is_numeric().sum().alias("valid_numeric_values"),
+    pl.col("obs_datetime").str.strptime(pl.Date, "%Y-%m-%d").is_not_null().sum().alias("valid_dates"),
+    pl.col("loinc").str.contains("-").sum().alias("valid_loinc_codes")
+])
+
+# Type casting with error handling
+df_clean = df.with_columns([
+    pl.col("value").cast(pl.Float64, strict=False),
+    pl.col("obs_datetime").str.strptime(pl.Datetime, "%Y-%m-%d %H:%M:%S")
+])
+\`\`\`
+
+**Q: How does Polars integrate with the validation pipeline?**
+
+**A:** Polars handles the initial data processing and quality checks:
+
+- CSV parsing with automatic type inference
+- Data quality assessments (missing values, type mismatches)
+- Efficient batch processing of large datasets
+- Integration with Pydantic for row-level validation
+
+---
+
+## YAML Mappings
+
+**Q: How do YAML mappings transform CSV data to FHIR?**
+
+**A:** YAML mappings define declarative transformation rules without requiring code changes:
+
+\`\`\`yaml
+# mapping.yaml
+observation:
+  resourceType: "Observation"
+  status:
+    source: "status"
+    default: "final"
+
+  code:
+    coding:
+      - system:
+          source: "system"
+          default: "http://loinc.org"
+        code:
+          source: "loinc"
+        display:
+          lookup: "loinc_displays"
+
+  subject:
+    reference:
+      template: "Patient/{patient_id}"
+
+  valueQuantity:
+    value:
+      source: "value"
+      type: "number"
+    unit:
+      source: "unit"
+    system:
+      default: "http://unitsofmeasure.org"
+
+  effectiveDateTime:
+    source: "obs_datetime"
+    format: "datetime"
+\`\`\`
+
+**Q: What mapping features are supported?**
+
+- **Direct Field Mapping**: \`source: "field_name"\`
+- **Default Values**: \`default: "final"\`
+- **Template Substitution**: \`template: "Patient/{patient_id}"\`
+- **Type Conversion**: \`type: "number"\`
+- **Conditional Logic**: Based on source data values
+- **Lookup Tables**: Reference external code systems
+
+**Q: Why use YAML instead of hardcoded transformations?**
+
+- Easy to modify mappings without code changes
+- Version control for mapping specifications
+- Non-technical users can modify mappings
+- Support for multiple mapping profiles
+- Clear documentation of transformation logic
+
+---
+
+## Processing Pipeline
+
+**Q: What are the steps in the processing pipeline?**
+
+<div class="info-box">
+<strong>Pipeline Stages:</strong><br>
+1. Upload (CSV File Input) → 2. Parse (Polars DataFrame) → 3. Validate (Pydantic Models) → 4. Map (YAML Rules) → 5. Build (FHIR Resources) → 6. Export (Multiple Formats)
+</div>
+
+**A:** The pipeline processes data through six distinct stages:
+
+1. **File Upload**: Accept CSV files with clinical observations
+2. **Data Parsing**: Use Polars to read and analyze CSV structure
+3. **Data Validation**: Apply Pydantic models to ensure data quality
+4. **Field Mapping**: Transform data using YAML mapping specifications
+5. **FHIR Building**: Generate compliant FHIR Observation resources
+6. **Export Generation**: Create NDJSON, Bundle, and Summary outputs
+
+\`\`\`python
+def process_pipeline():
+    # 1. Load and validate CSV
+    csv_result = load_and_validate_csv(filepath)
+
+    # 2. Apply YAML mappings
+    mapping_spec = load_mapping_spec("mapping.yaml")
+    mapped_data = apply_mappings(csv_result['dataframe'], mapping_spec)
+
+    # 3. Build FHIR resources
+    observations = []
+    for row in mapped_data:
+        obs = ObservationBuilder.build_from_dict(row)
+        observations.append(obs)
+
+    # 4. Validate FHIR resources
+    valid_observations = validate_fhir_resources(observations)
+
+    # 5. Generate exports
+    export_results = generate_exports(valid_observations)
+
+    return ProcessingResult(
+        success_rate=len(valid_observations) / len(observations),
+        observations=valid_observations,
+        exports=export_results
+    )
+\`\`\`
+
+**Q: How does error handling work in the pipeline?**
+
+- **Graceful Degradation**: Invalid rows are skipped, not the entire batch
+- **Error Categorization**: Separate validation, mapping, and FHIR errors
+- **Detailed Logging**: Each error includes row number and specific issue
+- **Success Metrics**: Report percentage of successfully processed records
+
+---
+
+## Validation Layers
+
+**Q: What validation layers ensure data quality?**
+
+**A:** The system implements multiple validation layers:
+
+### Validation Layers
+
+| Layer | Focus | Tools |
+|-------|-------|-------|
+| **CSV Structure** | File format, encoding, columns | Polars |
+| **Data Types** | Numeric, date, string validation | Pydantic |
+| **Business Rules** | Clinical data requirements | Custom validators |
+| **FHIR Compliance** | Resource structure validation | fhir.resources |
+| **US Core Profile** | Healthcare interoperability standards | Profile validators |
+
+### Common Validation Errors
+
+- Missing required fields (patient_id, loinc)
+- Invalid LOINC codes or formats
+- Non-numeric values in numeric fields
+- Invalid date formats
+- Empty or whitespace-only values
+
+\`\`\`python
+# Validation pipeline example
+def validate_observation_data(df):
+    results = ValidationResult()
+
+    # Layer 1: Required field validation
+    required_fields = ['patient_id', 'loinc', 'value', 'unit']
+    for field in required_fields:
+        if field not in df.columns:
+            results.add_error(f"Missing required column: {field}")
+
+    # Layer 2: Data type validation
+    numeric_validations = df.select([
+        pl.col("value").is_numeric().alias("value_numeric"),
+        pl.col("patient_id").is_not_null().alias("patient_id_present")
+    ])
+
+    # Layer 3: Business rule validation
+    loinc_validation = df.filter(
+        pl.col("loinc").str.contains("-") == False
+    ).select("row_nr", "loinc")
+
+    # Layer 4: FHIR resource validation (after mapping)
+    for obs_dict in mapped_observations:
+        try:
+            observation = Observation(**obs_dict)  # Validates FHIR structure
+            results.add_valid_observation(observation)
+        except ValidationError as e:
+            results.add_fhir_error(str(e))
+
+    return results
+\`\`\`
+
+---
+
+## Deployment & Integration
+
+**Q: How can the FHIR pipeline be deployed and integrated?**
+
+**A:** The pipeline supports multiple deployment scenarios:
+
+### Deployment Options
+
+- **Replit Deployment**: One-click deployment with automatic scaling
+- **Docker Container**: Containerized deployment for any environment
+- **Cloud Platforms**: AWS, GCP, Azure with managed services
+- **On-Premises**: Local installation for sensitive healthcare data
+
+### Integration Points
+
+- **HAPI FHIR Server**: Direct upload to FHIR repositories
+- **EHR Systems**: Integration via FHIR APIs
+- **Data Lakes**: Bulk export to analytics platforms
+- **HL7 Networks**: Standard healthcare data exchange
+
+\`\`\`python
+# Example HAPI FHIR server integration
+import requests
+
+def upload_to_fhir_server(observations, server_base_url):
+    headers = {
+        'Content-Type': 'application/fhir+json',
+        'Accept': 'application/fhir+json'
+    }
+
+    results = []
+    for obs in observations:
+        response = requests.post(
+            f"{server_base_url}/Observation",
+            json=obs.dict(exclude_none=True),
+            headers=headers
+        )
+        results.append({
+            'status': response.status_code,
+            'resource_id': response.json().get('id') if response.ok else None,
+            'errors': response.json().get('issue', []) if not response.ok else []
+        })
+
+    return results
+\`\`\`
+
+### Security & Compliance
+
+- **HIPAA Compliance**: Secure handling of PHI data
+- **Data Encryption**: At rest and in transit
+- **Access Controls**: Role-based authentication
+- **Audit Logging**: Comprehensive processing logs
+- **Data Residency**: Control over data location
+
+---
+
+<div class="info-box">
+For additional questions or technical support, please refer to the <a href="https://hl7.org/fhir/" target="_blank">HL7 FHIR Documentation</a> or the project repository.
+</div>
+        `
     }
 };
 
