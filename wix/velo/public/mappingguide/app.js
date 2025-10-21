@@ -2808,6 +2808,575 @@ def map_prescription_to_medication_request(prescription):
                 <li><a href="http://hl7.org/fhir/medicationrequest.html" target="_blank">FHIR MedicationRequest</a></li>
             </ul>
         `
+    },
+
+    'data-types': {
+        title: 'FHIR Data Types',
+        content: `
+            <h1>FHIR Data Types</h1>
+
+            <h2>Overview</h2>
+            <p>FHIR defines a rich set of data types that are used across all resources. Understanding these types is crucial for proper data mapping.</p>
+
+            <h2>Primitive Data Types</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                        <th>Regex/Format</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>boolean</td>
+                        <td>True or false</td>
+                        <td>true, false</td>
+                        <td>true | false</td>
+                    </tr>
+                    <tr>
+                        <td>integer</td>
+                        <td>Whole number</td>
+                        <td>42, -7</td>
+                        <td>-?[0-9]+</td>
+                    </tr>
+                    <tr>
+                        <td>string</td>
+                        <td>Sequence of Unicode characters</td>
+                        <td>"Hello World"</td>
+                        <td>Any UTF-8 string</td>
+                    </tr>
+                    <tr>
+                        <td>decimal</td>
+                        <td>Rational number</td>
+                        <td>3.14, -0.5</td>
+                        <td>-?([0-9]+\.[0-9]+)</td>
+                    </tr>
+                    <tr>
+                        <td>uri</td>
+                        <td>Uniform Resource Identifier</td>
+                        <td>"http://example.org"</td>
+                        <td>\\S+</td>
+                    </tr>
+                    <tr>
+                        <td>date</td>
+                        <td>Date (no time)</td>
+                        <td>"2024-01-15"</td>
+                        <td>YYYY-MM-DD</td>
+                    </tr>
+                    <tr>
+                        <td>dateTime</td>
+                        <td>Date and time</td>
+                        <td>"2024-01-15T10:30:00Z"</td>
+                        <td>YYYY-MM-DDThh:mm:ss+zz:zz</td>
+                    </tr>
+                    <tr>
+                        <td>time</td>
+                        <td>Time of day</td>
+                        <td>"10:30:00"</td>
+                        <td>hh:mm:ss</td>
+                    </tr>
+                    <tr>
+                        <td>code</td>
+                        <td>String from controlled vocabulary</td>
+                        <td>"male"</td>
+                        <td>[^\\s]+</td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>Logical id</td>
+                        <td>"example-123"</td>
+                        <td>[A-Za-z0-9\\-\\.]{1,64}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Complex Data Types</h2>
+
+            <h3>CodeableConcept</h3>
+            <p>A value that is usually supplied by providing a reference to one or more terminologies.</p>
+
+            <pre><code class="language-json">{
+  "coding": [{
+    "system": "http://snomed.info/sct",
+    "code": "44054006",
+    "display": "Diabetes mellitus type 2"
+  }],
+  "text": "Type 2 Diabetes"
+}</code></pre>
+
+            <h3>Coding</h3>
+            <p>A reference to a code defined by a terminology system.</p>
+
+            <pre><code class="language-json">{
+  "system": "http://loinc.org",
+  "code": "15074-8",
+  "display": "Glucose [Moles/volume] in Blood"
+}</code></pre>
+
+            <h3>Identifier</h3>
+            <p>A unique identifier for a resource or element.</p>
+
+            <pre><code class="language-json">{
+  "use": "official",
+  "type": {
+    "coding": [{
+      "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+      "code": "MR"
+    }]
+  },
+  "system": "http://hospital.example.org",
+  "value": "12345"
+}</code></pre>
+
+            <h3>HumanName</h3>
+            <p>A name of a person.</p>
+
+            <pre><code class="language-json">{
+  "use": "official",
+  "family": "Doe",
+  "given": ["John", "Robert"],
+  "prefix": ["Mr."],
+  "suffix": ["Jr."]
+}</code></pre>
+
+            <h3>Address</h3>
+            <p>Physical location.</p>
+
+            <pre><code class="language-json">{
+  "use": "home",
+  "type": "physical",
+  "line": ["123 Main St", "Apt 4B"],
+  "city": "Springfield",
+  "state": "IL",
+  "postalCode": "62701",
+  "country": "US"
+}</code></pre>
+
+            <h3>ContactPoint</h3>
+            <p>Contact detail such as phone or email.</p>
+
+            <pre><code class="language-json">{
+  "system": "phone",
+  "value": "555-123-4567",
+  "use": "home",
+  "rank": 1
+}</code></pre>
+
+            <h3>Quantity</h3>
+            <p>Measured amount.</p>
+
+            <pre><code class="language-json">{
+  "value": 95,
+  "unit": "mg/dL",
+  "system": "http://unitsofmeasure.org",
+  "code": "mg/dL"
+}</code></pre>
+
+            <h3>Reference</h3>
+            <p>Reference to another resource.</p>
+
+            <pre><code class="language-json">{
+  "reference": "Patient/example",
+  "type": "Patient",
+  "display": "John Doe"
+}</code></pre>
+
+            <h3>Period</h3>
+            <p>Time range.</p>
+
+            <pre><code class="language-json">{
+  "start": "2024-01-15T10:00:00Z",
+  "end": "2024-01-15T11:00:00Z"
+}</code></pre>
+
+            <h2>Mapping Data Types</h2>
+
+            <h3>Example: Mapping to CodeableConcept</h3>
+
+            <pre><code class="language-python">def map_to_codeable_concept(code, display, system="http://snomed.info/sct"):
+    """Map a code to FHIR CodeableConcept"""
+    return {
+        "coding": [{
+            "system": system,
+            "code": code,
+            "display": display
+        }],
+        "text": display
+    }</code></pre>
+
+            <h3>Example: Mapping to Identifier</h3>
+
+            <pre><code class="language-python">def map_to_identifier(value, system, type_code=None):
+    """Map value to FHIR Identifier"""
+    identifier = {
+        "system": system,
+        "value": value
+    }
+
+    if type_code:
+        identifier["type"] = {
+            "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": type_code
+            }]
+        }
+
+    return identifier</code></pre>
+
+            <h2>Common Mapping Scenarios</h2>
+
+            <h3>Date Format Conversion</h3>
+
+            <pre><code class="language-python">from datetime import datetime
+
+def convert_to_fhir_date(date_string, input_format="%m/%d/%Y"):
+    """Convert various date formats to FHIR date (YYYY-MM-DD)"""
+    try:
+        dt = datetime.strptime(date_string, input_format)
+        return dt.strftime("%Y-%m-%d")
+    except ValueError:
+        return None</code></pre>
+
+            <h3>Phone Number Formatting</h3>
+
+            <pre><code class="language-python">def format_phone_to_contactpoint(phone, use="home"):
+    """Convert phone number to ContactPoint"""
+    # Clean phone number
+    cleaned = ''.join(filter(str.isdigit, phone))
+
+    # Format for E.164 if it's a US number
+    if len(cleaned) == 10:
+        formatted = f"+1-{cleaned[:3]}-{cleaned[3:6]}-{cleaned[6:]}"
+    else:
+        formatted = phone
+
+    return {
+        "system": "phone",
+        "value": formatted,
+        "use": use
+    }</code></pre>
+
+            <h2>Best Practices</h2>
+
+            <div class="success-box">
+                <ul>
+                    <li>Always validate data types before mapping</li>
+                    <li>Use the most specific data type (e.g., code vs string)</li>
+                    <li>Include both system and code in Coding elements</li>
+                    <li>Provide display text for human readability</li>
+                    <li>Use standard code systems (LOINC, SNOMED CT, RxNorm)</li>
+                    <li>Handle null/missing values appropriately</li>
+                    <li>Preserve precision in decimal values</li>
+                </ul>
+            </div>
+
+            <h2>Resources</h2>
+            <ul>
+                <li><a href="http://hl7.org/fhir/datatypes.html" target="_blank">FHIR Data Types Specification</a></li>
+                <li><a href="http://hl7.org/fhir/terminologies.html" target="_blank">Using Terminologies</a></li>
+            </ul>
+        `
+    },
+
+    'terminology': {
+        title: 'Terminology Mapping',
+        content: `
+            <h1>Terminology Mapping</h1>
+
+            <h2>Overview</h2>
+            <p>Terminology mapping is the process of converting codes from one coding system to another. This is essential for FHIR interoperability as different systems may use different code systems.</p>
+
+            <div class="info-box">
+                <strong>Why Terminology Mapping Matters:</strong><br>
+                Proper code mapping ensures semantic interoperability - that the meaning of data is preserved when exchanged between systems.
+            </div>
+
+            <h2>Common Code Systems</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code System</th>
+                        <th>Purpose</th>
+                        <th>URI</th>
+                        <th>Example Use</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>LOINC</td>
+                        <td>Lab tests, observations</td>
+                        <td>http://loinc.org</td>
+                        <td>Observation.code</td>
+                    </tr>
+                    <tr>
+                        <td>SNOMED CT</td>
+                        <td>Clinical terms, diagnoses</td>
+                        <td>http://snomed.info/sct</td>
+                        <td>Condition.code</td>
+                    </tr>
+                    <tr>
+                        <td>RxNorm</td>
+                        <td>Medications</td>
+                        <td>http://www.nlm.nih.gov/research/umls/rxnorm</td>
+                        <td>Medication.code</td>
+                    </tr>
+                    <tr>
+                        <td>ICD-10</td>
+                        <td>Diagnoses (billing)</td>
+                        <td>http://hl7.org/fhir/sid/icd-10</td>
+                        <td>Condition.code</td>
+                    </tr>
+                    <tr>
+                        <td>CPT</td>
+                        <td>Procedures (billing)</td>
+                        <td>http://www.ama-assn.org/go/cpt</td>
+                        <td>Procedure.code</td>
+                    </tr>
+                    <tr>
+                        <td>CVX</td>
+                        <td>Vaccines</td>
+                        <td>http://hl7.org/fhir/sid/cvx</td>
+                        <td>Immunization.vaccineCode</td>
+                    </tr>
+                    <tr>
+                        <td>UCUM</td>
+                        <td>Units of measure</td>
+                        <td>http://unitsofmeasure.org</td>
+                        <td>Quantity.code</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Mapping Strategies</h2>
+
+            <h3>1. Direct Mapping (1:1)</h3>
+            <p>Simple one-to-one correspondence between codes.</p>
+
+            <pre><code class="language-python">GENDER_MAP = {
+    'M': 'male',
+    'F': 'female',
+    'O': 'other',
+    'U': 'unknown'
+}
+
+def map_gender(source_gender):
+    return GENDER_MAP.get(source_gender, 'unknown')</code></pre>
+
+            <h3>2. Lookup Table Mapping</h3>
+            <p>Use a mapping table for complex conversions.</p>
+
+            <pre><code class="language-python">import pandas as pd
+
+# Load mapping table
+icd10_to_snomed = pd.read_csv('icd10_snomed_map.csv')
+
+def map_icd10_to_snomed(icd10_code):
+    """Map ICD-10 to SNOMED CT"""
+    row = icd10_to_snomed[icd10_to_snomed['icd10_code'] == icd10_code]
+
+    if not row.empty:
+        return {
+            'system': 'http://snomed.info/sct',
+            'code': row.iloc[0]['snomed_code'],
+            'display': row.iloc[0]['snomed_display']
+        }
+    return None</code></pre>
+
+            <h3>3. Terminology Server Mapping</h3>
+            <p>Use a FHIR terminology server for dynamic mapping.</p>
+
+            <pre><code class="language-python">import requests
+
+def translate_code(code, source_system, target_system, tx_server_url):
+    """Use $translate operation on terminology server"""
+    params = {
+        'code': code,
+        'system': source_system,
+        'target': target_system
+    }
+
+    response = requests.get(
+        f"{tx_server_url}/ConceptMap/$translate",
+        params=params
+    )
+
+    if response.status_code == 200:
+        result = response.json()
+        if 'parameter' in result:
+            for param in result['parameter']:
+                if param['name'] == 'match':
+                    return param['part'][0]['valueCoding']
+
+    return None
+
+# Example usage
+tx_server = "https://tx.fhir.org/r4"
+snomed_code = translate_code(
+    code="E11.9",
+    source_system="http://hl7.org/fhir/sid/icd-10",
+    target_system="http://snomed.info/sct",
+    tx_server_url=tx_server
+)</code></pre>
+
+            <h2>Common Mapping Scenarios</h2>
+
+            <h3>ICD-10 to SNOMED CT</h3>
+
+            <pre><code class="language-python">ICD10_SNOMED_MAP = {
+    'E11.9': {  # Type 2 diabetes without complications
+        'system': 'http://snomed.info/sct',
+        'code': '44054006',
+        'display': 'Diabetes mellitus type 2'
+    },
+    'I10': {  # Essential hypertension
+        'system': 'http://snomed.info/sct',
+        'code': '59621000',
+        'display': 'Essential hypertension'
+    }
+}
+
+def map_diagnosis_code(icd10_code):
+    """Map ICD-10 diagnosis to SNOMED CT"""
+    if icd10_code in ICD10_SNOMED_MAP:
+        return {
+            'coding': [
+                {
+                    'system': 'http://hl7.org/fhir/sid/icd-10',
+                    'code': icd10_code
+                },
+                ICD10_SNOMED_MAP[icd10_code]
+            ]
+        }
+    else:
+        # Return ICD-10 only if no SNOMED mapping
+        return {
+            'coding': [{
+                'system': 'http://hl7.org/fhir/sid/icd-10',
+                'code': icd10_code
+            }]
+        }</code></pre>
+
+            <h3>Local Codes to Standard Codes</h3>
+
+            <pre><code class="language-python">LOCAL_TO_LOINC = {
+    'GLU': {
+        'system': 'http://loinc.org',
+        'code': '15074-8',
+        'display': 'Glucose [Moles/volume] in Blood'
+    },
+    'HGB': {
+        'system': 'http://loinc.org',
+        'code': '718-7',
+        'display': 'Hemoglobin [Mass/volume] in Blood'
+    }
+}
+
+def map_lab_code(local_code, local_system):
+    """Map local lab code to LOINC"""
+    return {
+        'coding': [
+            {
+                'system': local_system,
+                'code': local_code
+            },
+            LOCAL_TO_LOINC.get(local_code, {})
+        ] if local_code in LOCAL_TO_LOINC else [{
+            'system': local_system,
+            'code': local_code
+        }]
+    }</code></pre>
+
+            <h2>Using ConceptMap Resources</h2>
+
+            <p>FHIR ConceptMap resources define mappings between code systems.</p>
+
+            <pre><code class="language-json">{
+  "resourceType": "ConceptMap",
+  "id": "gender-mapping",
+  "url": "http://example.org/fhir/ConceptMap/gender-mapping",
+  "name": "GenderCodeMapping",
+  "status": "active",
+  "sourceUri": "http://example.org/fhir/ValueSet/local-gender",
+  "targetUri": "http://hl7.org/fhir/ValueSet/administrative-gender",
+  "group": [{
+    "source": "http://example.org/codes/gender",
+    "target": "http://hl7.org/fhir/administrative-gender",
+    "element": [
+      {
+        "code": "M",
+        "target": [{
+          "code": "male",
+          "equivalence": "equivalent"
+        }]
+      },
+      {
+        "code": "F",
+        "target": [{
+          "code": "female",
+          "equivalence": "equivalent"
+        }]
+      }
+    ]
+  }]
+}</code></pre>
+
+            <h2>Handling Unmappable Codes</h2>
+
+            <pre><code class="language-python">def safe_code_mapping(source_code, mapping_dict, source_system):
+    """Safely map codes with fallback"""
+    if source_code in mapping_dict:
+        # Return both source and target codes
+        return {
+            'coding': [
+                {
+                    'system': source_system,
+                    'code': source_code
+                },
+                mapping_dict[source_code]
+            ]
+        }
+    else:
+        # Return source code only with extension noting unmapped
+        return {
+            'coding': [{
+                'system': source_system,
+                'code': source_code
+            }],
+            'extension': [{
+                'url': 'http://example.org/fhir/StructureDefinition/unmapped-code',
+                'valueBoolean': True
+            }]
+        }</code></pre>
+
+            <h2>Best Practices</h2>
+
+            <div class="success-box">
+                <ul>
+                    <li>Always include the source code system alongside mapped codes</li>
+                    <li>Document mapping decisions and equivalence levels</li>
+                    <li>Use standard code systems (LOINC, SNOMED CT, RxNorm) when possible</li>
+                    <li>Maintain mapping tables in version control</li>
+                    <li>Use ConceptMap resources for reusable mappings</li>
+                    <li>Test mappings with real-world data</li>
+                    <li>Plan for codes that don't map cleanly (1:many, many:1)</li>
+                    <li>Keep original codes when mapping is uncertain</li>
+                </ul>
+            </div>
+
+            <h2>Tools and Resources</h2>
+
+            <ul>
+                <li><a href="https://www.nlm.nih.gov/research/umls/mapping_projects/index.html" target="_blank">UMLS Mapping Projects</a></li>
+                <li><a href="https://loinc.org/relma/" target="_blank">RELMA (LOINC Mapping Tool)</a></li>
+                <li><a href="https://www.nlm.nih.gov/research/umls/rxnorm/index.html" target="_blank">RxNorm</a></li>
+                <li><a href="https://tx.fhir.org/" target="_blank">FHIR Terminology Server</a></li>
+                <li><a href="http://hl7.org/fhir/conceptmap.html" target="_blank">FHIR ConceptMap Resource</a></li>
+            </ul>
+        `
     }
 };
 
