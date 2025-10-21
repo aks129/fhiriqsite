@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHIR IQ Mapping Wiki</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>FHIR IQ</h1>
+                <p class="subtitle">Mapping Wiki</p>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search wiki...">
+                </div>
+
+                <ul class="nav-list">
+                    <li class="nav-section">
+                        <h3>Getting Started</h3>
+                        <ul>
+                            <li><a href="#intro" data-page="intro">Introduction to FHIR</a></li>
+                            <li><a href="#why-mapping" data-page="why-mapping">Why FHIR Mapping?</a></li>
+                            <li><a href="#quick-start" data-page="quick-start">Quick Start Guide</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-section">
+                        <h3>Core Concepts</h3>
+                        <ul>
+                            <li><a href="#resources" data-page="resources">FHIR Resources</a></li>
+                            <li><a href="#us-core" data-page="us-core">US Core Profiles</a></li>
+                            <li><a href="#data-types" data-page="data-types">Data Types</a></li>
+                            <li><a href="#terminology" data-page="terminology">Terminology Mapping</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-section">
+                        <h3>Mapping Approaches</h3>
+                        <ul>
+                            <li><a href="#structuremap" data-page="structuremap">StructureMap</a></li>
+                            <li><a href="#yaml-mapping" data-page="yaml-mapping">YAML Mapping Files</a></li>
+                            <li><a href="#liquid-templates" data-page="liquid-templates">Liquid Templates</a></li>
+                            <li><a href="#fsh" data-page="fsh">FSH (FHIR Shorthand)</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-section">
+                        <h3>Resource Examples</h3>
+                        <ul>
+                            <li><a href="#patient-mapping" data-page="patient-mapping">Patient Mapping</a></li>
+                            <li><a href="#observation-mapping" data-page="observation-mapping">Observation Mapping</a></li>
+                            <li><a href="#condition-mapping" data-page="condition-mapping">Condition Mapping</a></li>
+                            <li><a href="#medication-mapping" data-page="medication-mapping">Medication Mapping</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-section">
+                        <h3>Tools & Libraries</h3>
+                        <ul>
+                            <li><a href="#fhir-tools" data-page="fhir-tools">FHIR Tools Overview</a></li>
+                            <li><a href="#python-fhir" data-page="python-fhir">Python fhir.resources</a></li>
+                            <li><a href="#validation" data-page="validation">Validation & Testing</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-section">
+                        <h3>Advanced Topics</h3>
+                        <ul>
+                            <li><a href="#complex-scenarios" data-page="complex-scenarios">Complex Data Scenarios</a></li>
+                            <li><a href="#source-target-validation" data-page="source-target-validation">Source to Target Validation</a></li>
+                            <li><a href="#extensions" data-page="extensions">Extensions</a></li>
+                            <li><a href="#performance" data-page="performance">Performance Optimization</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-section">
+                        <h3>Reference</h3>
+                        <ul>
+                            <li><a href="#api-reference" data-page="api-reference">API Reference</a></li>
+                            <li><a href="#fhir-versions" data-page="fhir-versions">FHIR Versions</a></li>
+                            <li><a href="#glossary" data-page="glossary">Glossary</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div id="content">
+                <!-- Content will be loaded here dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
